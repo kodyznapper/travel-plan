@@ -108,13 +108,15 @@ function fileExists_(id) { try { DriveApp.getFileById(id).getName(); return true
 function folderExists_(id) { try { DriveApp.getFolderById(id).getName(); return true; } catch (e) { return false; } }
 
 function backup_(file) {
+  var old = readMd_(file);
+  if (!old.trim()) return;   // nothing worth keeping (e.g. first save over an empty plan file)
   var props = PropertiesService.getScriptProperties();
   var bid = props.getProperty('BACKUP_FOLDER_ID');
   var folder = null;
   if (bid) { try { folder = DriveApp.getFolderById(bid); } catch (e) { folder = null; } }
   if (!folder) { folder = DriveApp.createFolder('travel-plan backups'); props.setProperty('BACKUP_FOLDER_ID', folder.getId()); }
   var stamp = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd_HHmmss');
-  folder.createFile(Utilities.newBlob(readMd_(file), 'text/plain', 'travel-plan_' + stamp + '.md'));
+  folder.createFile(Utilities.newBlob(old, 'text/plain', 'travel-plan_' + stamp + '.md'));
 }
 
 /* Constant-time compare + a global limit on wrong guesses (the web app is anonymous, so there is no per-user limit). */
