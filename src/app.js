@@ -50,7 +50,7 @@
   function icon(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.other) + '</svg>'; }
 
   var LANG = 'th';
-  var APP_VERSION = 'v2.2';
+  var APP_VERSION = 'v2.2.1';
   var IS_GAS = window.TP_TARGET === 'gas';   // Google Apps Script build: plan lives in Drive, read/written through google.script.run
   var CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
 
@@ -219,6 +219,7 @@
   function replaceTrip(oldT, newT, edited_) {
     carryChecks(oldT, newT);
     newT.id = oldT.id; newT.origin = oldT.origin || 'seed'; newT.localEdited = !!edited_; newT.updatedAt = Date.now();
+    newT.remoteVersion = oldT.remoteVersion; newT.remoteFull = oldT.remoteFull;   // GAS: importing over the Drive plan must keep the Drive version it is based on
     S.trips[S.trips.indexOf(oldT)] = newT;
     return newT;
   }

@@ -172,7 +172,7 @@ pip install playwright && playwright install chromium
 python3 tests/e2e/ftest.py      # import/ซ้ำ/แก้/ย้าย/ลบ+undo/checklist/export/seed conflict (12 checks)
 python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en (14 checks)
 python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
-python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, EN (32 checks)
+python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, EN (34 checks)
 node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง build ก่อน; make test ทำให้)
 
 # ถ้า pip ติดตั้งลง Python ของระบบไม่ได้ (macOS/Homebrew) ให้ใช้ venv:
@@ -209,7 +209,7 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 16. **GAS: ยังไม่ได้ทดสอบบน Google จริง** เทสต์ทั้งหมดใช้ GAS จำลอง (`tests/gas/fake-gas.js`) ข้อที่ติด `❓` ในข้อ 4 "Google Apps Script" ต้องเช็กตาม checklist ใน README หลัง deploy ครั้งแรก
 17. **GAS: ใครก็ล็อกการบันทึกได้ 10 นาที** ด้วยการเดารหัสผิด 10 ครั้ง (ลิมิตนับรวมเพราะไม่มีตัวตนผู้ใช้) อ่านแผนยังได้ปกติ ถ้าเจอบ่อยค่อยเปลี่ยนเป็นลิมิตแยกตามอย่างอื่น
 18. **GAS: รหัสแก้ไขเก็บใน `localStorage` แบบข้อความธรรมดา** บนเครื่องเจ้าของ ใครใช้ browser นั้นได้ก็บันทึกได้ ถ้ารหัสหลุด เปลี่ยน `EDIT_KEY` ใน Script Properties ได้ทันที (รหัสเก่าที่จำไว้จะใช้ไม่ได้)
-19. **GAS: แผนเดียวต่อ deployment** แผนอื่นที่นำเข้าในหน้า GAS อยู่แค่ในเครื่อง ไม่ขึ้น Drive ถ้าจะเปลี่ยนแผนบน Drive ให้นำเข้า md ที่ชื่อทริป+วันเริ่มตรงกัน แล้วเลือก "เขียนทับแผนเดิม" จากนั้นกดบันทึกขึ้น Drive
+19. **GAS: แผนเดียวต่อ deployment** (v2.2.1 แก้บั๊ก: ตอนนำเข้าทับ `replaceTrip` ทิ้ง `remoteVersion`/`remoteFull` ทำให้กดบันทึกแล้วเด้ง dialog ซ้ำ 2–3 รอบ) แผนอื่นที่นำเข้าในหน้า GAS อยู่แค่ในเครื่อง ไม่ขึ้น Drive ถ้าจะเปลี่ยนแผนบน Drive ให้นำเข้า md ที่ชื่อทริป+วันเริ่มตรงกัน แล้วเลือก "เขียนทับแผนเดิม" จากนั้นกดบันทึกขึ้น Drive
 
 ## 7. ไฟล์ที่เกี่ยวข้อง
 

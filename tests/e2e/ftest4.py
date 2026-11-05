@@ -141,6 +141,18 @@ with sync_playwright() as p:
     ow.click('[data-act=discard-local]'); settle(ow, 300); ow.click('[data-res=yes]'); settle(ow, 1500)
     check('discard: local edit gone, back in sync', 'จะทิ้ง' not in ow.inner_text('#app') and ow.locator('[data-syncbar].dirty').count() == 0)
 
+    # ---------------- import a .md over the Drive plan, then save (README "เปลี่ยนทั้งแผนด้วยไฟล์ .md ใหม่") ----------------
+    imp = pathlib.Path(tempfile.mkdtemp()) / 'taiwan-trip-2026-2026-11-12.md'
+    imp.write_text(gas('getTrip', KEY)['md'].replace('style: ', 'style: นำเข้าใหม่ ', 1), encoding='utf8')
+    ow.goto(PAGE + '#home'); settle(ow, 400)
+    ow.click('[data-act=import] >> nth=0'); ow.set_input_files('[data-imp=file]', str(imp)); settle(ow, 400)
+    ow.click('[data-imp=save]'); settle(ow, 300)
+    ow.click('[data-res=over]'); settle(ow, 500)
+    check('import over Drive plan: still one server trip, bar dirty', ow.evaluate("JSON.parse(localStorage.getItem('tp1.trips')).filter(function(t){return t.origin==='server'}).length") == 1 and ow.locator('[data-syncbar].dirty').count() == 1)
+    nb = len(backups())
+    ow.click('[data-act=save-remote]'); settle(ow, 1500)
+    check('import over Drive plan: saves on first click (no conflict / key dialogs)', ow.locator('.modal').count() == 0 and 'style: นำเข้าใหม่' in drive_md() and len(backups()) == nb + 1)
+
     # ---------------- export on GAS always offers copy ----------------
     ow.goto(PAGE + '#' + tid); settle(ow, 400)
     ow.click('[data-act=export-md]'); settle(ow, 300)
