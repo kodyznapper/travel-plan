@@ -98,7 +98,7 @@ with sync_playwright() as p:
     ow.goto(PAGE + '#' + tid + '--d1'); settle(ow)
     ow.click('[data-act=edit-toggle]'); settle(ow, 300)
     ow.fill('[data-b="days.0.theme"]', 'ธีมทดสอบจากเจ้าของ'); settle(ow, 400)
-    check('owner: editing marks the bar dirty (live)', ow.locator('[data-syncbar].dirty').count() == 1)
+    check('owner: editing marks the bar dirty (live), orange bar has no X', ow.locator('[data-syncbar].dirty').count() == 1 and ow.locator('[data-act=sync-hide]').count() == 0)
     check('owner: edit bar says changes stay local until saved', 'บันทึกขึ้น Drive' in ow.inner_text('.editbar'))
     ow.click('[data-act=edit-toggle]'); settle(ow, 300)
     check('Drive unchanged before saving', 'ธีมทดสอบจากเจ้าของ' not in drive_md())
@@ -114,6 +114,10 @@ with sync_playwright() as p:
     check('a backup was written', len(backups()) == 1)
     check('owner: bar back in sync, key remembered', ow.locator('[data-syncbar].dirty').count() == 0 and ow.evaluate("JSON.parse(localStorage.getItem('tp1.key'))") == KEY)
     check('owner with key: planning section visible again', len((ls_trip(ow) or {}).get('plan', '')) > 0)
+    ow.click('[data-act=sync-hide]'); settle(ow, 300)
+    check('close (X) hides the in-sync bar', ow.locator('.syncbar').count() == 0)
+    ow.reload(); settle(ow, 1500)
+    check('closed bar stays hidden after reload (remembered on this device)', ow.locator('.syncbar').count() == 0 and ow.evaluate("JSON.parse(localStorage.getItem('tp1.settings')).syncHide") is True)
 
     # ---------------- viewer sees it ----------------
     vw.goto(PAGE + '#' + tid + '--d1'); vw.reload(); settle(vw, 1500)
@@ -133,6 +137,7 @@ with sync_playwright() as p:
     check('stale save: conflict dialog, Drive untouched', ow.locator('[data-res=force]').count() == 1 and 'แก้วันสองในเครื่อง' not in drive_md())
     ow.click('[data-res=force]'); settle(ow, 1500)
     check('force: local version written to Drive', 'แก้วันสองในเครื่อง' in drive_md())
+    check('after an edit + save the in-sync bar is back (with its X)', ow.locator('.syncbar:not(.dirty) [data-act=sync-hide]').count() == 1)
 
     # ---------------- discard local edits ----------------
     ow.click('[data-act=edit-toggle]'); settle(ow, 300)

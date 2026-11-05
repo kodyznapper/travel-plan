@@ -23,7 +23,7 @@ var PLAN_HEAD = 'วางแผน';     // "# วางแผน" section is o
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
-    .setTitle('แผนเที่ยว')
+    .setTitle('Trip Plans - วางแผนเที่ยว')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover');
 }
 
