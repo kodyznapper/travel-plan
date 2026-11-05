@@ -1,7 +1,7 @@
 build:
 	python3 tools/build.py
 test:
-	node tests/parser.test.js && node tests/i18n-coverage.js
+	node tests/parser.test.js && node tests/i18n-coverage.js && python3 tools/build.py && node tests/gas.test.js
 e2e:
 	bash tests/e2e/run_all.sh
 serve:

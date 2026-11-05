@@ -6,7 +6,9 @@ python3 tools/build.py
 node --check src/app.js && node --check src/parser.js
 node tests/parser.test.js
 node tests/i18n-coverage.js
+node tests/gas.test.js
 python3 tests/e2e/ftest.py
 python3 tests/e2e/ftest2.py
 python3 tests/e2e/ftest3.py
+python3 tests/e2e/ftest4.py
 echo "ALL TESTS PASSED"
