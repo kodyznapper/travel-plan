@@ -50,7 +50,7 @@
   function icon(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.other) + '</svg>'; }
 
   var LANG = 'th';
-  var APP_VERSION = 'v2.3.0';
+  var APP_VERSION = 'v2.4.0';
   var IS_GAS = window.TP_TARGET === 'gas';   // Google Apps Script build: plan lives in Drive, read/written through google.script.run
   var CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
 
@@ -194,8 +194,9 @@
   var SEED_HASH = fnv(SEEDS.join('\n<<seed>>\n'));
 
   function makeId(meta) {
-    var base = String(meta.title || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    if (!base) base = 'trip';
+    function slug(x) { return String(x || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+    // the first title that has Latin letters (a Thai title like "เที่ยวไต้หวัน 2026" falls back to title_en)
+    var base = [meta.title, meta.title_en].map(slug).filter(function (x) { return /[a-z]/.test(x); })[0] || slug(meta.title) || 'trip';
     if (/^comment-/.test(base)) base = 't-' + base;
     base += '-' + (TP.isDate(meta.start) ? meta.start : 'x');
     var id = base, k = 2;
@@ -233,7 +234,8 @@
     var conflicts = [];
     if (!IS_GAS && lsGet(K.seed) !== SEED_HASH) {   // GAS has no seed: the plan comes from Drive (loadRemote)
       seedTrips().forEach(function (t) {
-        var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0];
+        // a renamed seed (same start date) still replaces its old copy, keeping its id (links) and the viewer's ticks
+        var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0] || S.trips.filter(function (x) { return x.origin === 'seed' && x.meta.start === t.meta.start; })[0];
         if (!ex) { t.id = makeId(t.meta); t.origin = 'seed'; t.localEdited = false; t.updatedAt = Date.now(); S.trips.push(t); }
         else if (!ex.localEdited) { replaceTrip(ex, t, false); }
         else conflicts.push([ex, t]);
@@ -433,6 +435,11 @@
     var r = parseHash(), trip = null;
     if (r.view === 'trip') {
       trip = S.trips.filter(function (t) { return t.id === r.id; })[0];
+      if (!trip && /\d{4}-\d{2}-\d{2}$/.test(r.id)) {   // link made before the trip was renamed: the id still ends with the start date
+        var byDate = S.trips.filter(function (t) { return t.meta.start === r.id.slice(-10); });
+        if (byDate.length === 1) trip = byDate[0];
+      }
+      if (!trip && IS_GAS) trip = serverTrip();   // one plan per deployment: its id differs between browsers (made from the title on first load), so any trip link opens it
       var waiting = IS_GAS && S.remote.state === 'loading' && !serverTrip();   // deep link on a first visit: keep the hash until Drive answers
       if (!trip) { if (!waiting) history.replaceState(null, '', '#home'); r = { view: 'home' }; }
     }
@@ -583,7 +590,7 @@
     var state = st.status === 'upcoming' ? icon('clock') + '<span>' + countdown(st.left) + '</span>'
       : st.status === 'ongoing' ? icon('clock') + T('<span>กำลังเที่ยว วันที่ ') + st.k + T(' จาก ') + st.total + '</span>'
         : st.status === 'past' ? T('<span>ทริปนี้จบแล้ว</span>') : '';
-    var h = '<section class="ov-hero o"><div>' + (place ? '<p class="ov-place">' + esc(place) + '</p>' : '') + '<h1>' + esc(L(mt, 'title')) + '</h1>' +
+    var h = nowCardHtml(t, 'ov') + '<section class="ov-hero o"><div>' + (place ? '<p class="ov-place">' + esc(place) + '</p>' : '') + '<h1>' + esc(L(mt, 'title')) + '</h1>' +
       T('<dl class="facts"><div><dt>วันที่</dt><dd>') + esc(fmtRange(mt.start, mt.end)) + '</dd></div>' +
       (n ? T('<div><dt>ระยะเวลา</dt><dd>') + durLabel(n) + '</dd></div>' : '') +
       (mt.travelers ? T('<div><dt>ผู้เดินทาง</dt><dd>') + esc(mt.travelers) + ' ' + unit(+mt.travelers, 'person') + '</dd></div>' : '') +
@@ -626,7 +633,7 @@
   function dayView(t, di, st) {
     var d = t.days[di], cls = dayCls(di), last = d.date === t.meta.end;
     var isToday = st.status === 'ongoing' && st.dayIdx === di;
-    var h = '<section class="day-head ' + cls + T('"><div class="dbadge"><span>วันที่</span><b>') + (di + 1) + '</b></div><div><p class="dh-date">' + esc(fmtDate(d.date, true)) + (isToday ? T('<span class="today-chip">วันนี้</span>') : '') + '</p><h1>' + inl(L(d, 'theme') || 'Day ' + (di + 1)) + '</h1>' + (L(d, 'summary') ? '<p class="dh-sum">' + inl(L(d, 'summary')) + '</p>' : '') + '</div>' +
+    var h = nowCardHtml(t, di) + '<section class="day-head ' + cls + T('"><div class="dbadge"><span>วันที่</span><b>') + (di + 1) + '</b></div><div><p class="dh-date">' + esc(fmtDate(d.date, true)) + (isToday ? T('<span class="today-chip">วันนี้</span>') : '') + '</p><h1>' + inl(L(d, 'theme') || 'Day ' + (di + 1)) + '</h1>' + (L(d, 'summary') ? '<p class="dh-sum">' + inl(L(d, 'summary')) + '</p>' : '') + '</div>' +
       (d.stay ? '<div class="stay">' + icon('hotel') + '<div><small>' + (last ? T('ปลายทางคืนนี้') : T('คืนนี้นอนที่')) + '</small><b>' + inl(d.stay) + '</b></div></div>' : '') + '</section>';
     if (d.route) h += '<section class="band ' + cls + '" data-n="' + (di + 1) + '"><div class="metro" data-metro="day:' + di + '"></div></section>';
     var openAll = d.items.length && d.items.every(function (it) { return S.open[it.id]; });
@@ -855,6 +862,56 @@
     var el = D.createElement('li'); el.className = 'now';
     el.innerHTML = '<span class="now-t">' + n.hm + T('</span><span class="now-dot"></span><span class="now-l">ตอนนี้ (เวลาท้องถิ่น)</span>');
     tl.insertBefore(el, before);
+  }
+
+  /* ---------------- "now + next" card (Phase 4) ---------------- */
+  var NC = { now: ['ตอนนี้', 'Now'], next: ['ถัดไป', 'Next'], done: ['วันนี้ครบทุกรายการแล้ว', 'That’s everything for today'], tom: ['พรุ่งนี้', 'Tomorrow'], starts: ['เริ่ม', 'starts'], map: ['แผนที่', 'Map'] }; /*noT*/
+  function nc(k) { return NC[k][LANG === 'en' ? 1 : 0]; }
+  function waitLabel(m) { var h = Math.floor(m / 60), r = m % 60, p = []; if (h) p.push(h + (LANG === 'en' ? ' h' : ' ชม.')); if (r || !h) p.push(r + (LANG === 'en' ? ' min' : ' นาที')); return (LANG === 'en' ? 'in ' : 'อีก ') + p.join(' '); } /*noT*/
+  function itName(it) { return LANG === 'en' && it.en ? it.en : it.title; }
+  // where today sits in the plan, by the trip's own clock; null outside trip days and after the last day's last item
+  function nowNext(t) {
+    var n = nowIn(t.meta.timezone), di = -1;
+    t.days.forEach(function (d, i) { if (d.date === n.date) di = i; });
+    if (di < 0) return null;
+    var cur = null, next = null;
+    t.days[di].items.forEach(function (it) { var m = startMin(it.time); if (m < 0) return; if (m <= n.min) { if (!next) cur = it; } else if (!next) next = it; });
+    var r = { n: n, di: di, cur: cur, next: next, wait: next ? startMin(next.time) - n.min : 0 };
+    if (!next) {
+      var tm = t.days[di + 1]; if (!tm) return null;
+      r.tomorrow = tm.items.filter(function (it) { return startMin(it.time) >= 0; })[0];
+      if (!r.tomorrow) return null;
+      r.tdi = di + 1;
+    }
+    return r;
+  }
+  // where = 'ov' (overview) or the day index of the tab being shown; empty placeholder keeps a slot for the 1-minute refresh
+  function nowCardHtml(t, where) {
+    var x = t && !S.edit ? nowNext(t) : null, slot = '<i hidden data-nowcard="' + where + '"></i>';
+    if (!x || (where !== 'ov' && x.di !== where)) return slot;
+    var h = '<section class="nowcard" data-nowcard="' + where + '"><p class="nc-now">' + icon('clock') + '<b>' + esc(x.n.hm) + '</b>' + (x.cur ? '<span>' + esc(nc('now')) + ': ' + inl(itName(x.cur)) + '</span>' : '') + '</p>';
+    if (x.next) {
+      var it = x.next, url = mapUrl(it), tp = L(it, 'transport'), cs = L(it, 'cost');
+      var chips = lineList(it.line).map(function (l) { return chipHtml(l, true); }).join('');
+      h += '<button class="nc-main" data-act="goto-item" data-d="' + x.di + '" data-id="' + it.id + '"><span class="nc-k">' + esc(nc('next')) + ' · <b>' + esc(waitLabel(x.wait)) + '</b></span>' +
+        '<span class="nc-t"><span class="nc-time">' + esc(splitTime(it.time)[0]) + '</span>' + inl(itName(it)) + (it.zh ? '<span class="zh" lang="zh-Hant">' + esc(it.zh) + '</span>' : '') + '</span>' +
+        ((chips || vis(tp)) ? '<span class="nc-line">' + chips + (vis(tp) ? '<span>' + inl(tp) + '</span>' : '') + '</span>' : '') +
+        (vis(cs) ? '<span class="nc-cost">' + inl(cs) + '</span>' : '') + '</button>' +
+        (url ? '<a class="btn sm nc-map" href="' + esc(url) + '" target="_blank" rel="noopener">' + icon('pin') + '<span>' + esc(nc('map')) + '</span></a>' : '');
+    } else {
+      var tt = x.tomorrow;
+      h += '<p class="nc-done">' + esc(nc('done')) + '</p><button class="nc-main" data-act="goto-item" data-d="' + x.tdi + '" data-id="' + tt.id + '"><span class="nc-k">' + esc(nc('tom')) + ' (Day ' + (x.tdi + 1) + ') ' + esc(nc('starts')) + '</span>' +
+        '<span class="nc-t"><span class="nc-time">' + esc(splitTime(tt.time)[0]) + '</span>' + inl(itName(tt)) + '</span></button>';
+    }
+    return h + '</section>';
+  }
+  function refreshNowCard() { $$('[data-nowcard]').forEach(function (el) { var w = el.getAttribute('data-nowcard'); el.outerHTML = nowCardHtml(S.cur, w === 'ov' ? 'ov' : +w); }); }
+  // after a "goto-item" jump: open + centre the item (instead of jumping to the top)
+  function scrollToItem() {
+    if (!S.scrollItem) return false;
+    var li = $('.it[data-id="' + S.scrollItem + '"]'); S.scrollItem = null;
+    if (!li) return false;
+    li.scrollIntoView({ block: 'center' }); return true;
   }
 
   /* ---------------- metro map ---------------- */
@@ -1122,6 +1179,7 @@
       case 'import': openImport(); return;
       case 'save-remote': saveRemote(false); return;
       case 'sync-hide': syncHide(true); refreshSyncBar(); return;
+      case 'goto-item': { var gid = b.getAttribute('data-id'); S.open[gid] = true; S.scrollItem = gid; var gh = t.id + '--d' + (+b.getAttribute('data-d') + 1); if (location.hash === '#' + gh) { render(true); scrollToItem(); } else location.hash = gh; return; }
       case 'promote': promoteTrip(t); return;
       case 'reload-remote': S.remote.state = 'loading'; render(true); loadRemote(); return;
       case 'discard-local':
@@ -1226,9 +1284,10 @@
   });
   D.addEventListener('dragend', function () { drag = null; $$('.ed[draggable]').forEach(function (x) { x.removeAttribute('draggable'); x.classList.remove('drag-over'); }); });
 
-  window.addEventListener('hashchange', function () { render(false); window.scrollTo(0, 0); });
+  window.addEventListener('hashchange', function () { render(false); if (!scrollToItem()) window.scrollTo(0, 0); });
   window.addEventListener('pagehide', saveNow);
-  setInterval(function () { if (S.cur && !S.edit) placeNow(); }, 60000);
+  setInterval(function () { if (S.cur && !S.edit) { placeNow(); refreshNowCard(); } }, 60000);
+  D.addEventListener('visibilitychange', function () { if (D.visibilityState === 'visible' && S.cur && !S.edit) { placeNow(); refreshNowCard(); } });
   /* GAS: coming back to the tab after 5+ minutes picks up the owner's latest save (no polling, to stay inside quota) */
   D.addEventListener('visibilitychange', function () { if (IS_GAS && D.visibilityState === 'visible' && !S.edit && !S.remote.busy && Date.now() - S.remote.at > 300000) loadRemote(); });
   /* GAS: the page runs in an iframe, so copy our hash to the address bar to keep links shareable.

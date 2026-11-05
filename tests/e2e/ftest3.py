@@ -3,7 +3,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 PAGE = 'file://' + str(ROOT / 'dist/travel-plan.html')
 MARKED = str(ROOT / 'vendor/marked.min.js')
 from playwright.sync_api import sync_playwright
-TW = '#taiwan-trip-2026-2026-11-12'
+TW = '#taiwan-trip-2026-11-12'
 errs = []; ok = True
 def check(name, cond):
     global ok; print(('PASS ' if cond else 'FAIL ') + name); ok = ok and bool(cond)

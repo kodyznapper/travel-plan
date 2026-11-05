@@ -89,6 +89,12 @@ with sync_playwright() as p:
     check('deep link (first visit, nothing cached): opens the linked tab', dl.evaluate('location.hash') == '#' + t['id'] + '--ref' and dl.locator('.tab[aria-current=page]').inner_text().strip() == 'ข้อมูลอ้างอิง')
     check('deep link: top-frame hash kept', dl.evaluate('window.__mirrored') == t['id'] + '--ref')
     dl.context.close()
+    # a link whose trip id differs from this browser's (made from an older title) still opens the Drive plan
+    dl = device(b, 'deeplink2')
+    dl.add_init_script("window.__topHash = 'old-trip-name-1999-01-01--d3';")
+    dl.goto(PAGE); settle(dl, 1500)
+    check('deep link with another trip id: opens the Drive plan on that tab', dl.locator('.tab[aria-current=page]').count() == 1 and 'D3' in dl.locator('.tab[aria-current=page]').inner_text())
+    dl.context.close()
 
     # ---------------- owner (device A) ----------------
     ow = device(b, 'owner')
@@ -147,7 +153,7 @@ with sync_playwright() as p:
     check('discard: local edit gone, back in sync', 'จะทิ้ง' not in ow.inner_text('#app') and ow.locator('[data-syncbar].dirty').count() == 0)
 
     # ---------------- import a .md over the Drive plan, then save (README "เปลี่ยนทั้งแผนด้วยไฟล์ .md ใหม่") ----------------
-    imp = pathlib.Path(tempfile.mkdtemp()) / 'taiwan-trip-2026-2026-11-12.md'
+    imp = pathlib.Path(tempfile.mkdtemp()) / 'taiwan-trip-2026-11-12.md'
     imp.write_text(gas('getTrip', KEY)['md'].replace('style: ', 'style: นำเข้าใหม่ ', 1), encoding='utf8')
     ow.goto(PAGE + '#home'); settle(ow, 400)
     ow.click('[data-act=import] >> nth=0'); ow.set_input_files('[data-imp=file]', str(imp)); settle(ow, 400)

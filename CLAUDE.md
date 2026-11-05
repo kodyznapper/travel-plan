@@ -1,6 +1,6 @@
 # CLAUDE.md — Travel Plan (แผนเที่ยว)
 
-อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (Phase 2a/2b/2d เสร็จแล้ว, 2c เขียนโค้ดและเทสต์กับ GAS จำลองแล้ว รอทดสอบบน Google จริง) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
+อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (v2.4.0: Phase 2a/2b/2d เสร็จ, 2c deploy แล้ว เหลือทดสอบบางข้อ, Phase 4 ทำการ์ด "ตอนนี้ + ถัดไป" แล้ว) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
 
 > **กฎเอกสาร (บังคับทุกครั้ง):** ทุกครั้งที่เพิ่ม/เปลี่ยน/ลบ feature ต้องอัปเดต **ทั้ง `CLAUDE.md` และ `README.md`** ในคอมมิตเดียวกับโค้ด ดูรายการที่ต้องแก้ในข้อ 4 "Definition of Done" งานที่เอกสารยังไม่อัปเดตถือว่ายังไม่เสร็จ
 >
@@ -11,7 +11,7 @@
 เว็บแผนเที่ยวแบบ interactive ไฟล์ HTML ไฟล์เดียว (`dist/travel-plan.html`) ไม่มี backend
 
 - **เป้าหมาย:** import แผนเที่ยวจากไฟล์ markdown ที่ Claude สร้างตาม template แล้วแสดงเป็นเว็บที่ใช้ได้จริงบนมือถือระหว่างเที่ยว: ภาพรวมทริป, timeline รายวัน, เช็กลิสต์เตรียมของ, To-do, ข้อมูลอ้างอิง (เบอร์ฉุกเฉิน ประโยคภาษาท้องถิ่น การ์ดแท็กซี่)
-- **ผู้ใช้และโมเดลการแชร์ (Kody ตัดสินแล้ว):** ทุกคนที่มี URL **ดูอย่างเดียว** (ติ๊ก checklist ของตัวเองได้) **Kody แก้ได้คนเดียว** แจกเป็น URL ของเว็บ HTML ตอนนี้แผนเดียวคือ Taiwan Trip 2026 (12–17 พ.ย. 2026, 8 คน)
+- **ผู้ใช้และโมเดลการแชร์ (Kody ตัดสินแล้ว):** ทุกคนที่มี URL **ดูอย่างเดียว** (ติ๊ก checklist ของตัวเองได้) **Kody แก้ได้คนเดียว** แจกเป็น URL ของเว็บ HTML ตอนนี้แผนเดียวคือ เที่ยวไต้หวัน 2026 (title_en: Taiwan Trip, 12–17 พ.ย. 2026, **6 คน** ไทยล้วน ตาม Kody 2026-11-05 · ในเนื้อหาแผนยังมี "8 ที่/8 คน" เช่นจอง Hotpot ที่รวมเพื่อนไต้หวัน ห้ามแก้เอง)
   - **ที่ทำแล้ว (v2.1):** "โหมดเจ้าของ" ซ่อนเครื่องมือแก้ไข/นำเข้า/ส่งออก/หน้าวางแผนจากผู้ชม ปลดล็อกโดยแตะบรรทัดเวอร์ชันในหน้าตั้งค่า 7 ครั้งติด การแก้ไขของเจ้าของอยู่ใน browser เครื่องนั้นเท่านั้น ผู้ชมคนอื่นจะเห็นต่อเมื่อ Kody ส่งออก .md → ส่งให้ Claude → publish ทับลิงก์เดิม
   - **ที่ทำแล้ว (v2.2, Phase 2c):** บน Google Apps Script การแก้ของ Kody ไปถึงทุกคนโดยไม่ต้องส่งไฟล์ แผนอยู่ในไฟล์ `.md` ใน Drive อ่านได้ทุกคน เขียนได้เฉพาะคนที่ส่งรหัสแก้ไขถูก (server ตรวจ) ปุ่มซ่อนในหน้ายังไม่ใช่การป้องกัน ตัวป้องกันจริงคือรหัสฝั่ง server **deploy แล้ว 2026-11-05** ผ่านแล้ว: ผู้ชมอ่านแบบไม่ login, ใส่รหัส, บันทึกขึ้น Drive, backup, deep link (ข้อที่เหลือดู ❓ ในข้อ 4)
 - **หน้าตา:** ต้นแบบคือ `Original_template.pdf` (ทริปไถจง 4 วัน) แต่ใช้ design system "Dark Tech Workshop" (dark เป็นค่าเริ่มต้น มี light เป็นตัวเลือก)
@@ -65,12 +65,12 @@ travel-plan/
 │  ├─ gas.test.js            logic ของ Code.gs: setup, ตัด # วางแผน, รหัส, conflict, backup, lockout, ไฟล์ว่าง (36 checks)
 │  ├─ gas/fake-gas.js        DriveApp/PropertiesService/LockService/CacheService/Session จำลอง (เท่าที่ Code.gs ใช้)
 │  ├─ gas/call.js            เรียกฟังก์ชัน public ของ Code.gs หนึ่งครั้ง state เก็บในไฟล์ (ใช้ใน ftest4)
-│  └─ e2e/ ftest.py ftest2.py ftest3.py ftest4.py shot.py run_all.sh
+│  └─ e2e/ ftest.py ftest2.py ftest3.py ftest4.py ftest5.py shot.py run_all.sh
 ├─ vendor/marked.min.js      ใช้ใน e2e แทน CDN (offline) ตัวหน้าเว็บยังโหลดจาก CDN
 └─ dist/                     ผลลัพธ์ (commit ไว้ใน repo ให้ copy ได้จาก GitHub): travel-plan.html (Artifact), gas/ (Apps Script)
 ```
 
-**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → server GAS (`rpc`, `loadRemote`, `saveRemote`, `askKey`, `syncBarHtml`) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → `afterRender` + `placeNow` (Today mode) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
+**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → server GAS (`rpc`, `loadRemote`, `saveRemote`, `askKey`, `syncBarHtml`) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → `afterRender` + `placeNow` (Today mode) + การ์ด "ตอนนี้ + ถัดไป" (`nowNext`, `nowCardHtml`, `refreshNowCard`, `scrollToItem`) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
 
 **Data model** (ดู `TP.emptyTrip()` ใน parser.js): `trip = { id, meta{title,title_en,subtitle,...,timezone}, overview{flights[],stays[],remember,extra[]}, days[{n,date,theme,theme_en,route,stay,summary,summary_en,items[],must[],caution[],extra}], pack[{title,items[{text,done}],note}], todo[{due,text,done}], ref[{title,md}], plan, metaExtra, origin, localEdited, updatedAt, remoteVersion, remoteFull }` · `origin` = `seed | import | server` (`server` = แผนจาก Drive บน GAS มีได้แผนเดียว) · `remoteVersion` = เวลาแก้ล่าสุดของไฟล์ใน Drive ตอนโหลด (ใช้กันเขียนทับ) · `remoteFull` = โหลดมาพร้อม `# วางแผน` แล้ว (มีรหัส) ห้ามบันทึกถ้าเป็น false ไม่งั้นหัวข้อวางแผนใน Drive จะหาย
 item = `{ id, time, title, en, zh, type, status, highlight, line, transport, transport_en, line_alt, transport_alt, transport_alt_en, cost, cost_en, notes, notes_en, map, extra{} }`
@@ -140,7 +140,7 @@ item = `{ id, time, title, en, zh, type, status, highlight, line, transport, tra
 - **ดาวน์โหลดไฟล์:** บน GAS ไม่พึ่งดาวน์โหลดอย่างเดียว ส่งออก/Template เปิดกล่องข้อความให้คัดลอกพร้อมปุ่ม "ดาวน์โหลด" เสมอ ❓ ยังไม่รู้ว่าปุ่มดาวน์โหลดใน iframe ของ Google ใช้ได้ไหม
 - **CDN และฟอนต์:** ยึดรายการโฮสต์ในข้อ 2 เหมือนเดิม (เป็นจุดร่วมของทั้งสอง target) ❓ ยังไม่ได้ทดสอบว่า GAS โหลด `cdn.jsdelivr.net` / Google Fonts ได้ปกติ
 - **ห้ามใช้บน GAS:** capability ของ claude.ai (`claude.use(...)`) ไม่มีบน GAS ฟีเจอร์ที่พึ่งมันต้องซ่อนหรือมีทางเลือกอื่น (ดู Phase 4/5) · ห้าม `UrlFetchApp` ไปเว็บนอกโดยไม่คุยกับ Kody ก่อน
-- **Quota ❓:** GAS มีโควตาการรันต่อวันของบัญชี Gmail ส่วนตัว ผู้ชม 8 คนน่าจะไม่ถึง แต่ยังไม่ได้ตรวจตัวเลข อย่าโหลดซ้ำถี่ (เช่น poll) โดยไม่จำเป็น
+- **Quota ❓:** GAS มีโควตาการรันต่อวันของบัญชี Gmail ส่วนตัว ผู้ชม 6–8 คนน่าจะไม่ถึง แต่ยังไม่ได้ตรวจตัวเลข อย่าโหลดซ้ำถี่ (เช่น poll) โดยไม่จำเป็น
 
 **Definition of Done (ทุก feature / ทุก phase)**
 1. ใช้งานได้บน **GAS** (หรือถ้า GAS target ยังไม่ถูกสร้าง: ไม่ใช้อะไรที่ขัดกับกฎ GAS ข้างบน) และบน **Artifact** / `make serve`
@@ -172,7 +172,8 @@ pip install playwright && playwright install chromium
 python3 tests/e2e/ftest.py      # import/ซ้ำ/แก้/ย้าย/ลบ+undo/checklist/export/seed conflict (12 checks)
 python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en, ป้าย "สถานที่น่าสนใจรอบๆ", ชื่อแท็บ, รายการเขตเวลาทั้งโลก + UTC (21 checks)
 python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
-python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, ไฟล์ใน Drive ว่าง + ปุ่มใช้แผนนี้เป็นแผนบน Drive, ปุ่ม X ปิดแถบ sync, EN (42 checks)
+python3 tests/e2e/ftest5.py     # การ์ด "ตอนนี้ + ถัดไป" (นาฬิกาจำลองเวลาไทเป: ระหว่างวัน, รีเฟรชทุกนาที, แตะไปรายการ, หลังรายการสุดท้าย, ก่อน/หลังทริป, EN, โหมดแก้ไข) + id ทริปจาก title ละติน + ลิงก์เก่าหลังเปลี่ยนชื่อ + seed ที่เปลี่ยนชื่อแทนของเดิม (22 checks)
+python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, ไฟล์ใน Drive ว่าง + ปุ่มใช้แผนนี้เป็นแผนบน Drive, ปุ่ม X ปิดแถบ sync, ลิงก์ที่ id ไม่ตรงเปิดแผนบน Drive, EN (44 checks)
 node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง build ก่อน; make test ทำให้)
 
 # ถ้า pip ติดตั้งลง Python ของระบบไม่ได้ (macOS/Homebrew) ให้ใช้ venv:
@@ -180,14 +181,14 @@ node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง
 #   PATH=.venv/bin:$PATH make e2e
 
 # screenshot ตรวจหน้าตา (ผลที่ /tmp/tp-shots/)
-python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d5')" \
-                          "run(p,'ov-en',1280,900,'#taiwan-trip-2026-2026-11-12',lang='en',theme='light')"
+python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-11-12--d5')" \
+                          "run(p,'ov-en',1280,900,'#taiwan-trip-2026-11-12',lang='en',theme='light')"
 # พารามิเตอร์ run(): name,w,h,hash,theme,planning,clock,actions,full,lang   (clock='2026-11-13T10:40:00Z' ทดสอบ Today mode)
 ```
 
 **ขั้นตอน release:** แก้ `src/` หรือ `data/` → `make e2e` ต้องผ่านทั้งหมด → อัปเดต `CLAUDE.md` + `README.md` → `dist/travel-plan.html` → ส่งให้ Kody publish ทับลิงก์ Artifact เดิม (เก็บ URL เดิมไว้ เพื่อให้ลิงก์ที่แชร์ไปแล้วอัปเดตตาม) · GAS: วาง `dist/gas/index.html` และ `dist/gas/Code.gs` ทับไฟล์เดิมในโปรเจกต์ Apps Script → Deploy → **Manage deployments → ✏️ แก้ deployment เดิม → Version: New version** (ห้ามกด New deployment เพราะจะได้ URL ใหม่ ลิงก์ที่แจกไปแล้วจะไม่อัปเดต) → ทดสอบมือตาม checklist ใน `README.md` (ขั้นตอนเต็มอยู่ใน README "วิธีเอาขึ้น Google Apps Script")
 
-**ทดสอบ Today mode:** เทสต์ e2e ใช้เวลาจริงของเครื่อง ถ้าอยากเห็นเส้น "ตอนนี้" ให้ใช้ `clock=` ใน `shot.py` (Playwright `page.clock.install`)
+**ทดสอบ Today mode:** เทสต์ e2e ส่วนใหญ่ใช้เวลาจริงของเครื่อง ถ้าอยากเห็นเส้น "ตอนนี้" / การ์ด "ถัดไป" ให้ใช้ `clock=` ใน `shot.py` (Playwright `page.clock.install`) `ftest5.py` ตั้งนาฬิกาเอง
 
 ## 6. Known Issues / ข้อควรระวัง
 
@@ -200,7 +201,7 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 7. **เทสต์ไม่ได้ครอบคลุม:** มือถือจริง (ทดสอบที่ viewport 390px และ 1280px ใน Chromium เท่านั้น), Safari/iOS, การลากสลับลำดับ (drag-and-drop บน desktop ยังไม่มี e2e), ฟอนต์จริงจาก Google Fonts (เทสต์บล็อกไว้ ใช้ fallback), การดาวน์โหลดผ่าน capability `downloads` ในหน้าที่ publish จริง (เทสต์ใช้ปุ่มดาวน์โหลดแบบ anchor)
 8. **ไม่มีเน็ต:** ฟอนต์ตกไป fallback, markdown (ข้อมูลอ้างอิง/ข้อมูลเพิ่มเติม/จำไว้ตลอดทริป) แสดงเป็นข้อความธรรมดาเพราะ `marked` ไม่โหลด (`mdHtml` มี fallback) ออฟไลน์เต็มรูปแบบไม่รับประกัน
 9. **parser:** (ก) ค่าของ field ต้องอยู่บรรทัดเดียว (ข) `<!-- ... -->` ถูกลบทั้งไฟล์ก่อน parse รวมถึงที่อยู่ในเนื้อหา (ค) head ที่ไม่รู้จักใน front matter เก็บไว้ใน `metaExtra` พร้อมเตือน (ง) `##` ที่ไม่รู้จักใน Day ถูกย้ายไป "ข้อมูลเพิ่มเติม" พร้อมเตือน (จ) `id` ของ item/วัน สุ่มใหม่ทุกครั้งที่ parse เทสต์จึงตัด `id` ก่อนเทียบ
-10. **Router:** `tripId` ห้ามมี `--` (ใช้เป็นตัวคั่น tab) `makeId` สร้างจาก title ภาษาอังกฤษ + วันเริ่ม ชื่อทริปที่ไม่มีตัวอักษรละตินจะได้ `trip-<date>`
+10. **Router:** `tripId` ห้ามมี `--` (ใช้เป็นตัวคั่น tab) `makeId` สร้างจาก title ตัวแรกที่มีตัวอักษรละติน (`title` แล้ว `title_en`) + วันเริ่ม ไม่มีเลยได้ `trip-<date>` (v2.4.0: ชื่อไทย "เที่ยวไต้หวัน 2026" → `taiwan-trip-2026-11-12`) · id ถูกสร้างครั้งเดียวต่อ browser แล้วเก็บไว้ คนละเครื่องอาจได้ id ไม่เหมือนกัน (เช่น เครื่องที่เปิดก่อนเปลี่ยนชื่อยังเป็น `taiwan-trip-2026-2026-11-12`) จึงมีทางสำรอง 2 ชั้นใน `render()`: ไม่เจอ id → ใช้ทริปที่ `meta.start` ตรงกับวันที่ท้าย id (ถ้ามีทริปเดียว) → บน GAS ใช้แผนบน Drive · seed ที่เปลี่ยนชื่อ (`initData`) แทนสำเนาเก่าที่ `origin=seed` และวันเริ่มตรงกัน (เก็บ id และติ๊กเดิม)
 11. **สถานะ emoji ผูกกับโค้ดหลายจุด:** `TP.STATUS` (parser), `STATUS_CLS`/`statusLabel` และ `EMO_RE` (ลบ emoji ตอนปิดโหมดวางแผน) ถ้าเพิ่ม/เปลี่ยน emoji สถานะ ต้องแก้ทั้งสามที่
 12. **การย้ายรายการบนมือถือ** ใช้ปุ่ม ↑↓ (ลากใช้ได้เฉพาะ pointer แบบ fine บน desktop)
 13. **ห้ามเรียก `window.claude.use(...)` แล้วอ่านผลทันที** namespace มาทีหลังเสมอ ออกแบบให้หน้าทำงานได้เมื่อเป็น `null` (ตอนนี้ใช้แค่ `downloads`)
@@ -211,6 +212,8 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 18. **GAS: รหัสแก้ไขเก็บใน `localStorage` แบบข้อความธรรมดา** บนเครื่องเจ้าของ ใครใช้ browser นั้นได้ก็บันทึกได้ ถ้ารหัสหลุด เปลี่ยน `EDIT_KEY` ใน Script Properties ได้ทันที (รหัสเก่าที่จำไว้จะใช้ไม่ได้)
 19. **GAS: แผนเดียวต่อ deployment** (v2.2.1 แก้บั๊ก: ตอนนำเข้าทับ `replaceTrip` ทิ้ง `remoteVersion`/`remoteFull` ทำให้กดบันทึกแล้วเด้ง dialog ซ้ำ 2–3 รอบ) แผนอื่นที่นำเข้าในหน้า GAS อยู่แค่ในเครื่อง ไม่ขึ้น Drive ถ้าจะเปลี่ยนแผนบน Drive ให้นำเข้า md ที่ชื่อทริป+วันเริ่มตรงกัน แล้วเลือก "เขียนทับแผนเดิม" จากนั้นกดบันทึกขึ้น Drive
 20. **GAS deployment แรก (2026-11-05): `getTrip` ส่ง `md: ""`** ไฟล์ `travel-plan.md` ที่ `setup()` สร้างอ่านออกมาว่าง (เวลาแก้ไขตรงกับตอน setup) และหน้าค้าง "กำลังโหลดแผน…" เพราะ error ถูกกลืน ❓ ยังไม่รู้ว่าทำไมไฟล์ที่ `setup()` (โค้ด v2.2.1) สร้างถึงว่าง v2.2.2: `createFile` ใช้ `Utilities.newBlob`, `setup()` เติมไฟล์ว่างจาก seed, `saveTrip` อ่านกลับแล้วโยน `WRITE_FAILED` ถ้า Drive ไม่เก็บ, `getTrip` ส่ง `size` · **ผลจริงหลัง v2.2.2:** Kody กด "ใช้แผนนี้เป็นแผนบน Drive" แล้ว `getTrip` ของผู้ชมได้ `size: 33371` แผนแสดงครบ (แปลว่า `setContent` + อ่านกลับทำงานบน Drive จริง) · backup ไฟล์แรกว่างเพราะเป็นสำเนาของไฟล์ว่างก่อนบันทึก (Code.gs หลังจากนี้ไม่สร้าง backup เปล่าแล้ว)
+21. **ใช้กับประเทศอื่น (ยังไม่แก้ วางแผนหลังทริป):** (ก) `LINES` มีแต่สายไทเป รหัสอย่าง `G` จะได้สีไทเปแม้เป็นสาย Ginza ของโตเกียว (template v2 สั่งให้เขียน `ชื่อ#RRGGBB` นอกไทเป) (ข) ชื่อท้องถิ่น `zh` ใส่ `lang="zh-Hant"` + ฟอนต์จีนตัวเต็มเสมอ คันจิญี่ปุ่นแสดงรูปแบบจีน และ `hasCJK` ไม่รู้จักคานะ/ฮันกึล (ตารางประโยคเกาหลี/คานะล้วนไม่ขยายใหญ่ตอนเต็มจอ) (ค) timezone เดียวทั้งทริป (ข้อ 1)
+22. **การ์ด "ตอนนี้ + ถัดไป" ข้ามรายการที่เวลาไม่มีตัวเลข HH:MM** (เช่น "เช้า", "บ่าย", "❓") และใช้ timezone ของทริป รายการที่เขียนเป็นเวลาไทยเพี้ยน 1 ชม. เหมือนข้อ 1 · ถือว่ารายการเรียงตามเวลาในไฟล์
 
 ## 7. ไฟล์ที่เกี่ยวข้อง
 
@@ -219,8 +222,8 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 | `src/parser.js` | `TP.parse(md)` → `{trip, warnings}` · `TP.toMarkdown(trip)` · `TP.parseLines()` · `TP.LINES` · ค่าคงที่ (`STATUS`, `TYPES`, `ITEM_KEYS`, `META_KEYS`) |
 | `src/app.js` | แอปทั้งหมด (ตารางลำดับในข้อ 3) |
 | `src/styles.css` | tokens + components (ส่วนท้ายไฟล์: chip/block สายรถไฟ, reduced-motion) |
-| `data/travel-plan-template.md` | schema + กฎ + ตัวอย่างเปล่า ใช้ให้ Claude สร้างแผนใหม่: แนบไฟล์นี้ + ข้อมูลดิบ แล้วสั่ง "สร้างตาม template ห้ามเปลี่ยนชื่อหัวข้อ/field อะไรไม่รู้ใส่ ❓ ห้ามเดา" |
-| `data/seed/taiwan-2026.md` | แผนไต้หวัน v4.1 (6 วัน 5 คืน, 8 คน) แปลงจาก v3 เป็น schema ใหม่ |
+| `data/travel-plan-template.md` | **template v2:** schema + กฎของไฟล์ + กฎสำหรับ Claude (A–F: ห้ามเดา, ความหมายสถานะ, ร่างได้แต่ติด ❓, หนึ่ง field หนึ่งภาษา, เวลา HH:MM, ไฟล์ยาว) + ตัวอย่างที่ใส่ข้อมูลครบ · **กฎที่ Claude ในแชทต้องรู้ต้องอยู่ในไฟล์นี้** (Claude บน claude.ai ไม่เห็น CLAUDE.md/README) เพิ่ม field ใหม่ต้องแก้คอมเมนต์ที่นี่ด้วย · ข้อความสั่ง Claude อยู่ใน README "สร้างแผนใหม่ด้วย Claude" |
+| `data/seed/taiwan-2026.md` | แผนไต้หวัน (6 วัน 5 คืน, 6 คน) **สำเนาของ `travel-plan.md` บน Drive** ดึงมา 2026-11-05 (v2.4.0) ให้ Artifact ตรงกับ GAS · แหล่งความจริงคือไฟล์บน Drive ถ้า Kody แก้บน GAS แล้วอยากให้ Artifact ตาม ให้ดาวน์โหลดไฟล์จาก Drive มาแทนไฟล์นี้ |
 | `README.md` | คำอธิบายโปรเจกต์สำหรับคนทั่วไป: feature, วิธีใช้, วิธี deploy, สถานะ Phase, checklist ทดสอบมือบน GAS (อัปเดตทุกครั้งที่เพิ่ม feature) |
 | `gas/Code.gs` | server ของ Apps Script: `doGet` · `getTrip(key)` → `{md, version, owner, size}` (`size` = จำนวนตัวอักษรดิบในไฟล์ ดูได้ว่าไฟล์ว่างไหม) · `checkKey(key)` · `saveTrip(md, key, baseVersion, force)` → `{ok, version}` หรือ `{conflict}` · `setup()` |
 | `tests/gas/*`, `tests/gas.test.js`, `tests/e2e/ftest4.py` | GAS จำลอง + เทสต์ฝั่ง server และหน้า GAS |
@@ -244,13 +247,15 @@ dashboard + ปฏิทินรายเดือน · เมนูตาม 
   5. ✅ (v2.3.0) แถบ "ตรงกับแผนบน Drive" มีปุ่ม X ปิดได้ (จำในเครื่อง `tp1.settings.syncHide`) แถบสีส้ม (ยังไม่บันทึก / error / แผนยังไม่อยู่บน Drive) ปิดไม่ได้ และเมื่อเกิดสถานะสีส้ม `syncHide` ถูกล้าง แถบสีฟ้าจึงกลับมาหลังบันทึกครั้งถัดไป (logic อยู่ใน `syncBarHtml` / `syncHide`)
   - ⏳ เหลือ: ทดสอบตาม checklist ใน README (iPhone/Safari, บันทึกครั้งที่สองติดกัน, ดาวน์โหลด, ฟอนต์/CDN) แล้วแก้ข้อ `❓` ในข้อ 4 · ทางเลือกเดิม (capability `db`/`user` ของ Artifact) พักไว้
 
+- v2.4.0 ✅ (2026-11-05) template v2 (กฎสำหรับ Claude + ตัวอย่างครบ ทดสอบด้วย Claude ตัวใหม่ทั้งก่อน/หลัง ผลอยู่ใน README) · seed = สำเนาไฟล์บน Drive · id ทริปจาก title ละติน + ลิงก์เก่ายังเปิดได้ · การ์ด "ตอนนี้ + ถัดไป" (ดู Phase 4)
 - v2.3.0 ✅ ปรับ UI ตามที่ Kody ขอ (2026-11-05): ช่องเขตเวลาแนะนำเขตเวลาทั้งโลกจาก `Intl.supportedValuesOf('timeZone')` (browser ที่ไม่มีใช้ `TZ` 14 เมืองเดิม) พร้อม label UTC ณ วันเริ่มทริป (`tzOptions`, cache ต่อวันที่) ยังเป็นช่องพิมพ์ + `<datalist>` · ป้าย field `notes` = "สถานที่น่าสนใจรอบๆ / หมายเหตุ" (EN "Nearby places / notes") คีย์ `notes:` ใน md ไม่เปลี่ยน · ชื่อแท็บ `Trip Plans - วางแผนเที่ยว` คงที่ทุกภาษา (Artifact: `<title>` ใน `build.py` + `D.title` ใน `render()` · GAS: `setTitle()` ใน `Code.gs`) · ปุ่ม X ปิดแถบ sync (ดู 2c ข้อ 5)
 
 **Phase 3 ⏳ — สร้าง/แก้แผนในเว็บได้ครบ**
 ปุ่ม "แผนใหม่" (เปล่า / คัดลอกโครง) · preview markdown ข้างช่องแก้ · ตรวจข้อมูลแล้วเตือน (เวลาซ้อน/ไม่เรียง, วันที่นอกช่วงทริป, วันไม่มี route) · ปุ่มเรียงตามเวลา · undo/redo หลายขั้น · field timezone ต่อรายการ (แก้ปัญหาข้อ 6.1) · เพิ่มคำแปล `_en` ให้ field ที่ยังไม่มี (must/caution/flights/stays)
 
-**Phase 4 ⏳ — ใช้ระหว่างเที่ยว** (ถ้าต้องการให้ทันทริป 12 พ.ย. ให้ดึงขึ้นมาก่อน)
-การ์ด "ถัดไป" บนสุดของวันนี้ (รายการถัดไป วิธีเดินทาง เวลาที่เหลือ) · ติ๊กรายการ "ไปแล้ว / ข้าม" · แนบไฟล์ต่อแผน/รายการ (QR TWAC, ตั๋ว, ใบจอง): **บน GAS เก็บในโฟลเดอร์ Drive ของ Kody** อัปโหลดได้เฉพาะเจ้าของ (ตรวจรหัสแก้ไขฝั่ง server) ❓ ยังไม่ได้เลือกว่าผู้ชมเปิดไฟล์ผ่าน server หรือผ่านลิงก์แชร์ของ Drive · บน Artifact ใช้ capability `assets` หรือซ่อนฟีเจอร์ · ลดการพึ่ง CDN (ฝัง `marked` ลงในหน้าตอน build ได้ ฟอนต์ยังต้องโหลดจาก Google Fonts)
+**Phase 4 🟡 — ใช้ระหว่างเที่ยว** (Kody ตัดสิน 2026-11-05: ทำแบบย่อก่อนทริป = การ์ด "ถัดไป" + template v2 ส่วนอื่นหลังทริป)
+- ✅ (v2.4.0) การ์ด "ตอนนี้ + ถัดไป" บนสุดของแท็บภาพรวมและแท็บของวันนี้ ผู้ชมทุกคนเห็น: เวลาท้องถิ่น + รายการที่เริ่มไปแล้วล่าสุด · รายการถัดไป (เวลา ชื่อ อีกกี่นาที transport หลัก + chip สาย cost ปุ่มแผนที่) แตะแล้วไปแท็บวันนั้น เปิดรายการ เลื่อนไปกลางจอ · หลังรายการสุดท้าย "วันนี้ครบทุกรายการแล้ว · พรุ่งนี้ (Day N) เริ่ม …" · วันสุดท้ายหลังรายการสุดท้าย / ก่อนทริป / หลังทริป / โหมดแก้ไข ไม่แสดง · รีเฟรชทุก 60 วินาทีและตอนกลับมาที่แท็บ (ในเครื่อง ไม่เรียก server) · ข้อความสองภาษาอยู่ใน `NC` (`/*noT*/`)
+- ⏳ ติ๊กรายการ "ไปแล้ว / ข้าม" · แนบไฟล์ต่อแผน/รายการ (QR TWAC, ตั๋ว, ใบจอง): **บน GAS เก็บในโฟลเดอร์ Drive ของ Kody** อัปโหลดได้เฉพาะเจ้าของ (ตรวจรหัสแก้ไขฝั่ง server) ❓ ยังไม่ได้เลือกว่าผู้ชมเปิดไฟล์ผ่าน server หรือผ่านลิงก์แชร์ของ Drive · บน Artifact ใช้ capability `assets` หรือซ่อนฟีเจอร์ · ลดการพึ่ง CDN (ฝัง `marked` ลงในหน้าตอน build ได้ ฟอนต์ยังต้องโหลดจาก Google Fonts)
 
 **Phase 5 ⏸ (พักไว้) — ให้ Claude ช่วยในเว็บ**
 ช่อง "วางโน้ตดิบ" แปลงเป็นแผนตาม template · ปุ่มให้ Claude ตรวจจุดขัดแย้งแล้วเติม ⚠️❓ · บน Artifact ใช้ capability `sample` ได้ แต่ **บน GAS ไม่มีทางเทียบเท่า** (ต้องใช้ Anthropic API key ซึ่งมีค่าใช้จ่าย) Kody ตัดสิน 2026-11-05 ให้พักไว้ ห้ามเริ่มทำจนกว่าจะคุยใหม่
