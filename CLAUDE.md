@@ -62,7 +62,7 @@ travel-plan/
 ├─ tests/
 │  ├─ parser.test.js         round-trip ของทุก md ใน data/ + line registry
 │  ├─ i18n-coverage.js       ทุกข้อความไทยใน T('...') ต้องมีคำแปล EN
-│  ├─ gas.test.js            logic ของ Code.gs: setup, ตัด # วางแผน, รหัส, conflict, backup, lockout (30 checks)
+│  ├─ gas.test.js            logic ของ Code.gs: setup, ตัด # วางแผน, รหัส, conflict, backup, lockout, ไฟล์ว่าง (34 checks)
 │  ├─ gas/fake-gas.js        DriveApp/PropertiesService/LockService/CacheService/Session จำลอง (เท่าที่ Code.gs ใช้)
 │  ├─ gas/call.js            เรียกฟังก์ชัน public ของ Code.gs หนึ่งครั้ง state เก็บในไฟล์ (ใช้ใน ftest4)
 │  └─ e2e/ ftest.py ftest2.py ftest3.py ftest4.py shot.py run_all.sh
@@ -81,7 +81,7 @@ item = `{ id, time, title, en, zh, type, status, highlight, line, transport, tra
 
 **Owner mode:** `S.settings.owner` (false เป็นค่าเริ่มต้น) ถ้าเป็น false `render()` บังคับ `planning=false` ทำให้ไม่มีปุ่มแก้ไข แท็บวางแผน badge สถานะ หรือเครื่องมือ import/export (ทุกอย่างผูกกับ `S.settings.planning`) ผู้ใช้เดิมที่เคยเปิดโหมดวางแผนก่อนมีฟีเจอร์นี้ถูก migrate ให้เป็นเจ้าของ (`owner = planning` ตอน `initData`) ปลดล็อก/ออก: ตั้งค่า → แตะบรรทัด `แผนเที่ยว v…` 7 ครั้งใน 1.5 วินาทีต่อครั้ง / ปุ่ม "ออกจากโหมดเจ้าของ" `APP_VERSION` อยู่ต้นไฟล์ `app.js` ให้เพิ่มเลขทุกครั้งที่ release
 
-**GAS flow (`TP_TARGET === 'gas'`):** เปิดหน้า → แสดงสำเนาใน `localStorage` ทันที (ถ้ามี) → `getTrip(key)` → parse → ล้างติ๊กจาก server แล้วคัดลอกติ๊กของเครื่องนี้มา (`carryChecks`) → ถ้าเครื่องนี้มีการแก้ที่ยังไม่บันทึกและ version บน Drive เปลี่ยน ถามว่าจะใช้อันไหน · เจ้าของแก้ = เก็บในเครื่อง (`localEdited`) แถบ `.syncbar` ขึ้นสีส้ม → "บันทึกขึ้น Drive" → ถ้ายังไม่มีรหัสจะถาม (`checkKey`) แล้วโหลดฉบับเต็มก่อน → `saveTrip(md ที่ล้างติ๊กแล้ว, key, remoteVersion)` → ถ้า version ไม่ตรงขึ้น dialog conflict (บันทึกทับ / โหลดของบน Drive) · กลับมาที่แท็บหลังห่างไป 5 นาทีโหลดใหม่ (ไม่ poll) · deep link: อ่าน hash จาก `google.script.url.getLocation` และเขียนกลับด้วย `google.script.history.replace` (หลัง getLocation ตอบแล้วเท่านั้น)
+**GAS flow (`TP_TARGET === 'gas'`):** แผนที่อยู่แค่ในเครื่อง (`origin` ≠ `server` เช่น นำเข้าตอน Drive ยังโหลดไม่ได้) เจ้าของเห็นแถบส้ม "ยังไม่ได้อยู่บน Drive" + ปุ่ม **ใช้แผนนี้เป็นแผนบน Drive** (`promoteTrip`: ยืนยัน → รหัส → `saveTrip(..., force)` → กลายเป็นแผน server แผนเดียว) · เปิดหน้า → แสดงสำเนาใน `localStorage` ทันที (ถ้ามี) → `getTrip(key)` → parse → ล้างติ๊กจาก server แล้วคัดลอกติ๊กของเครื่องนี้มา (`carryChecks`) → ถ้าเครื่องนี้มีการแก้ที่ยังไม่บันทึกและ version บน Drive เปลี่ยน ถามว่าจะใช้อันไหน · เจ้าของแก้ = เก็บในเครื่อง (`localEdited`) แถบ `.syncbar` ขึ้นสีส้ม → "บันทึกขึ้น Drive" → ถ้ายังไม่มีรหัสจะถาม (`checkKey`) แล้วโหลดฉบับเต็มก่อน → `saveTrip(md ที่ล้างติ๊กแล้ว, key, remoteVersion)` → ถ้า version ไม่ตรงขึ้น dialog conflict (บันทึกทับ / โหลดของบน Drive) · กลับมาที่แท็บหลังห่างไป 5 นาทีโหลดใหม่ (ไม่ poll) · deep link: อ่าน hash จาก `google.script.url.getLocation` และเขียนกลับด้วย `google.script.history.replace` (หลัง getLocation ตอบแล้วเท่านั้น)
 
 **Seed:** (เฉพาะ Artifact) ตอนโหลด ถ้า hash ของ seed เปลี่ยน → แผนที่ผู้ใช้ไม่เคยแก้ (`localEdited=false`) ถูกแทนด้วยเวอร์ชันใหม่ ส่วนแผนที่แก้แล้วจะขึ้น dialog ให้เลือก "ใช้เวอร์ชันใหม่ / เก็บของในเครื่อง" (ติ๊ก checklist ถูกคัดลอกข้ามเวอร์ชันโดยจับคู่จากข้อความ)
 
@@ -134,7 +134,7 @@ item = `{ id, time, title, en, zh, type, status, highlight, line, transport, tra
 - **ผู้ชมไม่ได้รับหัวข้อ `# วางแผน` และ `<!-- -->`:** `getTrip()` ที่ไม่มีรหัสถูกตัดสองอย่างนี้ออกฝั่ง server (`viewerMd_`) ก่อนส่ง (แก้ Known Issue 14 สำหรับ target GAS) · ข้อมูลส่วนตัวที่ไม่อยากให้เพื่อนเห็นอย่าใส่ในส่วนอื่นของ md
 - **ติ๊ก checklist ไม่ขึ้น server:** บันทึกด้วย md ที่ `clearChecks` แล้ว และตอนโหลดล้างติ๊กจาก server เสมอ ติ๊กเป็นของแต่ละเครื่อง
 - **ที่เก็บ:** ไฟล์ `.md` ใน Drive (file id ใน Script Properties `TRIP_FILE_ID`, backup folder ใน `BACKUP_FOLDER_ID` สร้างโดย `setup()`) ห้ามใช้ Script Properties เก็บตัวแผน (จำกัด ~9KB ต่อค่า seed ไต้หวัน 57KB) · Sheet ไม่ใช้ (1 cell ≤ 50,000 ตัวอักษร) · หลัง setup แล้ว seed ใน build ไม่มีผลกับ GAS อีก แผนใหม่ต้องนำเข้าแล้วบันทึกขึ้น Drive หรือแก้ไฟล์ใน Drive ตรงๆ
-- **HtmlService:** หน้าอยู่ใน iframe ของ `*.googleusercontent.com` · viewport ตั้งฝั่ง server ด้วย `addMetaTag('viewport', ...)` (meta viewport ใน HTML อาจไม่มีผล) และ `setTitle()` · `google.script.run` เป็น async ใช้ `rpc()` ที่ห่อ `withSuccessHandler` / `withFailureHandler` เป็น Promise ทุกครั้ง error แปลงเป็นข้อความผ่าน `errText()` (รหัส error จาก server: `BAD_KEY LOCKED BUSY EMPTY TOO_BIG NOT_A_PLAN NOT_SET_UP`)
+- **HtmlService:** หน้าอยู่ใน iframe ของ `*.googleusercontent.com` · viewport ตั้งฝั่ง server ด้วย `addMetaTag('viewport', ...)` (meta viewport ใน HTML อาจไม่มีผล) และ `setTitle()` · `google.script.run` เป็น async ใช้ `rpc()` ที่ห่อ `withSuccessHandler` / `withFailureHandler` เป็น Promise ทุกครั้ง error แปลงเป็นข้อความผ่าน `errText()` (รหัส error จาก server: `BAD_KEY LOCKED BUSY EMPTY TOO_BIG NOT_A_PLAN NOT_SET_UP WRITE_FAILED` + ฝั่งหน้า `EMPTY_PLAN` เมื่อ `getTrip` ได้ md ว่าง) · **error ทุกตัวต้องไปถึงหน้าจอ:** `loadRemote` ส่งผลไป `applyRemote` ใน try/catch → `remoteFail` (เจ้าของเห็นแถบ `.syncbar` สีส้มค้างไว้, ผู้ชมที่ยังไม่มีสำเนาเห็นการ์ด error + ลองใหม่) ห้ามโยน error ใน success handler ของ `.then(ok, fail)` เพราะ `fail` จับไม่ได้ หน้าจะค้าง "กำลังโหลด" (เคยเกิดจริงบน deployment แรก)
 - **Router ❓:** hash ของ iframe ไม่ขึ้น URL ด้านบนเอง ทำแล้ว: อ่าน hash ตอนเปิดจาก `google.script.url.getLocation()` และเขียนกลับด้วย `google.script.history.replace()` ทุกครั้งที่ render (เทสต์กับตัวจำลองผ่าน) ❓ ยังไม่ได้ยืนยันกับ Google จริงว่าลิงก์ `…/exec#<trip>--d3` เปิดตรงวัน
 - **localStorage ❓:** iframe เป็น third-party ของ `script.google.com` Safari/iOS อาจแยกหรือล้าง storage ทำให้ติ๊ก checklist และรหัสที่จำไว้หาย ต้องทดสอบบน iPhone จริง หน้ายังทำงานได้ถ้า storage ใช้ไม่ได้ (อ่านแผนได้ แค่ไม่จำ)
 - **ดาวน์โหลดไฟล์:** บน GAS ไม่พึ่งดาวน์โหลดอย่างเดียว ส่งออก/Template เปิดกล่องข้อความให้คัดลอกพร้อมปุ่ม "ดาวน์โหลด" เสมอ ❓ ยังไม่รู้ว่าปุ่มดาวน์โหลดใน iframe ของ Google ใช้ได้ไหม
@@ -172,7 +172,7 @@ pip install playwright && playwright install chromium
 python3 tests/e2e/ftest.py      # import/ซ้ำ/แก้/ย้าย/ลบ+undo/checklist/export/seed conflict (12 checks)
 python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en (14 checks)
 python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
-python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, EN (34 checks)
+python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, ไฟล์ใน Drive ว่าง + ปุ่มใช้แผนนี้เป็นแผนบน Drive, EN (40 checks)
 node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง build ก่อน; make test ทำให้)
 
 # ถ้า pip ติดตั้งลง Python ของระบบไม่ได้ (macOS/Homebrew) ให้ใช้ venv:
@@ -210,6 +210,7 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 17. **GAS: ใครก็ล็อกการบันทึกได้ 10 นาที** ด้วยการเดารหัสผิด 10 ครั้ง (ลิมิตนับรวมเพราะไม่มีตัวตนผู้ใช้) อ่านแผนยังได้ปกติ ถ้าเจอบ่อยค่อยเปลี่ยนเป็นลิมิตแยกตามอย่างอื่น
 18. **GAS: รหัสแก้ไขเก็บใน `localStorage` แบบข้อความธรรมดา** บนเครื่องเจ้าของ ใครใช้ browser นั้นได้ก็บันทึกได้ ถ้ารหัสหลุด เปลี่ยน `EDIT_KEY` ใน Script Properties ได้ทันที (รหัสเก่าที่จำไว้จะใช้ไม่ได้)
 19. **GAS: แผนเดียวต่อ deployment** (v2.2.1 แก้บั๊ก: ตอนนำเข้าทับ `replaceTrip` ทิ้ง `remoteVersion`/`remoteFull` ทำให้กดบันทึกแล้วเด้ง dialog ซ้ำ 2–3 รอบ) แผนอื่นที่นำเข้าในหน้า GAS อยู่แค่ในเครื่อง ไม่ขึ้น Drive ถ้าจะเปลี่ยนแผนบน Drive ให้นำเข้า md ที่ชื่อทริป+วันเริ่มตรงกัน แล้วเลือก "เขียนทับแผนเดิม" จากนั้นกดบันทึกขึ้น Drive
+20. **GAS deployment แรก (2026-11-05): `getTrip` ส่ง `md: ""`** ไฟล์ `travel-plan.md` ที่ `setup()` สร้างอ่านออกมาว่าง (เวลาแก้ไขตรงกับตอน setup) และหน้าค้าง "กำลังโหลดแผน…" เพราะ error ถูกกลืน ❓ ยังไม่รู้ว่าไฟล์ว่างจริงหรืออ่านไม่ออก v2.2.2: `createFile` ใช้ `Utilities.newBlob`, `setup()` เติมไฟล์ว่างจาก seed, `saveTrip` อ่านกลับแล้วโยน `WRITE_FAILED` ถ้า Drive ไม่เก็บ, `getTrip` ส่ง `size` ดูผลจริงแล้วอัปเดตข้อนี้
 
 ## 7. ไฟล์ที่เกี่ยวข้อง
 
@@ -221,7 +222,7 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 | `data/travel-plan-template.md` | schema + กฎ + ตัวอย่างเปล่า ใช้ให้ Claude สร้างแผนใหม่: แนบไฟล์นี้ + ข้อมูลดิบ แล้วสั่ง "สร้างตาม template ห้ามเปลี่ยนชื่อหัวข้อ/field อะไรไม่รู้ใส่ ❓ ห้ามเดา" |
 | `data/seed/taiwan-2026.md` | แผนไต้หวัน v4.1 (6 วัน 5 คืน, 8 คน) แปลงจาก v3 เป็น schema ใหม่ |
 | `README.md` | คำอธิบายโปรเจกต์สำหรับคนทั่วไป: feature, วิธีใช้, วิธี deploy, สถานะ Phase, checklist ทดสอบมือบน GAS (อัปเดตทุกครั้งที่เพิ่ม feature) |
-| `gas/Code.gs` | server ของ Apps Script: `doGet` · `getTrip(key)` → `{md, version, owner}` · `checkKey(key)` · `saveTrip(md, key, baseVersion, force)` → `{ok, version}` หรือ `{conflict}` · `setup()` |
+| `gas/Code.gs` | server ของ Apps Script: `doGet` · `getTrip(key)` → `{md, version, owner, size}` (`size` = จำนวนตัวอักษรดิบในไฟล์ ดูได้ว่าไฟล์ว่างไหม) · `checkKey(key)` · `saveTrip(md, key, baseVersion, force)` → `{ok, version}` หรือ `{conflict}` · `setup()` |
 | `tests/gas/*`, `tests/gas.test.js`, `tests/e2e/ftest4.py` | GAS จำลอง + เทสต์ฝั่ง server และหน้า GAS |
 | `Original_template.pdf` (อยู่นอก repo, Kody ถือ) | ต้นแบบหน้าตา ถ้าต้องการให้ Claude Code เห็นให้ Kody ใส่ไว้ที่ `docs/` |
 | Artifact "Dark Tech Workshop" (URL ข้อ 4) | design system (README อย่างเดียว) |

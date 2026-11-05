@@ -173,6 +173,26 @@ with sync_playwright() as p:
     pg.goto(PAGE); settle(pg, 800)
     check('no google.script: error card with retry, no crash', pg.locator('[data-act=reload-remote]').count() == 1)
 
+    # ---------------- empty plan file on Drive (first real deployment) + plan imported before it worked ----------------
+    s = json.loads(state.read_text()); s['files'][s['props']['TRIP_FILE_ID']]['content'] = ''; state.write_text(json.dumps(s))
+    ev = device(b, 'empty-viewer')
+    ev.goto(PAGE); settle(ev, 1500)
+    check('empty Drive file: viewer gets an error card, not endless "loading"', ev.locator('[data-act=reload-remote]').count() == 1 and 'ว่างเปล่า' in ev.inner_text('#app') and ev.locator('[aria-busy=true]').count() == 0)
+    o2 = device(b, 'owner2')
+    o2.goto(PAGE); o2.evaluate("localStorage.setItem('tp1.settings', JSON.stringify({theme:'dark',planning:true,owner:true,lang:'th'}))"); o2.reload(); settle(o2, 1200)
+    o2.click('[data-act=import] >> nth=0'); o2.set_input_files('[data-imp=file]', str(imp)); settle(o2, 400)
+    o2.click('[data-imp=save]'); settle(o2, 800)
+    o2.reload(); settle(o2, 1500)
+    bar = o2.inner_text('[data-syncbar]') if o2.locator('[data-syncbar]').count() else ''
+    check('local-only plan + Drive error: bar shows the error and "use this plan on Drive"', 'ว่างเปล่า' in bar and o2.locator('[data-act=promote]').count() == 1 and o2.locator('[data-act=reload-remote]').count() == 1)
+    o2.click('[data-act=promote]'); settle(o2, 300); o2.click('[data-res=yes]'); settle(o2, 300)
+    check('promote without a key asks for it', o2.locator('[data-key]').count() == 1)
+    o2.fill('[data-key]', KEY); o2.click('[data-key-ok]'); settle(o2, 2000)
+    tr = o2.evaluate("JSON.parse(localStorage.getItem('tp1.trips')).map(function(t){return t.origin})")
+    check('promote: plan written to Drive, now the one server plan, bar in sync, no extra dialogs', 'style: นำเข้าใหม่' in drive_md() and tr == ['server'] and o2.locator('.modal').count() == 0 and o2.locator('[data-syncbar].dirty').count() == 0)
+    ev.reload(); settle(ev, 1500)
+    check('viewer after promote: sees the plan', ls_trip(ev) is not None and 'นำเข้าใหม่' in (ls_trip(ev)['meta'].get('style') or ''))
+
     # ---------------- English ----------------
     vw.evaluate("var s=JSON.parse(localStorage.getItem('tp1.settings')||'{}'); s.lang='en'; localStorage.setItem('tp1.settings', JSON.stringify(s))")
     ow.evaluate("var s=JSON.parse(localStorage.getItem('tp1.settings')); s.lang='en'; localStorage.setItem('tp1.settings', JSON.stringify(s))")
