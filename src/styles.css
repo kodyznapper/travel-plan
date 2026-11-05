@@ -329,6 +329,12 @@ details.more>.md{padding:0 16px 16px}
 /* edit */
 .editbar{display:flex;align-items:center;gap:10px;background:var(--cy-soft);border:1px solid var(--cy);border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:16px}
 .editbar .ic{color:var(--cy)}
+.syncbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:var(--cy-soft);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+.syncbar>span{flex:1 1 200px}
+.syncbar .ic{color:var(--cy)}
+.syncbar.dirty{background:var(--or-soft);border-color:var(--or)}
+.syncbar.dirty .ic{color:var(--or)}
+.syncbar .btn .ic{color:inherit}
 .ed{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
 .ed.drag-over{border-color:var(--cy);box-shadow:0 0 0 2px var(--cy-soft)}
 .ed-bar{display:flex;align-items:center;gap:6px;margin-bottom:10px}

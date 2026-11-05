@@ -1,6 +1,6 @@
 # CLAUDE.md — Travel Plan (แผนเที่ยว)
 
-อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (Phase 2a/2b/2d เสร็จแล้ว) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
+อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (Phase 2a/2b/2d เสร็จแล้ว, 2c เขียนโค้ดและเทสต์กับ GAS จำลองแล้ว รอทดสอบบน Google จริง) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
 
 > **กฎเอกสาร (บังคับทุกครั้ง):** ทุกครั้งที่เพิ่ม/เปลี่ยน/ลบ feature ต้องอัปเดต **ทั้ง `CLAUDE.md` และ `README.md`** ในคอมมิตเดียวกับโค้ด ดูรายการที่ต้องแก้ในข้อ 4 "Definition of Done" งานที่เอกสารยังไม่อัปเดตถือว่ายังไม่เสร็จ
 >
@@ -13,10 +13,10 @@
 - **เป้าหมาย:** import แผนเที่ยวจากไฟล์ markdown ที่ Claude สร้างตาม template แล้วแสดงเป็นเว็บที่ใช้ได้จริงบนมือถือระหว่างเที่ยว: ภาพรวมทริป, timeline รายวัน, เช็กลิสต์เตรียมของ, To-do, ข้อมูลอ้างอิง (เบอร์ฉุกเฉิน ประโยคภาษาท้องถิ่น การ์ดแท็กซี่)
 - **ผู้ใช้และโมเดลการแชร์ (Kody ตัดสินแล้ว):** ทุกคนที่มี URL **ดูอย่างเดียว** (ติ๊ก checklist ของตัวเองได้) **Kody แก้ได้คนเดียว** แจกเป็น URL ของเว็บ HTML ตอนนี้แผนเดียวคือ Taiwan Trip 2026 (12–17 พ.ย. 2026, 8 คน)
   - **ที่ทำแล้ว (v2.1):** "โหมดเจ้าของ" ซ่อนเครื่องมือแก้ไข/นำเข้า/ส่งออก/หน้าวางแผนจากผู้ชม ปลดล็อกโดยแตะบรรทัดเวอร์ชันในหน้าตั้งค่า 7 ครั้งติด การแก้ไขของเจ้าของอยู่ใน browser เครื่องนั้นเท่านั้น ผู้ชมคนอื่นจะเห็นต่อเมื่อ Kody ส่งออก .md → ส่งให้ Claude → publish ทับลิงก์เดิม
-  - **ที่ยังไม่ได้ทำ:** ให้การแก้ของ Kody ไปถึงทุกคนโดยไม่ต้องส่งไฟล์ ต้องมีที่เก็บกลางที่ "อ่านได้ทุกคน เขียนได้เฉพาะเจ้าของ" และบังคับฝั่ง server (Phase 2c บน Google Apps Script ดูข้อ 4 "Google Apps Script") ปุ่มซ่อนในหน้าไม่ใช่การป้องกัน
+  - **ที่ทำแล้ว (v2.2, Phase 2c):** บน Google Apps Script การแก้ของ Kody ไปถึงทุกคนโดยไม่ต้องส่งไฟล์ แผนอยู่ในไฟล์ `.md` ใน Drive อ่านได้ทุกคน เขียนได้เฉพาะคนที่ส่งรหัสแก้ไขถูก (server ตรวจ) ปุ่มซ่อนในหน้ายังไม่ใช่การป้องกัน ตัวป้องกันจริงคือรหัสฝั่ง server **ยังไม่ได้ deploy/ทดสอบบน Google จริง**
 - **หน้าตา:** ต้นแบบคือ `Original_template.pdf` (ทริปไถจง 4 วัน) แต่ใช้ design system "Dark Tech Workshop" (dark เป็นค่าเริ่มต้น มี light เป็นตัวเลือก)
 - **Deploy มี 2 target (Kody ตัดสินแล้ว 2026-11-05) ทุก phase ที่เสร็จต้องใช้งานได้บนทั้งสองที่:**
-  1. **Google Apps Script (GAS) web app = ลิงก์หลักที่แจกเพื่อน** ⏳ ยังไม่ได้สร้าง · Deploy แบบ Execute as: Me (Kody), Who has access: **Anyone** (ไม่ต้อง login Google) · แผนเก็บเป็น **ไฟล์ `.md` ใน Google Drive ของ Kody** · การบันทึกต้องส่ง **รหัสแก้ไข** ที่ server ตรวจกับค่าใน Script Properties ทุกครั้ง · ผู้ชมทุกคนอ่านอย่างเดียว
+  1. **Google Apps Script (GAS) web app = ลิงก์หลักที่แจกเพื่อน** โค้ดพร้อมใน `dist/gas/` ⏳ Kody ยัง deploy ไม่ได้ (ขั้นตอนอยู่ใน `README.md`) · Deploy แบบ Execute as: Me (Kody), Who has access: **Anyone** (ไม่ต้อง login Google) · แผนเก็บเป็น **ไฟล์ `.md` ใน Google Drive ของ Kody** · การบันทึกต้องส่ง **รหัสแก้ไข** ที่ server ตรวจกับค่าใน Script Properties ทุกครั้ง · ผู้ชมทุกคนอ่านอย่างเดียว
   2. **claude.ai Artifact** `https://claude.ai/artifact/DtvUoYKnyT15PwAmGY2omk` (ของเดิม เก็บไว้คู่กัน) เป็นภาพนิ่งของแผนตอน publish (ฝัง seed) ไม่มีที่เก็บกลาง (CSP ของ Artifact บล็อก `fetch` ไป GAS) publish จากแชท claude.ai ด้วยเครื่องมือ Artifact, capability `downloads` การ publish ทับลิงก์เดิมทำให้ทุกคนได้เวอร์ชันใหม่ Claude Code ส่งไฟล์ `dist/travel-plan.html` ให้ Kody publish จากแชทได้
 
 ## 2. Tech Stack
@@ -27,10 +27,10 @@
 | Framework | **ไม่มี** (vanilla DOM + string templates + `innerHTML`) |
 | Library (runtime) | `marked@12.0.2` UMD จาก `https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js` (ล็อกเวอร์ชัน) ใช้เฉพาะ render markdown |
 | ฟอนต์ | IBM Plex Sans Thai (400/500/600/700) + JetBrains Mono (400/500/700) จาก Google Fonts, fallback `Tahoma, sans-serif` / `'Courier New', monospace` |
-| ที่เก็บข้อมูล | ตอนนี้: `localStorage` (ต่อ browser ต่อเครื่อง) ไม่มี database · แผน GAS (⏳): ไฟล์ `.md` ใน Drive เป็นแหล่งความจริง + สำเนาใน `localStorage` + ติ๊ก checklist ของผู้ชมอยู่ใน `localStorage` ของเขาเอง |
-| Server (⏳) | Google Apps Script (`Code.gs`, V8 runtime) `doGet` ส่งหน้า HtmlService, ฟังก์ชันที่หน้าเรียกผ่าน `google.script.run` |
-| Build | `tools/build.py` (Python 3 stdlib) ประกอบ `src/*` + `data/*` เป็นไฟล์เดียว (target GAS ยังไม่มี ⏳) |
-| Test | Node (parser, i18n) + Python Playwright/Chromium (e2e) |
+| ที่เก็บข้อมูล | Artifact: `localStorage` (ต่อ browser ต่อเครื่อง) · GAS: ไฟล์ `.md` ใน Drive เป็นแหล่งความจริง + สำเนาใน `localStorage` (เปิดได้ตอนเน็ตหลุด) + ติ๊ก checklist และการแก้ที่ยังไม่บันทึกอยู่ใน `localStorage` ของแต่ละเครื่อง |
+| Server | Google Apps Script (`gas/Code.gs`, V8) `doGet` ส่งหน้า HtmlService · `getTrip` / `checkKey` / `saveTrip` เรียกจากหน้าผ่าน `google.script.run` · `setup` รันครั้งเดียวจาก editor |
+| Build | `tools/build.py` (Python 3 stdlib) ได้ 2 target: `dist/travel-plan.html` (ฝัง seed) และ `dist/gas/` (`index.html` ไม่ฝัง seed, `Code.gs` ฝัง seed ไว้ให้ `setup()`, `appsscript.json`) แยกด้วย `window.TP_TARGET` (`'static'` / `'gas'`) |
+| Test | Node (parser, i18n, `gas.test.js` รัน `dist/gas/Code.gs` กับ GAS จำลอง) + Python Playwright/Chromium (e2e รวม `ftest4.py` ที่หน้า GAS คุยกับ Code.gs จริงผ่าน GAS จำลอง) |
 
 **ห้ามใช้ (กฎของหน้าที่ publish เป็น Artifact และกฎของโปรเจกต์ ใช้กับโค้ดฝั่งหน้าเว็บของทั้งสอง target เพราะเป็นไฟล์ HTML ชุดเดียวกัน):**
 
@@ -55,29 +55,35 @@ travel-plan/
 ├─ data/
 │  ├─ seed/*.md              แผนที่ฝังมากับหน้า (window.TP_SEED) ตอนนี้: taiwan-2026.md
 │  └─ travel-plan-template.md  template เปล่า + กฎ (ฝังเป็น window.TP_TEMPLATE ปุ่ม "Template (.md)")
-├─ tools/build.py            -> dist/travel-plan.html
+├─ gas/
+│  ├─ Code.gs                server ของ Apps Script (มี placeholder `/*@@SEED_MD@@*/null` ให้ build ใส่ seed)
+│  └─ appsscript.json        manifest (timezone, V8, webapp: execute as owner, access anyone)
+├─ tools/build.py            -> dist/travel-plan.html + dist/gas/{index.html, Code.gs, appsscript.json}
 ├─ tests/
 │  ├─ parser.test.js         round-trip ของทุก md ใน data/ + line registry
 │  ├─ i18n-coverage.js       ทุกข้อความไทยใน T('...') ต้องมีคำแปล EN
-│  └─ e2e/ ftest.py ftest2.py shot.py run_all.sh
+│  ├─ gas.test.js            logic ของ Code.gs: setup, ตัด # วางแผน, รหัส, conflict, backup, lockout (30 checks)
+│  ├─ gas/fake-gas.js        DriveApp/PropertiesService/LockService/CacheService/Session จำลอง (เท่าที่ Code.gs ใช้)
+│  ├─ gas/call.js            เรียกฟังก์ชัน public ของ Code.gs หนึ่งครั้ง state เก็บในไฟล์ (ใช้ใน ftest4)
+│  └─ e2e/ ftest.py ftest2.py ftest3.py ftest4.py shot.py run_all.sh
 ├─ vendor/marked.min.js      ใช้ใน e2e แทน CDN (offline) ตัวหน้าเว็บยังโหลดจาก CDN
-└─ dist/travel-plan.html     ผลลัพธ์ (ไฟล์ที่ publish เป็น Artifact)
+└─ dist/                     ผลลัพธ์ (commit ไว้ใน repo ให้ copy ได้จาก GitHub): travel-plan.html (Artifact), gas/ (Apps Script)
 ```
 
-**ที่วางไว้สำหรับ GAS (⏳ ยังไม่มีในโค้ด ชื่ออาจเปลี่ยนตอนทำจริง ถ้าเปลี่ยนให้แก้ที่นี่):** `gas/Code.gs` (server: `doGet`, `getTrip`, `saveTrip`) · `gas/appsscript.json` (manifest: timezone, webapp access, scopes) · `dist/gas/` (ผลจาก build: `Code.gs` + `index.html` ที่ฝัง CSS/JS แล้ว พร้อม copy ไปวางในโปรเจกต์ Apps Script)
+**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → server GAS (`rpc`, `loadRemote`, `saveRemote`, `askKey`, `syncBarHtml`) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → `afterRender` + `placeNow` (Today mode) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
 
-**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → `afterRender` + `placeNow` (Today mode) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
-
-**Data model** (ดู `TP.emptyTrip()` ใน parser.js): `trip = { id, meta{title,title_en,subtitle,...,timezone}, overview{flights[],stays[],remember,extra[]}, days[{n,date,theme,theme_en,route,stay,summary,summary_en,items[],must[],caution[],extra}], pack[{title,items[{text,done}],note}], todo[{due,text,done}], ref[{title,md}], plan, metaExtra, origin, localEdited, updatedAt }`
+**Data model** (ดู `TP.emptyTrip()` ใน parser.js): `trip = { id, meta{title,title_en,subtitle,...,timezone}, overview{flights[],stays[],remember,extra[]}, days[{n,date,theme,theme_en,route,stay,summary,summary_en,items[],must[],caution[],extra}], pack[{title,items[{text,done}],note}], todo[{due,text,done}], ref[{title,md}], plan, metaExtra, origin, localEdited, updatedAt, remoteVersion, remoteFull }` · `origin` = `seed | import | server` (`server` = แผนจาก Drive บน GAS มีได้แผนเดียว) · `remoteVersion` = เวลาแก้ล่าสุดของไฟล์ใน Drive ตอนโหลด (ใช้กันเขียนทับ) · `remoteFull` = โหลดมาพร้อม `# วางแผน` แล้ว (มีรหัส) ห้ามบันทึกถ้าเป็น false ไม่งั้นหัวข้อวางแผนใน Drive จะหาย
 item = `{ id, time, title, en, zh, type, status, highlight, line, transport, transport_en, line_alt, transport_alt, transport_alt_en, cost, cost_en, notes, notes_en, map, extra{} }`
 
 **Router:** hash `#home` หรือ `#<tripId>--<tab>` โดย tab = `overview | d1..dN | pack | todo | ref | plan` (`plan` เห็นเฉพาะโหมดวางแผน)
 
-**localStorage keys:** `tp1.trips`, `tp1.settings` (`theme`, `planning`, `lang`, `owner`), `tp1.seed` (hash ของ seed ล่าสุด) ถ้าเปลี่ยนรูปแบบข้อมูลแบบที่ของเก่าอ่านไม่ได้ ให้เพิ่มเลขเวอร์ชันของ key (`tp2.*`) พร้อมเขียน migration ห้ามทับเงียบๆ
+**localStorage keys:** `tp1.trips`, `tp1.settings` (`theme`, `planning`, `lang`, `owner`), `tp1.seed` (hash ของ seed ล่าสุด ไม่ใช้บน GAS), `tp1.key` (รหัสแก้ไขที่ยืนยันแล้ว เฉพาะ GAS เก็บแบบข้อความธรรมดา ลบเมื่อกด "ลืมรหัส" / ออกจากโหมดเจ้าของ / server ตอบ BAD_KEY) ถ้าเปลี่ยนรูปแบบข้อมูลแบบที่ของเก่าอ่านไม่ได้ ให้เพิ่มเลขเวอร์ชันของ key (`tp2.*`) พร้อมเขียน migration ห้ามทับเงียบๆ
 
 **Owner mode:** `S.settings.owner` (false เป็นค่าเริ่มต้น) ถ้าเป็น false `render()` บังคับ `planning=false` ทำให้ไม่มีปุ่มแก้ไข แท็บวางแผน badge สถานะ หรือเครื่องมือ import/export (ทุกอย่างผูกกับ `S.settings.planning`) ผู้ใช้เดิมที่เคยเปิดโหมดวางแผนก่อนมีฟีเจอร์นี้ถูก migrate ให้เป็นเจ้าของ (`owner = planning` ตอน `initData`) ปลดล็อก/ออก: ตั้งค่า → แตะบรรทัด `แผนเที่ยว v…` 7 ครั้งใน 1.5 วินาทีต่อครั้ง / ปุ่ม "ออกจากโหมดเจ้าของ" `APP_VERSION` อยู่ต้นไฟล์ `app.js` ให้เพิ่มเลขทุกครั้งที่ release
 
-**Seed:** ตอนโหลด ถ้า hash ของ seed เปลี่ยน → แผนที่ผู้ใช้ไม่เคยแก้ (`localEdited=false`) ถูกแทนด้วยเวอร์ชันใหม่ ส่วนแผนที่แก้แล้วจะขึ้น dialog ให้เลือก "ใช้เวอร์ชันใหม่ / เก็บของในเครื่อง" (ติ๊ก checklist ถูกคัดลอกข้ามเวอร์ชันโดยจับคู่จากข้อความ)
+**GAS flow (`TP_TARGET === 'gas'`):** เปิดหน้า → แสดงสำเนาใน `localStorage` ทันที (ถ้ามี) → `getTrip(key)` → parse → ล้างติ๊กจาก server แล้วคัดลอกติ๊กของเครื่องนี้มา (`carryChecks`) → ถ้าเครื่องนี้มีการแก้ที่ยังไม่บันทึกและ version บน Drive เปลี่ยน ถามว่าจะใช้อันไหน · เจ้าของแก้ = เก็บในเครื่อง (`localEdited`) แถบ `.syncbar` ขึ้นสีส้ม → "บันทึกขึ้น Drive" → ถ้ายังไม่มีรหัสจะถาม (`checkKey`) แล้วโหลดฉบับเต็มก่อน → `saveTrip(md ที่ล้างติ๊กแล้ว, key, remoteVersion)` → ถ้า version ไม่ตรงขึ้น dialog conflict (บันทึกทับ / โหลดของบน Drive) · กลับมาที่แท็บหลังห่างไป 5 นาทีโหลดใหม่ (ไม่ poll) · deep link: อ่าน hash จาก `google.script.url.getLocation` และเขียนกลับด้วย `google.script.history.replace` (หลัง getLocation ตอบแล้วเท่านั้น)
+
+**Seed:** (เฉพาะ Artifact) ตอนโหลด ถ้า hash ของ seed เปลี่ยน → แผนที่ผู้ใช้ไม่เคยแก้ (`localEdited=false`) ถูกแทนด้วยเวอร์ชันใหม่ ส่วนแผนที่แก้แล้วจะขึ้น dialog ให้เลือก "ใช้เวอร์ชันใหม่ / เก็บของในเครื่อง" (ติ๊ก checklist ถูกคัดลอกข้ามเวอร์ชันโดยจับคู่จากข้อความ)
 
 **รูปแบบ markdown** (กฎละเอียดอยู่ในคอมเมนต์หัวไฟล์ `data/travel-plan-template.md` ซึ่งเป็นแหล่งความจริงของ schema): front matter `---` → `# ภาพรวม` (`## เที่ยวบิน` ตาราง, `## ที่พัก` ตาราง, `## จำไว้ตลอดทริป`) → `# Day N — YYYY-MM-DD · ธีม` (บรรทัด `route/stay/summary` แล้ว `### เวลา · ชื่อ` ตามด้วย `- key: value` หนึ่งบรรทัดต่อ field, `## ห้ามพลาดวันนี้`, `## ข้อควรระวัง`, `## ข้อมูลเพิ่มเติม`) → `# เตรียมของ` → `# To-do` → `# ข้อมูลอ้างอิง` → `# วางแผน` (เห็นเฉพาะโหมดวางแผน)
 
@@ -119,17 +125,19 @@ item = `{ id, time, title, en, zh, type, status, highlight, line, transport, tra
 
 **Google Apps Script (target หลัก) — กฎที่ทุก phase ต้องผ่าน**
 
-ข้อเท็จจริงด้านล่างมาจากความรู้ทั่วไปเรื่อง GAS ยังไม่ได้ทดสอบกับโปรเจกต์นี้ ข้อที่ติด `❓` ต้องทดสอบบน deployment จริงก่อนถือว่าใช้ได้ ทดสอบแล้วให้แก้ข้อความตรงนี้เป็นผลจริง
+โค้ดทำตามกฎข้างล่างครบแล้ว (v2.2) และผ่านเทสต์กับ GAS จำลอง (`tests/gas/`) แต่ GAS จำลองเช็กได้แค่ logic ของเรา ไม่ใช่พฤติกรรมของ Google ข้อที่ติด `❓` ยังต้องทดสอบบน deployment จริง ทดสอบแล้วให้แก้ข้อความตรงนี้เป็นผลจริง
 
 - **โค้ดหน้าเว็บชุดเดียวใช้ได้ทั้งสอง target** แยกพฤติกรรมด้วยการตรวจ environment ตอนรัน (`window.google && google.script && google.script.run`) ห้าม fork เป็น `app.js` สองไฟล์ ห้ามให้หน้าพังเมื่อไม่มี `google.script` (Artifact, `make serve`, e2e) หรือไม่มี `window.claude` (GAS)
 - **สิทธิ์เขียนบังคับฝั่ง server เท่านั้น:** `saveTrip(md, editKey, baseVersion)` ใน `Code.gs` เทียบ `editKey` กับ `PropertiesService.getScriptProperties().getProperty('EDIT_KEY')` ถ้าไม่ตรงให้ throw โดยไม่เขียนอะไร · **ห้ามฝังรหัสแก้ไขใน HTML/JS/repo** (Kody ตั้งเองใน Script Properties) · ฝั่งหน้าเก็บรหัสไว้ใน `localStorage` เครื่องเจ้าของหลังกรอกครั้งแรก · โหมดเจ้าของ (`S.settings.owner`) ยังเป็นแค่ตัวซ่อนปุ่ม
-- **กันเขียนทับ:** `saveTrip` รับ `baseVersion` (เช่น `updatedAt` หรือ revision ของไฟล์) ถ้าไฟล์ใน Drive ใหม่กว่า ให้ปฏิเสธแล้วให้หน้าถามว่าจะโหลดใหม่หรือเขียนทับ · ทุกครั้งที่บันทึกให้สำรองไฟล์เดิมไว้ในโฟลเดอร์ backup ใน Drive (ไม่พึ่งประวัติเวอร์ชันของ Drive อย่างเดียว)
-- **ผู้ชมไม่ได้รับหัวข้อ `# วางแผน`:** `getTrip()` ที่ไม่มีรหัสแก้ไขให้ตัดหัวข้อนี้ออกฝั่ง server ก่อนส่ง (แก้ Known Issue 14 สำหรับ target GAS) · ข้อมูลส่วนตัวที่ไม่อยากให้เพื่อนเห็นอย่าใส่ใน md
-- **ที่เก็บ:** ไฟล์ `.md` ใน Drive (ระบุด้วย file id ใน Script Properties `TRIP_FILE_ID`) ห้ามใช้ Script Properties เก็บตัวแผน (จำกัด ~9KB ต่อค่า seed ไต้หวัน 57KB) · Sheet ไม่ใช้ (1 cell ≤ 50,000 ตัวอักษร)
-- **HtmlService:** หน้าอยู่ใน iframe ของ `*.googleusercontent.com` · ต้องตั้ง viewport ฝั่ง server ด้วย `HtmlOutput.addMetaTag('viewport', ...)` (meta viewport ใน HTML ไม่มีผล) และ `setTitle()` · `google.script.run` เป็น async ใช้ `withSuccessHandler` / `withFailureHandler` ทุกครั้ง พร้อมสถานะกำลังโหลด/บันทึก และข้อความ error ที่อ่านรู้เรื่อง (ผ่าน `T()`)
-- **Router ❓:** hash ของ iframe ไม่สะท้อนขึ้น URL ด้านบน ลิงก์ที่แชร์แบบ `...exec#trip--d3` อาจไม่เปิดตรงหน้า ต้องใช้ `google.script.url.getLocation()` / `google.script.history` หรือ query `?tab=` ที่ `doGet(e)` อ่าน ทดสอบก่อนเลือก
-- **localStorage ❓:** iframe เป็น third-party ของ `script.google.com` Safari/iOS อาจแยกหรือล้าง storage ทำให้ติ๊ก checklist ของผู้ชมหาย ต้องทดสอบบน iPhone จริง ถ้าใช้ไม่ได้ หน้าต้องยังทำงานได้ (อ่านแผนได้ แค่ไม่จำติ๊ก) และบอกผู้ใช้
-- **ดาวน์โหลดไฟล์ ❓:** ปุ่มดาวน์โหลดแบบ `<a download>` + Blob อาจถูก sandbox ของ iframe บล็อก ต้องมี fallback (แสดงข้อความให้คัดลอก หรือให้เจ้าของบันทึก/สำรองลง Drive ผ่าน server)
+- **กันเขียนทับ:** `saveTrip` รับ `baseVersion` = `getLastUpdated()` ของไฟล์ตอนโหลด ถ้าไม่ตรงกับตอนนี้ ตอบ `{conflict:true}` แล้วหน้าถามว่าจะบันทึกทับหรือโหลดของบน Drive · ใช้ `LockService` กันสองคนบันทึกพร้อมกัน · ทุกครั้งที่บันทึกสำรองไฟล์เดิมไว้ในโฟลเดอร์ `travel-plan backups` ❓ ยังไม่ได้ยืนยันว่า `getLastUpdated()` อ่านค่าใหม่ทันทีหลัง `setContent` (ถ้าไม่ จะเห็น dialog conflict หลอกตอนบันทึกครั้งถัดไป กดบันทึกทับได้)
+- **ลิมิตการเดารหัส:** ผิดครบ 10 ครั้งใน 10 นาที (นับรวมทุกคน เพราะผู้ใช้ไม่มีตัวตน) ล็อกการบันทึก/ตรวจรหัส 10 นาที การอ่านไม่ถูกล็อก · ฟังก์ชันที่ชื่อลงท้าย `_` หน้าเว็บเรียกไม่ได้ (กฎของ GAS) ฟังก์ชัน public มีแค่ `doGet getTrip checkKey saveTrip setup` (`gas.test.js` เช็ก) · `setup()` ยอมรันเฉพาะเจ้าของจาก editor (`Session.getActiveUser()` ต้องตรงกับเจ้าของ)
+- **ผู้ชมไม่ได้รับหัวข้อ `# วางแผน` และ `<!-- -->`:** `getTrip()` ที่ไม่มีรหัสถูกตัดสองอย่างนี้ออกฝั่ง server (`viewerMd_`) ก่อนส่ง (แก้ Known Issue 14 สำหรับ target GAS) · ข้อมูลส่วนตัวที่ไม่อยากให้เพื่อนเห็นอย่าใส่ในส่วนอื่นของ md
+- **ติ๊ก checklist ไม่ขึ้น server:** บันทึกด้วย md ที่ `clearChecks` แล้ว และตอนโหลดล้างติ๊กจาก server เสมอ ติ๊กเป็นของแต่ละเครื่อง
+- **ที่เก็บ:** ไฟล์ `.md` ใน Drive (file id ใน Script Properties `TRIP_FILE_ID`, backup folder ใน `BACKUP_FOLDER_ID` สร้างโดย `setup()`) ห้ามใช้ Script Properties เก็บตัวแผน (จำกัด ~9KB ต่อค่า seed ไต้หวัน 57KB) · Sheet ไม่ใช้ (1 cell ≤ 50,000 ตัวอักษร) · หลัง setup แล้ว seed ใน build ไม่มีผลกับ GAS อีก แผนใหม่ต้องนำเข้าแล้วบันทึกขึ้น Drive หรือแก้ไฟล์ใน Drive ตรงๆ
+- **HtmlService:** หน้าอยู่ใน iframe ของ `*.googleusercontent.com` · viewport ตั้งฝั่ง server ด้วย `addMetaTag('viewport', ...)` (meta viewport ใน HTML อาจไม่มีผล) และ `setTitle()` · `google.script.run` เป็น async ใช้ `rpc()` ที่ห่อ `withSuccessHandler` / `withFailureHandler` เป็น Promise ทุกครั้ง error แปลงเป็นข้อความผ่าน `errText()` (รหัส error จาก server: `BAD_KEY LOCKED BUSY EMPTY TOO_BIG NOT_A_PLAN NOT_SET_UP`)
+- **Router ❓:** hash ของ iframe ไม่ขึ้น URL ด้านบนเอง ทำแล้ว: อ่าน hash ตอนเปิดจาก `google.script.url.getLocation()` และเขียนกลับด้วย `google.script.history.replace()` ทุกครั้งที่ render (เทสต์กับตัวจำลองผ่าน) ❓ ยังไม่ได้ยืนยันกับ Google จริงว่าลิงก์ `…/exec#<trip>--d3` เปิดตรงวัน
+- **localStorage ❓:** iframe เป็น third-party ของ `script.google.com` Safari/iOS อาจแยกหรือล้าง storage ทำให้ติ๊ก checklist และรหัสที่จำไว้หาย ต้องทดสอบบน iPhone จริง หน้ายังทำงานได้ถ้า storage ใช้ไม่ได้ (อ่านแผนได้ แค่ไม่จำ)
+- **ดาวน์โหลดไฟล์:** บน GAS ไม่พึ่งดาวน์โหลดอย่างเดียว ส่งออก/Template เปิดกล่องข้อความให้คัดลอกพร้อมปุ่ม "ดาวน์โหลด" เสมอ ❓ ยังไม่รู้ว่าปุ่มดาวน์โหลดใน iframe ของ Google ใช้ได้ไหม
 - **CDN และฟอนต์:** ยึดรายการโฮสต์ในข้อ 2 เหมือนเดิม (เป็นจุดร่วมของทั้งสอง target) ❓ ยังไม่ได้ทดสอบว่า GAS โหลด `cdn.jsdelivr.net` / Google Fonts ได้ปกติ
 - **ห้ามใช้บน GAS:** capability ของ claude.ai (`claude.use(...)`) ไม่มีบน GAS ฟีเจอร์ที่พึ่งมันต้องซ่อนหรือมีทางเลือกอื่น (ดู Phase 4/5) · ห้าม `UrlFetchApp` ไปเว็บนอกโดยไม่คุยกับ Kody ก่อน
 - **Quota ❓:** GAS มีโควตาการรันต่อวันของบัญชี Gmail ส่วนตัว ผู้ชม 8 คนน่าจะไม่ถึง แต่ยังไม่ได้ตรวจตัวเลข อย่าโหลดซ้ำถี่ (เช่น poll) โดยไม่จำเป็น
@@ -164,6 +172,12 @@ pip install playwright && playwright install chromium
 python3 tests/e2e/ftest.py      # import/ซ้ำ/แก้/ย้าย/ลบ+undo/checklist/export/seed conflict (12 checks)
 python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en (14 checks)
 python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
+python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, EN (32 checks)
+node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง build ก่อน; make test ทำให้)
+
+# ถ้า pip ติดตั้งลง Python ของระบบไม่ได้ (macOS/Homebrew) ให้ใช้ venv:
+#   python3 -m venv .venv && .venv/bin/pip install playwright && .venv/bin/playwright install chromium
+#   PATH=.venv/bin:$PATH make e2e
 
 # screenshot ตรวจหน้าตา (ผลที่ /tmp/tp-shots/)
 python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d5')" \
@@ -171,14 +185,14 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 # พารามิเตอร์ run(): name,w,h,hash,theme,planning,clock,actions,full,lang   (clock='2026-11-13T10:40:00Z' ทดสอบ Today mode)
 ```
 
-**ขั้นตอน release:** แก้ `src/` หรือ `data/` → `make e2e` ต้องผ่านทั้งหมด → อัปเดต `CLAUDE.md` + `README.md` → `dist/travel-plan.html` → ส่งให้ Kody publish ทับลิงก์ Artifact เดิม (เก็บ URL เดิมไว้ เพื่อให้ลิงก์ที่แชร์ไปแล้วอัปเดตตาม) · GAS (⏳ เมื่อมี target แล้ว): วางไฟล์ใน `dist/gas/` ลงโปรเจกต์ Apps Script → Deploy → **Manage deployments → แก้ deployment เดิมเป็นเวอร์ชันใหม่** (ห้ามกด New deployment เพราะจะได้ URL ใหม่ ลิงก์ที่แจกไปแล้วจะไม่อัปเดต) → ทดสอบมือตาม checklist ใน `README.md`
+**ขั้นตอน release:** แก้ `src/` หรือ `data/` → `make e2e` ต้องผ่านทั้งหมด → อัปเดต `CLAUDE.md` + `README.md` → `dist/travel-plan.html` → ส่งให้ Kody publish ทับลิงก์ Artifact เดิม (เก็บ URL เดิมไว้ เพื่อให้ลิงก์ที่แชร์ไปแล้วอัปเดตตาม) · GAS: วาง `dist/gas/index.html` และ `dist/gas/Code.gs` ทับไฟล์เดิมในโปรเจกต์ Apps Script → Deploy → **Manage deployments → ✏️ แก้ deployment เดิม → Version: New version** (ห้ามกด New deployment เพราะจะได้ URL ใหม่ ลิงก์ที่แจกไปแล้วจะไม่อัปเดต) → ทดสอบมือตาม checklist ใน `README.md` (ขั้นตอนเต็มอยู่ใน README "วิธีเอาขึ้น Google Apps Script")
 
 **ทดสอบ Today mode:** เทสต์ e2e ใช้เวลาจริงของเครื่อง ถ้าอยากเห็นเส้น "ตอนนี้" ให้ใช้ `clock=` ใน `shot.py` (Playwright `page.clock.install`)
 
 ## 6. Known Issues / ข้อควรระวัง
 
 1. **เส้น "ตอนนี้" ใช้ timezone เดียวทั้งทริป** (`meta.timezone`) รายการที่เขียนเป็นเวลาไทย (FD230 07:45 ออกดอนเมือง) จะเลื่อนผิด 1 ชม. เฉพาะช่วงรายการนั้น แก้จริงต้องมี timezone ต่อรายการ (Phase 3)
-2. **ข้อมูลอยู่ใน browser เครื่องเดียว** ไม่ sync ข้ามเครื่อง ล้าง browser = หาย (เหลือแค่ export .md/.json) เพื่อนเห็นแผนที่ฝังมากับลิงก์เท่านั้น ไม่เห็นการแก้ไขในเครื่องคุณ (Phase 2c บน GAS จะแก้ข้อนี้ ส่วน target Artifact จะยังเป็นแบบนี้ต่อ)
+2. **ข้อมูลอยู่ใน browser เครื่องเดียว** ไม่ sync ข้ามเครื่อง ล้าง browser = หาย (เหลือแค่ export .md/.json) เพื่อนเห็นแผนที่ฝังมากับลิงก์เท่านั้น ไม่เห็นการแก้ไขในเครื่องคุณ (เฉพาะ target Artifact · บน GAS แก้แล้วใน 2c: แผนอยู่บน Drive การแก้ไปถึงทุกคนเมื่อกดบันทึก)
 3. **EN mode แปลแค่ UI + field `_en` ที่ใส่ไว้** ใน seed ไต้หวันมีเฉพาะ `summary_en` ทุกวัน + `style_en` ที่เหลือ (transport/notes/cost, ห้ามพลาด/ข้อควรระวัง, เที่ยวบิน/ที่พัก, ข้อมูลอ้างอิง, เตรียมของ) ยังเป็นภาษาไทย ไม่มีการแปลอัตโนมัติ และ `summary_en` ที่มีอยู่เป็น "ร่างที่ Claude เขียน" ยังไม่ได้ให้ Kody ตรวจ
 4. **สีสายรถไฟมาจากความจำ ไม่ใช่ค่า official** (`LINES` ใน parser.js) ชื่อจีนของสาย R/BL/G/O/BR ตรงกับตารางศัพท์ใน md; ชื่อและสีของ Airport MRT / HSR / TRA / Circular ไม่ได้มาจากข้อมูลของ Kody ต้องตรวจก่อนใช้ในทริปอื่น สี G (`#008357`) และ TRA (`#52708F`) ถูกขยับเล็กน้อยให้ข้อความบน chip ผ่าน 4.5:1
 5. **Seed `line:`/`line_alt:` ใน taiwan-2026.md** ใส่เฉพาะสายที่ข้อความ transport ระบุไว้ตรงๆ (23 รายการ + 6 รายการ alt) เช่น Day 3 15:00 ช่วง "MRT Beitou → Xinbeitou" ไม่ได้ติดสาย เพราะ md ไม่ได้ระบุสี และ Day 1 19:30 "MRT ย้อนเส้นทางเดิม" ไม่ได้ติดสาย
@@ -192,6 +206,10 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 13. **ห้ามเรียก `window.claude.use(...)` แล้วอ่านผลทันที** namespace มาทีหลังเสมอ ออกแบบให้หน้าทำงานได้เมื่อเป็น `null` (ตอนนี้ใช้แค่ `downloads`)
 14. **โหมดเจ้าของเป็นแค่ตัวกั้นหน้าจอ ไม่ใช่ความปลอดภัย:** ข้อมูลทุกอย่างฝังอยู่ในไฟล์ HTML ใครมีลิงก์กด view source ก็อ่านได้ รวมถึงหัวข้อ `# วางแผน` (จุดขัดแย้ง ❓⚠️ ที่ Claude ร่างไว้) ถ้าไม่อยากให้เพื่อนเห็น ต้องตัดส่วนนั้นออกจากเวอร์ชันที่ publish (ยังไม่มีตัวเลือกนี้ใน `tools/build.py`) การแก้ไขของผู้ชมแต่ละคนอยู่ในเครื่องเขาเท่านั้น ไม่ไปถึงใคร แต่ผู้ชมที่ปลดล็อกโหมดเจ้าของเองบนเครื่องตัวเองก็แก้ของตัวเองได้ (บน GAS: ผู้ชมที่ปลดล็อกจะแก้ได้แค่ในเครื่องตัวเอง บันทึกขึ้น Drive ไม่ได้ถ้าไม่มีรหัสแก้ไข และ server ตัด `# วางแผน` ออกก่อนส่งให้ผู้ชม)
 15. **เนื้อหาทริปไม่ได้ตรวจซ้ำ** เวลา ราคา เส้นทางใน `data/seed/taiwan-2026.md` ยกมาจากไฟล์ของ Kody ตามเดิม รายการที่ติด `❓`/`⚠️` คือยังไม่ยืนยัน ห้ามลบเครื่องหมายเอง และกล่อง "ห้ามพลาด / ข้อควรระวัง" ทุกวันเป็นร่างที่ Claude สรุปจากข้อมูลในไฟล์ (ติด `❓` ทุกบรรทัด รอ Kody ตรวจ)
+16. **GAS: ยังไม่ได้ทดสอบบน Google จริง** เทสต์ทั้งหมดใช้ GAS จำลอง (`tests/gas/fake-gas.js`) ข้อที่ติด `❓` ในข้อ 4 "Google Apps Script" ต้องเช็กตาม checklist ใน README หลัง deploy ครั้งแรก
+17. **GAS: ใครก็ล็อกการบันทึกได้ 10 นาที** ด้วยการเดารหัสผิด 10 ครั้ง (ลิมิตนับรวมเพราะไม่มีตัวตนผู้ใช้) อ่านแผนยังได้ปกติ ถ้าเจอบ่อยค่อยเปลี่ยนเป็นลิมิตแยกตามอย่างอื่น
+18. **GAS: รหัสแก้ไขเก็บใน `localStorage` แบบข้อความธรรมดา** บนเครื่องเจ้าของ ใครใช้ browser นั้นได้ก็บันทึกได้ ถ้ารหัสหลุด เปลี่ยน `EDIT_KEY` ใน Script Properties ได้ทันที (รหัสเก่าที่จำไว้จะใช้ไม่ได้)
+19. **GAS: แผนเดียวต่อ deployment** แผนอื่นที่นำเข้าในหน้า GAS อยู่แค่ในเครื่อง ไม่ขึ้น Drive ถ้าจะเปลี่ยนแผนบน Drive ให้นำเข้า md ที่ชื่อทริป+วันเริ่มตรงกัน แล้วเลือก "เขียนทับแผนเดิม" จากนั้นกดบันทึกขึ้น Drive
 
 ## 7. ไฟล์ที่เกี่ยวข้อง
 
@@ -203,7 +221,8 @@ python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d
 | `data/travel-plan-template.md` | schema + กฎ + ตัวอย่างเปล่า ใช้ให้ Claude สร้างแผนใหม่: แนบไฟล์นี้ + ข้อมูลดิบ แล้วสั่ง "สร้างตาม template ห้ามเปลี่ยนชื่อหัวข้อ/field อะไรไม่รู้ใส่ ❓ ห้ามเดา" |
 | `data/seed/taiwan-2026.md` | แผนไต้หวัน v4.1 (6 วัน 5 คืน, 8 คน) แปลงจาก v3 เป็น schema ใหม่ |
 | `README.md` | คำอธิบายโปรเจกต์สำหรับคนทั่วไป: feature, วิธีใช้, วิธี deploy, สถานะ Phase, checklist ทดสอบมือบน GAS (อัปเดตทุกครั้งที่เพิ่ม feature) |
-| `gas/*` (⏳) | server ของ Google Apps Script (ดูข้อ 3) |
+| `gas/Code.gs` | server ของ Apps Script: `doGet` · `getTrip(key)` → `{md, version, owner}` · `checkKey(key)` · `saveTrip(md, key, baseVersion, force)` → `{ok, version}` หรือ `{conflict}` · `setup()` |
+| `tests/gas/*`, `tests/gas.test.js`, `tests/e2e/ftest4.py` | GAS จำลอง + เทสต์ฝั่ง server และหน้า GAS |
 | `Original_template.pdf` (อยู่นอก repo, Kody ถือ) | ต้นแบบหน้าตา ถ้าต้องการให้ Claude Code เห็นให้ Kody ใส่ไว้ที่ `docs/` |
 | Artifact "Dark Tech Workshop" (URL ข้อ 4) | design system (README อย่างเดียว) |
 
@@ -216,12 +235,12 @@ dashboard + ปฏิทินรายเดือน · เมนูตาม 
 - 2a ✅ บล็อกสีตามสายรถไฟ/MRT (`line`, `line_alt`, chip + บล็อกใน detail + legend "สายที่ใช้วันนี้")
 - 2b ✅ สลับ EN/TH (UI ทั้งหมด + `*_en` แบบไม่บังคับ)
 - 2d ✅ โหมดเจ้าของ (ทุกคนดูอย่างเดียว) + แก้เครื่องหมายถูกของ checkbox (v2.1)
-- 2c ⏳ **Google Apps Script + ที่เก็บกลางแบบ "ทุกคนอ่าน เจ้าของเขียนคนเดียว"** (เลือกแล้ว 2026-11-05: GAS, ไฟล์ `.md` ใน Drive, รหัสแก้ไขฝั่ง server, เปิดให้ Anyone, เก็บ Artifact ไว้คู่กัน) ทำตามลำดับ แต่ละขั้นต้องใช้งานได้ก่อนไปขั้นต่อไป:
-  1. **target GAS แบบดูอย่างเดียว:** `build.py` สร้าง `dist/gas/` (`Code.gs` + `index.html`) `doGet` ส่งหน้าที่ฝัง seed ไว้ (ยังไม่อ่าน Drive) · ทดสอบข้อ `❓` ในกฎ GAS (router, localStorage บน iPhone, ดาวน์โหลด, CDN) แล้วแก้ข้อความใน CLAUDE.md เป็นผลจริง
-  2. **อ่านจาก Drive:** `getTrip()` อ่านไฟล์ `TRIP_FILE_ID` ตัด `# วางแผน` สำหรับผู้ชม หน้าแสดงแผนจาก server แทน seed (fallback: สำเนาใน `localStorage` → seed) ติ๊ก checklist ของผู้ชมยังอยู่ในเครื่องเขา
-  3. **บันทึกของเจ้าของ:** ช่องกรอกรหัสแก้ไขในโหมดเจ้าของ, `saveTrip(md, editKey, baseVersion)` ตรวจรหัส + กันเขียนทับ + สำรองไฟล์เดิม, สถานะ "บันทึกแล้ว/ยังไม่บันทึก" ในหน้า
-  4. **ตัดกลไก seed/republish บน GAS** (บน Artifact ยังใช้ seed เหมือนเดิม) + sync มือถือ↔โน้ตบุ๊กของเจ้าของ (โหลดจาก Drive ทุกครั้งที่เปิด)
-  - การเขียนต้องบังคับฝั่ง server ห้ามพึ่งแค่ `S.settings.owner` · ❓ ยังไม่ได้ตัดสิน: ใช้ `clasp` push โค้ดอัตโนมัติ หรือ Kody copy-paste เอง · ทางเลือกเดิม (capability `db`/`user` ของ Artifact) พักไว้
+- 2c ✅ โค้ด / ⏳ deploy จริง (v2.2) **Google Apps Script + ที่เก็บกลางแบบ "ทุกคนอ่าน เจ้าของเขียนคนเดียว"** Kody ตัดสิน 2026-11-05: GAS, ไฟล์ `.md` ใน Drive, รหัสแก้ไขฝั่ง server, เปิดให้ Anyone, เก็บ Artifact ไว้คู่กัน, **บันทึกด้วยปุ่ม** (ไม่ auto), **copy-paste** ขึ้น Apps Script (ไม่ใช้ clasp), **1 แผนต่อ 1 deployment**
+  1. ✅ target GAS: `build.py` สร้าง `dist/gas/` (`index.html` + `Code.gs` + `appsscript.json`)
+  2. ✅ อ่านจาก Drive: `getTrip()` ตัด `# วางแผน` + comment สำหรับผู้ชม หน้าแสดงสำเนาในเครื่องก่อนแล้วอัปเดตจาก server ติ๊กของผู้ชมอยู่ในเครื่องเขา
+  3. ✅ บันทึกของเจ้าของ: ใส่รหัส (ตั้งค่า หรือตอนกดบันทึก), `saveTrip` ตรวจรหัส + กันเขียนทับ + backup, แถบสถานะบันทึกแล้ว/ยังไม่บันทึก, ทิ้งการแก้ไข
+  4. ✅ ไม่ใช้ seed บน GAS (seed ใช้แค่ `setup()` ครั้งแรก) · sync มือถือ↔โน้ตบุ๊ก = โหลดจาก Drive ทุกครั้งที่เปิด/กลับมาที่แท็บหลัง 5 นาที
+  - ⏳ เหลือ: Kody deploy + ทดสอบตาม checklist ใน README แล้วแก้ข้อ `❓` ในข้อ 4 · ทางเลือกเดิม (capability `db`/`user` ของ Artifact) พักไว้
 
 **Phase 3 ⏳ — สร้าง/แก้แผนในเว็บได้ครบ**
 ปุ่ม "แผนใหม่" (เปล่า / คัดลอกโครง) · preview markdown ข้างช่องแก้ · ตรวจข้อมูลแล้วเตือน (เวลาซ้อน/ไม่เรียง, วันที่นอกช่วงทริป, วันไม่มี route) · ปุ่มเรียงตามเวลา · undo/redo หลายขั้น · field timezone ต่อรายการ (แก้ปัญหาข้อ 6.1) · เพิ่มคำแปล `_en` ให้ field ที่ยังไม่มี (must/caution/flights/stays)
