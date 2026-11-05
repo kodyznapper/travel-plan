@@ -4,7 +4,7 @@ PAGE = 'file://' + str(ROOT / 'dist/travel-plan.html')
 MARKED = str(ROOT / 'vendor/marked.min.js')          # stands in for the jsdelivr CDN so tests run offline
 TEMPLATE = str(ROOT / 'data/travel-plan-template.md')
 from playwright.sync_api import sync_playwright
-U=PAGE; H='#taiwan-trip-2026-2026-11-12'
+U=PAGE; H='#taiwan-trip-2026-11-12'
 errs=[]; ok=True
 def check(name,cond):
     global ok; print(('PASS ' if cond else 'FAIL ')+name); ok = ok and bool(cond)

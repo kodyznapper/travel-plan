@@ -1,15 +1,17 @@
 ---
-title: Taiwan Trip 2026
+title: เที่ยวไต้หวัน 2026
+title_en: Taiwan Trip
 subtitle: Taipei
+subtitle_en: Let's enjoy the trip
 country: Taiwan
 country_native: 臺灣
 start: 2026-11-12
 end: 2026-11-17
 timezone: Asia/Taipei
-travelers: 8
-style: ขนส่งสาธารณะเป็นหลัก · เดินระยะใกล้ (≤ ~15 นาที/ช่วง)
-style_en: Mainly public transport · short walks (≤ ~15 min per stretch)
-version: v4.1
+travelers: 6
+style: ขนส่งสาธารณะเป็นหลัก และ เดินระยะใกล้ (≤ ~15 นาที/ช่วง)
+style_en: Mainly public transport and Short walks (≤ ~15 min per stretch)
+version: v1.2
 ---
 
 # ภาพรวม
@@ -34,34 +36,38 @@ version: v4.1
 - ค่า MRT/รถเมล์ในแผนเป็นค่าประมาณ (MRT ระยะสั้น ~NT$20–35, รถเมล์ในเมือง ~NT$15 ต่อช่วง) ตรวจใน Google Maps / Taipei Metro Go ก่อนไป
 - ตลาดกลางคืนส่วนใหญ่รับเงินสด พกเงินสด NT$ ติดตัว
 - ⚠️ บุหรี่ไฟฟ้า/vape ห้ามนำเข้าและใช้ในไต้หวัน (ตรวจกฎศุลกากรล่าสุด)
+- ⚠️ ห้ามนำเข้าเนื้อสัตว์ (ตรวจกฎศุลกากรล่าสุด)
 
 # Day 1 — 2026-11-12 · Far from Thailand Land of Smile
 
 route: Taoyuan → Ximen → Longshan → Huashan → Ningxia
 stay: Hotel Midtown Richardson
-summary: บินถึง Taoyuan → เข้า Ximen ฝากกระเป๋า → วัด Longshan → Huashan 1914 → ตลาด Ningxia → พัก
-summary_en: Fly into Taoyuan → Ximen (drop bags) → Longshan Temple → Huashan 1914 → Ningxia Night Market → rest
+summary: บินถึง Taoyuan → เข้า Ximen ฝากกระเป๋า → วัด Longshan → Huashan 1914 → ตลาด Ningxia → โรงแรม
+summary_en: Fly into Taoyuan → Ximen (drop bags) → Longshan Temple → Huashan 1914 → Ningxia Night Market → Hotel
 
-### 07:45–12:30 · ดอนเมือง → เถาหยวน
-- en: DMK → Taoyuan Intl Airport
+### 07:45–12:30 · FD230 ดอนเมือง → เถาหยวน
+- en: FD230 DMK → TPE
 - zh: 桃園國際機場
 - type: flight
 - status: ✅
 - highlight: true
 - transport: FD230
-- cost: ~3 ชม. 45–55 นาที
+- transport_en: FD230
+- cost: ~3.45 ชม. / 3.45 hrs
 - notes: 🔎 FD230 ใช้ **Terminal 1** ❓ ยืนยันตามตั๋ว · ทำ TWAC ก่อนบิน
 
 ### 12:45–13:15 · ตม. + รับกระเป๋า
+- en: Immigration & Pick up laggage
 - zh: 入境
 - type: other
 - status: 📄
-- transport: เดินตามป้าย
-- cost: ~30 นาที
+- transport: เดินตามป้าย - Follow the route
+- cost: ~30 นาที/min
 - notes: ⚠️ ลงจริง 12:30 (PDF 12:45)
 - map: -
 
 ### 13:30–14:30 · ไป Ximending
+- en: To Ximending
 - zh: 西門町
 - type: train
 - status: ✅
@@ -122,12 +128,13 @@ summary_en: Fly into Taoyuan → Ximen (drop bags) → Longshan Temple → Huash
 - notes: 🔎 แผงเปิด ~17:00 · **Liu Yu Zi 劉芋仔** (Bib) ต่อคิว 20–60 นาที เงินสด ~NT$25–50 · Rong's Pork Liver 豬肝榮仔 · Fang Jia Chicken Rice 方家雞肉飯 (Bib)
 
 ### 19:30 · กลับโรงแรม
+- en: Back to Hotel
+- zh: 德立莊酒店
 - type: bus
 - status: 📄
 - transport: 📄 รถเมล์ 229 ย้อน
 - transport_alt: MRT ย้อนเส้นทางเดิม
 - cost: ~25–35 นาที
-- map: -
 
 ## ห้ามพลาดวันนี้
 - ❓ Liu Yu Zi 劉芋仔 (Bib) ที่ตลาด Ningxia
@@ -148,6 +155,7 @@ summary: Fu Hang (Bib) → Jiufen → พัก → Raohe → ✅ Hotpot ~20:15
 summary_en: Fu Hang (Bib) → Jiufen → rest → Raohe → ✅ Hotpot ~20:15
 
 ### 09:00 · Fu Hang Soy Milk
+- en: Fu Hang Soy Milk
 - zh: 阜杭豆漿
 - type: food
 - status: 📄
@@ -610,11 +618,12 @@ summary_en: Breakfast in Ximen → Wulai → onsen 13:00 → Xinyi / Din Tai Fun
 # Day 6 — 2026-11-17 · Good bye Taiwan / My Dear
 
 route: Ximen → Taoyuan → DMK
-stay: กลับไทย · FD231 ถึง DMK 21:30 (เวลาไทย)
+stay: Thailand · FD231 at DMK 21:30 (TH)
 summary: ฟรีไทม์ → เช็กเอาต์ 11:00 ฝากกระเป๋า → นัดรวม 14:30 → สนามบิน → ✅ FD231 18:35
 summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airport → ✅ FD231 18:35
 
-### เช้า–11:00 · ฟรีไทม์
+### เช้า–11:00 · Free Time Brunch อาหารเช้า ของกิน ของฝาก
+- en: Free Time Brunch
 - zh: 自由活動
 - type: free
 - status: 📄
@@ -622,6 +631,7 @@ summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airp
 - map: -
 
 ### 11:00 · เช็กเอาต์ + ฝากกระเป๋า
+- en: Check out Hotel and leave luggage
 - zh: 退房
 - type: hotel
 - status: 📄
@@ -629,11 +639,13 @@ summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airp
 - map: -
 
 ### 14:30 · นัดรวมที่โรงแรม
+- en: Gathering before go to Airport
 - type: hotel
 - status: 📄
 - map: -
 
-### 14:45 · ไปสนามบิน
+### 14:45 · ไปสนามบินเถาหยวน
+- en: To Taoyuan Intl Airport
 - zh: 桃園機場
 - type: train
 - status: 📄
@@ -645,13 +657,15 @@ summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airp
 - notes: 🔎 Express ทุก 15 นาที · ❓ ยืนยันเทอร์มินัล (T2 = A13) · ❓ AirAsia เช็กอินที่ A1 (in-town) ได้ไหม
 - map: -
 
-### 15:40 · ถึงสนามบิน
+### 15:40 · ถึงสนามบิน และ Check In
+- en: Arrive Airport & Check In
 - type: flight
 - status: 📄
 - notes: ⚠️ ถ้าใช้เส้นทางด้านบน ถึง ~16:00 → ยังเหลือ ~2.5 ชม.
 - map: -
 
-### 18:35 · FD231 TPE → DMK
+### 18:35 · FD231 เถาหยวน → ดอนเมือง
+- en: FD231 TPE → DMK
 - type: flight
 - status: ✅
 - highlight: true
@@ -679,6 +693,7 @@ summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airp
 | ✅ กระเป๋า CPAP (อุปกรณ์การแพทย์) | — | ดูหมวด กระเป๋า CPAP |
 
 ## กระเป๋า CPAP
+
 - [ ] เครื่อง + หน้ากาก + สายท่อลม + สายรัด
 - [ ] อะแดปเตอร์ — **ตรวจป้ายแรงดัน (ควรรองรับ 100–240V)** เพราะไต้หวัน 110V
 - [ ] รางปลั๊ก/ปลั๊กแปลง (Type A/B) สำหรับข้างเตียง
@@ -690,6 +705,7 @@ summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airp
 - [ ] ❓ แจ้งโรงแรมเรื่องปลั๊กข้างเตียง/น้ำกลั่น (ถ้าต้องใช้)
 
 ## เอกสาร / เงิน / สื่อสาร
+
 - [ ] พาสปอร์ต (≥ 6 เดือน) + สำเนา
 - [ ] ตั๋ว FD230/FD231 · ใบจองโรงแรม · **TWAC QR**
 - [ ] ประกันการเดินทาง ❓
@@ -710,11 +726,13 @@ summary_en: Free time → check out 11:00 and store bags → meet 14:30 → airp
 - [ ] ครีมกันแดด / แว่นกันแดด
 
 ## ยา / เบ็ดเตล็ด
+
+- [ ] ⚠️  **ห้าม** นำเข้าเนื้อสัตว์ (ตรวจกฎศุลกากรล่าสุด)
+- [ ] ⚠️ **ห้าม** นำเข้าบุหรี่ไฟฟ้า/vape และห้ามใช้ในไต้หวัน** (ตรวจกฎศุลกากรล่าสุด)
 - [ ] ยาประจำตัว (พกในกระเป๋าถือ)
 - [ ] ยาแก้เมารถ (Wulai ทางโค้ง) · ยาแก้ปวด/ท้องเสีย · พลาสเตอร์
 - [ ] พาวเวอร์แบงก์ (กระเป๋าถือ) + สายชาร์จ + หัวปลั๊ก
 - [ ] ทิชชู่เปียก/ถุงซิป/ถุงขยะ
-- [ ] ⚠️ **บุหรี่ไฟฟ้า/vape ห้ามนำเข้าและใช้ในไต้หวัน** (ตรวจกฎศุลกากรล่าสุด)
 - [ ] เว้นที่ว่างในกระเป๋าใหญ่สำหรับของฝาก
 
 # To-do

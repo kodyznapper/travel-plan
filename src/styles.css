@@ -424,3 +424,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
 @media (max-width:480px){.tb-in{gap:6px;padding:0 12px}.edbtn span{display:none}.edbtn{padding:0 11px;min-width:40px}}
 
 .note.ver{cursor:default;-webkit-user-select:none;user-select:none;padding:6px 0}
+
+/* ---------- now + next card (Phase 4) ---------- */
+.nowcard{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--or);border-radius:12px;padding:12px 14px;margin:4px 0 16px;display:grid;gap:8px}
+.nc-now{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:14px;color:var(--body)}
+.nc-now .ic{width:17px;height:17px;color:var(--or)}
+.nc-now b{font-family:var(--m);color:var(--text)}
+.nc-main{display:grid;gap:4px;text-align:left;width:100%;background:transparent;border:0;padding:0;color:var(--text);cursor:pointer}
+.nc-k{font-size:13px;color:var(--dim)}
+.nc-k b{color:var(--or);font-weight:700}
+.nc-t{font-weight:700;font-size:19px;line-height:1.35}
+.nc-time{font-family:var(--m);color:var(--or);margin-right:8px}
+.nc-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14px;color:var(--body)}
+.nc-cost{font-size:13.5px;color:var(--dim)}
+.nc-done{font-size:14px;color:var(--body)}
+.nc-map{justify-self:start}
+.nc-map .ic{width:16px;height:16px}

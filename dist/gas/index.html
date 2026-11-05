@@ -436,13 +436,29 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
 
 .note.ver{cursor:default;-webkit-user-select:none;user-select:none;padding:6px 0}
 
+/* ---------- now + next card (Phase 4) ---------- */
+.nowcard{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--or);border-radius:12px;padding:12px 14px;margin:4px 0 16px;display:grid;gap:8px}
+.nc-now{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:14px;color:var(--body)}
+.nc-now .ic{width:17px;height:17px;color:var(--or)}
+.nc-now b{font-family:var(--m);color:var(--text)}
+.nc-main{display:grid;gap:4px;text-align:left;width:100%;background:transparent;border:0;padding:0;color:var(--text);cursor:pointer}
+.nc-k{font-size:13px;color:var(--dim)}
+.nc-k b{color:var(--or);font-weight:700}
+.nc-t{font-weight:700;font-size:19px;line-height:1.35}
+.nc-time{font-family:var(--m);color:var(--or);margin-right:8px}
+.nc-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14px;color:var(--body)}
+.nc-cost{font-size:13.5px;color:var(--dim)}
+.nc-done{font-size:14px;color:var(--body)}
+.nc-map{justify-self:start}
+.nc-map .ic{width:16px;height:16px}
+
 </style>
 </head>
 <body>
 <header class="topbar" id="topbar"></header>
 <main id="app"></main>
 <div id="toasts" class="toasts" aria-live="polite"></div>
-<script>window.TP_TARGET="gas";window.TP_SEED=[];window.TP_TEMPLATE="\u003c!--\nTRAVEL PLAN TEMPLATE · v1\nใช้กับเว็บแผนเที่ยว (Travel Plan) — import ไฟล์นี้ได้โดยตรง\n\nวิธีใช้กับ Claude:\nแนบไฟล์นี้ + ข้อมูลดิบของทริป แล้วสั่งว่า\n\"สร้างแผนตาม travel-plan-template.md ห้ามเปลี่ยนชื่อหัวข้อและชื่อ field\nอะไรที่ไม่รู้ให้ใส่ ❓ ห้ามเดา\"\n\nกฎของไฟล์ (เว็บอ่านตามนี้):\n1. ส่วน --- ด้านบนสุด = ข้อมูลทริป (key: value ทีละบรรทัด)\n   วันที่ใช้รูปแบบ YYYY-MM-DD (ค.ศ.) · timezone ใช้ชื่อแบบ Asia/Taipei\n2. หัวข้อระดับ # ใช้ชื่อตามนี้เท่านั้น:\n   # ภาพรวม · # Day N — YYYY-MM-DD · ธีมของวัน · # เตรียมของ · # To-do · # ข้อมูลอ้างอิง · # วางแผน\n3. ใต้ # Day: บรรทัด route / stay / summary ก่อนรายการแรก\n   route คั่นจุดด้วย → (เว็บใช้วาดเส้นทาง) · ใส่ 2–5 จุด\n4. แต่ละรายการ = ### เวลา · ชื่อ (ภาษาไทย)\n   เวลาเขียนได้หลายแบบ: 09:00 · 09:00–10:30 · ~12:00 · เช้า–11:00\n   ตามด้วย field แบบ \"- key: value\" หนึ่งบรรทัดต่อ field (ใส่เฉพาะที่มี):\n     en            ชื่ออังกฤษ\n     zh            ชื่อจีน/ภาษาท้องถิ่น (ใช้สร้างลิงก์ Google Maps)\n     type          flight · train · bus · taxi · walk · hotel · food · cafe · market\n                   temple · museum · shopping · onsen · nature · nightlife · free · other\n     status        ✅ ยืนยันแล้ว · 📄 ตามเอกสาร · 🔎 ตรวจเว็บแล้ว · ⚠️ ต้องยืนยัน · ❓ ยังไม่ทราบ\n     highlight     true = รายการสำคัญ (เวลาตายตัว จองแล้ว พลาดไม่ได้)\n     line          สายรถไฟ/MRT ของ \"เดินทางหลัก\" คั่นด้วย , เรียงตามลำดับที่ใช้ เช่น BL, G\n                   รหัสที่รู้จัก: R BL G O BR Y AIRPORT HSR TRA (ไทเป) · สายอื่นใช้ ชื่อ#RRGGBB เช่น Yamanote#80C241\n                   ใส่เฉพาะสายที่ข้อความ transport ระบุไว้จริง ห้ามเดา\n     line_alt      เหมือน line แต่สำหรับ \"เดินทางรอง\"\n     transport     เดินทางหลัก\n     transport_alt เดินทางรอง\n     cost          ระยะเวลา / ค่าใช้จ่าย\n     notes         สถานที่น่าสนใจรอบๆ / หมายเหตุ\n     map           URL Google Maps (ถ้าไม่ใส่ เว็บค้นจาก zh หรือ en ให้) · \"-\" = ไม่ต้องมีลิงก์\n   ภาษาอังกฤษ (ไม่บังคับ): เพิ่ม field _en ได้ transport_en · transport_alt_en · cost_en · notes_en\n   ชื่อสถานที่ภาษาอังกฤษใช้ field en เดิม · เว็บในโหมด EN ใช้ค่า _en ถ้ามี ไม่มีก็แสดงข้อความภาษาเดิม\n   ระดับวัน: theme_en · summary_en (วางไว้ถัดจาก route/stay/summary) · ระดับทริป: title_en · subtitle_en · style_en\n   ค่าของ field ต้องอยู่บรรทัดเดียว ถ้ามีหลายเรื่องให้คั่นด้วย \" · \"\n   ใช้ **ตัวหนา** และ `code` ได้\n5. ## ห้ามพลาดวันนี้ / ## ข้อควรระวัง = รายการ \"- \" ทีละบรรทัด\n   ## ข้อมูลเพิ่มเติม = markdown อิสระ (ตาราง ย่อหน้า quote ได้)\n6. # เตรียมของ: แบ่งหมวดด้วย ## · ของที่ต้องติ๊กใช้ \"- [ ] \" (เสร็จแล้ว \"- [x] \")\n   บรรทัดอื่นในหมวด (ตาราง, ย่อหน้า) แสดงเป็นหมายเหตุของหมวด\n7. # To-do: \"- [ ] กำหนด · งาน\" (ไม่มีกำหนดใส่ \"-\")\n   ถ้ากำหนดมีวันที่ YYYY-MM-DD เว็บจะเตือนเมื่อเลยกำหนด\n8. # ข้อมูลอ้างอิง: แบ่งด้วย ## เป็น markdown อิสระ\n   แถวในตารางแตะเพื่อเปิดเต็มจอได้ (เหมาะกับประโยคภาษาท้องถิ่น การ์ดแท็กซี่)\n9. # วางแผน: markdown อิสระ แสดงเฉพาะ \"โหมดวางแผน\"\n   (จุดขัดแย้ง สิ่งที่ยังไม่ยืนยัน แหล่งข้อมูล)\n10. ข้อความในกล่องคอมเมนต์นี้ เว็บไม่อ่าน ลบทิ้งได้\n-->\n---\ntitle: ชื่อทริป\nsubtitle: เมืองหลัก\ncountry: ชื่อประเทศ (อังกฤษ)\ncountry_native: ชื่อประเทศภาษาท้องถิ่น\nstart: 2027-01-01\nend: 2027-01-03\ntimezone: Asia/Bangkok\ntravelers: 2\nstyle: รูปแบบการเดินทาง\nstyle_en: Travel style in English (optional)\nversion: v1\n---\n\n# ภาพรวม\n\n## เที่ยวบิน\n\n| เที่ยวบิน | วันที่ | เส้นทาง | ออก | ถึง | สถานะ | หมายเหตุ |\n|---|---|---|---|---|---|---|\n| XX000 | 2027-01-01 | AAA → BBB | 00:00 | 00:00 | ❓ | |\n\n## ที่พัก\n\n| เช็กอิน | เช็กเอาต์ | ชื่อ | ที่อยู่ | หมายเหตุ | สถานะ |\n|---|---|---|---|---|---|\n| 2027-01-01 | 2027-01-03 | ชื่อที่พัก | ที่อยู่ | | ❓ |\n\n## จำไว้ตลอดทริป\n\n- เรื่องที่ต้องจำตลอดทริป\n\n# Day 1 — 2027-01-01 · ธีมของวัน\n\nroute: จุดเริ่ม → จุดกลาง → จุดจบ\nstay: ชื่อที่พัก\nsummary: สรุปวันสั้นๆ\nsummary_en: Short day summary in English (optional)\n\n### 09:00 · ชื่อสถานที่\n- en: English name\n- zh: 本地名稱\n- type: temple\n- status: ❓\n- line: BL\n- transport: เดินทางหลัก\n- transport_en: Main transport in English (optional)\n- line_alt: G, R\n- transport_alt: เดินทางรอง\n- cost: ~30 นาที / ~100\n- notes: สถานที่น่าสนใจรอบๆ / หมายเหตุ\n\n## ห้ามพลาดวันนี้\n- สิ่งที่ห้ามพลาด\n\n## ข้อควรระวัง\n- สิ่งที่ต้องระวัง\n\n## ข้อมูลเพิ่มเติม\n\nข้อมูลอื่นของวันนี้ (ไม่มีก็ลบหัวข้อนี้ได้)\n\n# เตรียมของ\n\n## เอกสาร\n- [ ] พาสปอร์ต\n\n# To-do\n\n- [ ] ก่อน 2027-01-01 · งานที่ต้องทำ\n\n# ข้อมูลอ้างอิง\n\n## เบอร์ฉุกเฉิน\n\n| เรื่อง | เบอร์ | หมายเหตุ |\n|---|---|---|\n| ตำรวจ | ❓ | |\n\n# วางแผน\n\n## จุดที่ยังไม่ยืนยัน\n\n- ❓\n";</script>
+<script>window.TP_TARGET="gas";window.TP_SEED=[];window.TP_TEMPLATE="\u003c!--\nTRAVEL PLAN TEMPLATE · v2\nใช้กับเว็บแผนเที่ยว (Travel Plan) — import ไฟล์นี้ได้โดยตรง\n\n══ วิธีใช้กับ Claude ══\nแนบไฟล์นี้ + ข้อมูลดิบของทริป (โน้ต, ตั๋ว, ใบจอง, PDF) แล้วสั่งว่า\n\"สร้างแผนตาม travel-plan-template.md ทำตามกฎในกล่องคอมเมนต์ด้านบนทุกข้อ\nห้ามเปลี่ยนชื่อหัวข้อและชื่อ field อะไรที่ไม่รู้ให้ใส่ ❓ ห้ามเดา\nส่งผลเป็นไฟล์ .md ไฟล์เดียว\"\nหลังได้ไฟล์: เว็บ → นำเข้า .md → ดู \"คำเตือน\" ในหน้าตรวจก่อนนำเข้า\nถ้ามีคำเตือน ส่งข้อความคำเตือนกลับให้ Claude แก้แล้วนำเข้าใหม่\n\n══ กฎสำหรับ Claude (คนสร้างแผน) ══\nA. ห้ามเดา: ข้อมูลที่ไม่มีในข้อมูลดิบให้ใส่ ❓ หรือเว้นว่าง ห้ามแต่งเวลา ราคา ที่อยู่ สีสายรถไฟ\nB. สถานะ (field status และคอลัมน์ สถานะ) ใช้ตามความหมายนี้เท่านั้น:\n     ✅ ยืนยันแล้ว   ผู้ใช้บอกเองว่าจอง/จ่าย/ยืนยันแล้ว (เช่น \"จองแล้ว\") — Claude ห้ามติด ✅ ให้สิ่งที่ตัวเองสรุป\n     📄 ตามเอกสาร   มาจากข้อมูลดิบ/ตั๋ว/PDF ที่ผู้ใช้ให้ ยังไม่มีใครตรวจซ้ำ\n     🔎 ตรวจเว็บแล้ว ตรวจกับเว็บไซต์แล้ว (ระบุแหล่งไว้ใน # วางแผน)\n     ⚠️ ต้องยืนยัน   ข้อมูลขัดกัน / เสี่ยงผิด / ผู้ใช้เขียนว่า \"ไม่แน่ใจ\" \"?\"\n     ❓ ยังไม่ทราบ   ไม่มีข้อมูล\n   ของที่ \"ยังไม่จอง / จองแล้วแต่ยังไม่จ่าย\" ใช้ ⚠️ แล้วเพิ่มงานนั้นใน # To-do\nC. Claude ร่างส่วนที่ผู้ใช้ไม่ได้ให้มาตรงๆ ได้ แต่ทุกบรรทัดที่สรุปเองต้องขึ้นต้นด้วย ❓\n   ได้แก่ ## ห้ามพลาดวันนี้ · ## ข้อควรระวัง · # วางแผน (จุดขัดแย้ง สิ่งที่ยังไม่ยืนยัน แหล่งข้อมูล)\n   ส่วนช่องภาษาอังกฤษ (_en) ให้แปลจากข้อความไทยตรงๆ ได้เลยโดยไม่ต้องติด ❓\nD. หนึ่ง field = หนึ่งภาษา: ข้อความไทยใส่ field หลัก ภาษาอังกฤษใส่ field _en\n   ห้ามเขียนสองภาษาในช่องเดียว เช่น \"~30 นาที/min\" ❌ → cost: ~30 นาที + cost_en: ~30 min ✅\nE. เวลา: เว็บใช้ตัวเลข HH:MM ตัวแรกของเวลาวาง \"เส้นตอนนี้\" และการ์ด \"ถัดไป\"\n   ถ้ารู้เวลาโดยประมาณให้เขียน ~14:00 · ถ้าไม่รู้เลยเขียน ❓ หรือคำอย่าง \"บ่าย\" ได้\n   (รายการนั้นจะไม่ขึ้นในการ์ด \"ถัดไป\") · เรียงรายการตามเวลาในแต่ละวัน\n   ทั้งทริปใช้ timezone เดียว (front matter) เวลาในหัว ### ต้องเป็นเวลาท้องถิ่นของทริปเสมอ\n   เหตุการณ์ที่เกิดนอกประเทศ (เช่น เครื่องออกจากไทย) ใช้เวลาถึงเป็นหัวรายการ แล้วเขียนเวลาไทยใน notes\nF. แผนยาวมาก (เกิน ~8 วัน) ให้ส่งเป็นไฟล์ หรือทยอยส่งทีละช่วงวันแล้วต่อกันเป็นไฟล์เดียว\n\n══ กฎของไฟล์ (เว็บอ่านตามนี้) ══\n1. ส่วน --- ด้านบนสุด = ข้อมูลทริป (key: value ทีละบรรทัด)\n   วันที่ใช้รูปแบบ YYYY-MM-DD (ค.ศ.) · timezone ใช้ชื่อ IANA แบบ Asia/Tokyo\n   start / end = วันแรก / วันสุดท้ายที่อยู่ในประเทศปลายทาง (ตามเวลาท้องถิ่น) · หนึ่ง # Day ต่อหนึ่งวัน\n   country_native = ชื่อประเทศภาษาท้องถิ่น แสดงเป็นตราประทับในหน้าแรก (ใช้ 2–4 ตัวอักษร เช่น 臺灣 日本 한국)\n   travelers = ตัวเลขจำนวนคน · ภาษาอังกฤษ (ไม่บังคับ): title_en · subtitle_en · style_en\n2. หัวข้อระดับ # ใช้ชื่อตามนี้เท่านั้น:\n   # ภาพรวม · # Day N — YYYY-MM-DD · ธีมของวัน · # เตรียมของ · # To-do · # ข้อมูลอ้างอิง · # วางแผน\n   ใต้ # ภาพรวม: ## เที่ยวบิน และ ## ที่พัก เป็นตาราง — ชื่อคอลัมน์ต้องตรงกับตัวอย่างทุกตัวอักษร\n   (เดินทางไม่ใช่เครื่องบิน เช่น รถไฟข้ามเมือง ใส่เป็นรายการในวันนั้นแทน)\n3. ใต้ # Day: บรรทัด route / stay / summary ก่อนรายการแรก (theme_en · summary_en ไม่บังคับ)\n   stay วันสุดท้ายที่ไม่มีที่พัก เขียนปลายทาง เช่น \"กลับไทย · XX000\"\n   route คั่นจุดด้วย → (เว็บใช้วาดเส้นทาง) · ใส่ 2–5 จุด\n4. แต่ละรายการ = ### เวลา · ชื่อ (ภาษาไทย)\n   เวลาเขียนได้หลายแบบ: 09:00 · 09:00–10:30 · ~12:00 · เช้า–11:00 (ดูกฎ E)\n   ตามด้วย field แบบ \"- key: value\" หนึ่งบรรทัดต่อ field (ใส่เฉพาะที่มี):\n     en            ชื่ออังกฤษ (โหมด EN ใช้เป็นชื่อหลัก)\n     zh            ชื่อในภาษาท้องถิ่น ภาษาอะไรก็ได้ (จีน ญี่ปุ่น เกาหลี …) ใช้สร้างลิงก์ Google Maps\n     type          flight · train · bus · taxi · walk · hotel · food · cafe · market\n                   temple · museum · shopping · onsen · nature · nightlife · free · other\n                   (free = เวลาว่าง/อิสระ · จุดชมวิว ตึก สวนสนุก ที่ไม่เข้าหมวดไหน ใช้ other)\n     status        ✅ · 📄 · 🔎 · ⚠️ · ❓ (ความหมายดูกฎ B)\n     highlight     true = รายการสำคัญ (เวลาตายตัว จองแล้ว พลาดไม่ได้)\n     line          สายรถไฟ/MRT ของ \"เดินทางหลัก\" คั่นด้วย , เรียงตามลำดับที่ใช้\n                   รหัสที่เว็บรู้จักมีแค่ของไทเป: R BL G O BR Y AIRPORT HSR TRA\n                   เมืองอื่นต้องเขียน ชื่อ#RRGGBB ทุกครั้ง เช่น Ginza#F39700 · Yamanote#80C241\n                   ห้ามใช้รหัสไทเปข้างบนกับสายเมืองอื่น (เช่น สาย G ของโตเกียว) เพราะเว็บจะใช้สีของไทเป\n                   ใส่เฉพาะสายที่ข้อความ transport ระบุไว้จริง · ถ้าไม่รู้สีจริงของสาย ไม่ต้องใส่ line\n                   สีในตัวอย่างของไฟล์นี้เป็นแค่ตัวอย่าง ห้ามคัดลอกไปใช้ถ้าไม่แน่ใจว่าเป็นสีจริง\n     line_alt      เหมือน line แต่สำหรับ \"เดินทางรอง\"\n     transport     เดินทางหลัก\n     transport_alt เดินทางรอง\n     cost          ระยะเวลา / ค่าใช้จ่าย (ใส่สกุลเงินในข้อความ เช่น ¥180 · NT$20)\n     notes         สถานที่น่าสนใจรอบๆ / หมายเหตุ\n     map           URL Google Maps (ถ้าไม่ใส่ เว็บค้นจาก zh หรือ en ให้) · \"-\" = ไม่ต้องมีลิงก์\n   ภาษาอังกฤษ (ไม่บังคับ): transport_en · transport_alt_en · cost_en · notes_en\n   เว็บโหมด EN ใช้ค่า _en ถ้ามี ไม่มีก็แสดงข้อความภาษาไทย\n   ยังไม่มีช่อง _en สำหรับ: ห้ามพลาด · ข้อควรระวัง · ตารางเที่ยวบิน/ที่พัก · เตรียมของ · To-do · ข้อมูลอ้างอิง\n   (ส่วนนี้เขียนภาษาไทย ถ้าต้องการให้คนต่างชาติอ่านได้ ใส่คำอังกฤษในวงเล็บได้)\n   ค่าของ field ต้องอยู่บรรทัดเดียว ถ้ามีหลายเรื่องให้คั่นด้วย \" · \"\n   ใช้ **ตัวหนา** และ `code` ได้\n5. ## ห้ามพลาดวันนี้ / ## ข้อควรระวัง = รายการ \"- \" ทีละบรรทัด (หัวข้อ ## อื่นใต้ Day ใช้ไม่ได้)\n   ## ข้อมูลเพิ่มเติม = markdown อิสระ (ตาราง ย่อหน้า quote ได้)\n6. # เตรียมของ: แบ่งหมวดด้วย ## · ของที่ต้องติ๊กใช้ \"- [ ] \" (เสร็จแล้ว \"- [x] \")\n   บรรทัดอื่นในหมวด (ตาราง, ย่อหน้า) แสดงเป็นหมายเหตุของหมวด\n7. # To-do: \"- [ ] กำหนด · งาน\" (ไม่มีกำหนดใส่ \"-\")\n   กำหนดเขียนอิสระได้ เช่น \"ก่อน 2027-03-01\" · ถ้ามีวันที่ YYYY-MM-DD เว็บจะเตือนเมื่อเลยกำหนด\n8. # ข้อมูลอ้างอิง: แบ่งด้วย ## เป็น markdown อิสระ\n   แถวในตารางแตะเพื่อเปิดเต็มจอได้ (เหมาะกับประโยคภาษาท้องถิ่น การ์ดแท็กซี่)\n   ควรมี: ข้อมูลเข้าเมือง · เบอร์ฉุกเฉิน · การ์ดแท็กซี่ (ที่อยู่ที่พักภาษาท้องถิ่น) · ประโยคใช้บ่อย\n9. # วางแผน: markdown อิสระ แสดงเฉพาะเจ้าของแผน (ผู้ชมบน Google Apps Script มองไม่เห็น)\n   ใส่: จุดขัดแย้ง สิ่งที่ยังไม่ยืนยัน แหล่งข้อมูล ข้อมูลส่วนตัวที่ไม่อยากให้เพื่อนเห็นใส่ที่นี่เท่านั้น\n10. ข้อความในกล่องคอมเมนต์นี้ เว็บไม่อ่าน ลบทิ้งได้\n-->\n---\ntitle: ชื่อทริป\ntitle_en: Trip name in English (optional)\nsubtitle: เมืองหลัก\nsubtitle_en: Main city in English (optional)\ncountry: ชื่อประเทศ (อังกฤษ)\ncountry_native: ชื่อประเทศภาษาท้องถิ่น\nstart: 2027-01-01\nend: 2027-01-03\ntimezone: Asia/Bangkok\ntravelers: 2\nstyle: รูปแบบการเดินทาง\nstyle_en: Travel style in English (optional)\nversion: v1\n---\n\n# ภาพรวม\n\n## เที่ยวบิน\n\n| เที่ยวบิน | วันที่ | เส้นทาง | ออก | ถึง | สถานะ | หมายเหตุ |\n|---|---|---|---|---|---|---|\n| XX000 | 2027-01-01 | AAA → BBB | 00:00 | 00:00 | ❓ | |\n\n## ที่พัก\n\n| เช็กอิน | เช็กเอาต์ | ชื่อ | ที่อยู่ | หมายเหตุ | สถานะ |\n|---|---|---|---|---|---|\n| 2027-01-01 | 2027-01-03 | ชื่อที่พัก | ที่อยู่ | | ❓ |\n\n## จำไว้ตลอดทริป\n\n- เรื่องที่ต้องจำตลอดทริป\n\n# Day 1 — 2027-01-01 · ธีมของวัน\n\nroute: จุดเริ่ม → จุดกลาง → จุดจบ\nstay: ชื่อที่พัก\nsummary: สรุปวันสั้นๆ\nsummary_en: Short day summary in English (optional)\ntheme_en: Day theme in English (optional)\n\n### 09:00 · ชื่อสถานที่\n- en: English name\n- zh: 本地名稱\n- type: temple\n- status: ❓\n- line: ชื่อสาย#1E88E5\n- transport: เดินทางหลัก\n- transport_en: Main transport in English (optional)\n- line_alt: สายA#E53935, สายB#43A047\n- transport_alt: เดินทางรอง\n- cost: ~30 นาที / ~100\n- cost_en: ~30 min / ~100 (optional)\n- notes: สถานที่น่าสนใจรอบๆ / หมายเหตุ\n- notes_en: Nearby places / notes in English (optional)\n\n### ~13:30–15:00 · ตัวอย่างที่ใส่ข้อมูลครบ (ลบได้)\n- en: Example Temple\n- zh: 範例寺\n- type: temple\n- status: 📄\n- highlight: true\n- line: Ginza#F39700\n- transport: สาย **Ginza** จาก A → B (3 ป้าย) → Exit 1 เดิน ~5 นาที\n- transport_en: **Ginza** line A → B (3 stops) → Exit 1, ~5 min walk\n- transport_alt: แท็กซี่ ~15 นาที ❓ ราคา\n- transport_alt_en: Taxi ~15 min ❓ fare\n- cost: ~20 นาที / ¥180 · ค่าเข้าฟรี\n- cost_en: ~20 min / ¥180 · free entry\n- notes: ปิดวันจันทร์ ❓ · ร้านขนมหน้าวัด\n- notes_en: Closed Mondays ❓ · snack shops at the gate\n\n## ห้ามพลาดวันนี้\n- ❓ สิ่งที่ห้ามพลาด\n\n## ข้อควรระวัง\n- ❓ สิ่งที่ต้องระวัง\n\n## ข้อมูลเพิ่มเติม\n\nข้อมูลอื่นของวันนี้ (ไม่มีก็ลบหัวข้อนี้ได้)\n\n# เตรียมของ\n\n## เอกสาร\n- [ ] พาสปอร์ต\n\n# To-do\n\n- [ ] ก่อน 2027-01-01 · งานที่ต้องทำ\n\n# ข้อมูลอ้างอิง\n\n## เบอร์ฉุกเฉิน\n\n| เรื่อง | เบอร์ | หมายเหตุ |\n|---|---|---|\n| ตำรวจ | ❓ | |\n\n## การ์ดแท็กซี่ (ที่พัก)\n\nชื่อและที่อยู่ที่พักภาษาท้องถิ่น ❓\n\n# วางแผน\n\n## จุดที่ยังไม่ยืนยัน\n\n- ❓\n\n## แหล่งข้อมูล\n\n- ข้อมูลดิบจากผู้ใช้\n";</script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script>
 /* Travel plan markdown <-> model. Runs in browser (window.TP) and node (module.exports). */
@@ -863,7 +879,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
   function icon(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.other) + '</svg>'; }
 
   var LANG = 'th';
-  var APP_VERSION = 'v2.3.0';
+  var APP_VERSION = 'v2.4.0';
   var IS_GAS = window.TP_TARGET === 'gas';   // Google Apps Script build: plan lives in Drive, read/written through google.script.run
   var CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
 
@@ -1007,8 +1023,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
   var SEED_HASH = fnv(SEEDS.join('\n<<seed>>\n'));
 
   function makeId(meta) {
-    var base = String(meta.title || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    if (!base) base = 'trip';
+    function slug(x) { return String(x || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+    // the first title that has Latin letters (a Thai title like "เที่ยวไต้หวัน 2026" falls back to title_en)
+    var base = [meta.title, meta.title_en].map(slug).filter(function (x) { return /[a-z]/.test(x); })[0] || slug(meta.title) || 'trip';
     if (/^comment-/.test(base)) base = 't-' + base;
     base += '-' + (TP.isDate(meta.start) ? meta.start : 'x');
     var id = base, k = 2;
@@ -1046,7 +1063,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
     var conflicts = [];
     if (!IS_GAS && lsGet(K.seed) !== SEED_HASH) {   // GAS has no seed: the plan comes from Drive (loadRemote)
       seedTrips().forEach(function (t) {
-        var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0];
+        // a renamed seed (same start date) still replaces its old copy, keeping its id (links) and the viewer's ticks
+        var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0] || S.trips.filter(function (x) { return x.origin === 'seed' && x.meta.start === t.meta.start; })[0];
         if (!ex) { t.id = makeId(t.meta); t.origin = 'seed'; t.localEdited = false; t.updatedAt = Date.now(); S.trips.push(t); }
         else if (!ex.localEdited) { replaceTrip(ex, t, false); }
         else conflicts.push([ex, t]);
@@ -1246,6 +1264,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
     var r = parseHash(), trip = null;
     if (r.view === 'trip') {
       trip = S.trips.filter(function (t) { return t.id === r.id; })[0];
+      if (!trip && /\d{4}-\d{2}-\d{2}$/.test(r.id)) {   // link made before the trip was renamed: the id still ends with the start date
+        var byDate = S.trips.filter(function (t) { return t.meta.start === r.id.slice(-10); });
+        if (byDate.length === 1) trip = byDate[0];
+      }
+      if (!trip && IS_GAS) trip = serverTrip();   // one plan per deployment: its id differs between browsers (made from the title on first load), so any trip link opens it
       var waiting = IS_GAS && S.remote.state === 'loading' && !serverTrip();   // deep link on a first visit: keep the hash until Drive answers
       if (!trip) { if (!waiting) history.replaceState(null, '', '#home'); r = { view: 'home' }; }
     }
@@ -1396,7 +1419,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
     var state = st.status === 'upcoming' ? icon('clock') + '<span>' + countdown(st.left) + '</span>'
       : st.status === 'ongoing' ? icon('clock') + T('<span>กำลังเที่ยว วันที่ ') + st.k + T(' จาก ') + st.total + '</span>'
         : st.status === 'past' ? T('<span>ทริปนี้จบแล้ว</span>') : '';
-    var h = '<section class="ov-hero o"><div>' + (place ? '<p class="ov-place">' + esc(place) + '</p>' : '') + '<h1>' + esc(L(mt, 'title')) + '</h1>' +
+    var h = nowCardHtml(t, 'ov') + '<section class="ov-hero o"><div>' + (place ? '<p class="ov-place">' + esc(place) + '</p>' : '') + '<h1>' + esc(L(mt, 'title')) + '</h1>' +
       T('<dl class="facts"><div><dt>วันที่</dt><dd>') + esc(fmtRange(mt.start, mt.end)) + '</dd></div>' +
       (n ? T('<div><dt>ระยะเวลา</dt><dd>') + durLabel(n) + '</dd></div>' : '') +
       (mt.travelers ? T('<div><dt>ผู้เดินทาง</dt><dd>') + esc(mt.travelers) + ' ' + unit(+mt.travelers, 'person') + '</dd></div>' : '') +
@@ -1439,7 +1462,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
   function dayView(t, di, st) {
     var d = t.days[di], cls = dayCls(di), last = d.date === t.meta.end;
     var isToday = st.status === 'ongoing' && st.dayIdx === di;
-    var h = '<section class="day-head ' + cls + T('"><div class="dbadge"><span>วันที่</span><b>') + (di + 1) + '</b></div><div><p class="dh-date">' + esc(fmtDate(d.date, true)) + (isToday ? T('<span class="today-chip">วันนี้</span>') : '') + '</p><h1>' + inl(L(d, 'theme') || 'Day ' + (di + 1)) + '</h1>' + (L(d, 'summary') ? '<p class="dh-sum">' + inl(L(d, 'summary')) + '</p>' : '') + '</div>' +
+    var h = nowCardHtml(t, di) + '<section class="day-head ' + cls + T('"><div class="dbadge"><span>วันที่</span><b>') + (di + 1) + '</b></div><div><p class="dh-date">' + esc(fmtDate(d.date, true)) + (isToday ? T('<span class="today-chip">วันนี้</span>') : '') + '</p><h1>' + inl(L(d, 'theme') || 'Day ' + (di + 1)) + '</h1>' + (L(d, 'summary') ? '<p class="dh-sum">' + inl(L(d, 'summary')) + '</p>' : '') + '</div>' +
       (d.stay ? '<div class="stay">' + icon('hotel') + '<div><small>' + (last ? T('ปลายทางคืนนี้') : T('คืนนี้นอนที่')) + '</small><b>' + inl(d.stay) + '</b></div></div>' : '') + '</section>';
     if (d.route) h += '<section class="band ' + cls + '" data-n="' + (di + 1) + '"><div class="metro" data-metro="day:' + di + '"></div></section>';
     var openAll = d.items.length && d.items.every(function (it) { return S.open[it.id]; });
@@ -1668,6 +1691,56 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
     var el = D.createElement('li'); el.className = 'now';
     el.innerHTML = '<span class="now-t">' + n.hm + T('</span><span class="now-dot"></span><span class="now-l">ตอนนี้ (เวลาท้องถิ่น)</span>');
     tl.insertBefore(el, before);
+  }
+
+  /* ---------------- "now + next" card (Phase 4) ---------------- */
+  var NC = { now: ['ตอนนี้', 'Now'], next: ['ถัดไป', 'Next'], done: ['วันนี้ครบทุกรายการแล้ว', 'That’s everything for today'], tom: ['พรุ่งนี้', 'Tomorrow'], starts: ['เริ่ม', 'starts'], map: ['แผนที่', 'Map'] }; /*noT*/
+  function nc(k) { return NC[k][LANG === 'en' ? 1 : 0]; }
+  function waitLabel(m) { var h = Math.floor(m / 60), r = m % 60, p = []; if (h) p.push(h + (LANG === 'en' ? ' h' : ' ชม.')); if (r || !h) p.push(r + (LANG === 'en' ? ' min' : ' นาที')); return (LANG === 'en' ? 'in ' : 'อีก ') + p.join(' '); } /*noT*/
+  function itName(it) { return LANG === 'en' && it.en ? it.en : it.title; }
+  // where today sits in the plan, by the trip's own clock; null outside trip days and after the last day's last item
+  function nowNext(t) {
+    var n = nowIn(t.meta.timezone), di = -1;
+    t.days.forEach(function (d, i) { if (d.date === n.date) di = i; });
+    if (di < 0) return null;
+    var cur = null, next = null;
+    t.days[di].items.forEach(function (it) { var m = startMin(it.time); if (m < 0) return; if (m <= n.min) { if (!next) cur = it; } else if (!next) next = it; });
+    var r = { n: n, di: di, cur: cur, next: next, wait: next ? startMin(next.time) - n.min : 0 };
+    if (!next) {
+      var tm = t.days[di + 1]; if (!tm) return null;
+      r.tomorrow = tm.items.filter(function (it) { return startMin(it.time) >= 0; })[0];
+      if (!r.tomorrow) return null;
+      r.tdi = di + 1;
+    }
+    return r;
+  }
+  // where = 'ov' (overview) or the day index of the tab being shown; empty placeholder keeps a slot for the 1-minute refresh
+  function nowCardHtml(t, where) {
+    var x = t && !S.edit ? nowNext(t) : null, slot = '<i hidden data-nowcard="' + where + '"></i>';
+    if (!x || (where !== 'ov' && x.di !== where)) return slot;
+    var h = '<section class="nowcard" data-nowcard="' + where + '"><p class="nc-now">' + icon('clock') + '<b>' + esc(x.n.hm) + '</b>' + (x.cur ? '<span>' + esc(nc('now')) + ': ' + inl(itName(x.cur)) + '</span>' : '') + '</p>';
+    if (x.next) {
+      var it = x.next, url = mapUrl(it), tp = L(it, 'transport'), cs = L(it, 'cost');
+      var chips = lineList(it.line).map(function (l) { return chipHtml(l, true); }).join('');
+      h += '<button class="nc-main" data-act="goto-item" data-d="' + x.di + '" data-id="' + it.id + '"><span class="nc-k">' + esc(nc('next')) + ' · <b>' + esc(waitLabel(x.wait)) + '</b></span>' +
+        '<span class="nc-t"><span class="nc-time">' + esc(splitTime(it.time)[0]) + '</span>' + inl(itName(it)) + (it.zh ? '<span class="zh" lang="zh-Hant">' + esc(it.zh) + '</span>' : '') + '</span>' +
+        ((chips || vis(tp)) ? '<span class="nc-line">' + chips + (vis(tp) ? '<span>' + inl(tp) + '</span>' : '') + '</span>' : '') +
+        (vis(cs) ? '<span class="nc-cost">' + inl(cs) + '</span>' : '') + '</button>' +
+        (url ? '<a class="btn sm nc-map" href="' + esc(url) + '" target="_blank" rel="noopener">' + icon('pin') + '<span>' + esc(nc('map')) + '</span></a>' : '');
+    } else {
+      var tt = x.tomorrow;
+      h += '<p class="nc-done">' + esc(nc('done')) + '</p><button class="nc-main" data-act="goto-item" data-d="' + x.tdi + '" data-id="' + tt.id + '"><span class="nc-k">' + esc(nc('tom')) + ' (Day ' + (x.tdi + 1) + ') ' + esc(nc('starts')) + '</span>' +
+        '<span class="nc-t"><span class="nc-time">' + esc(splitTime(tt.time)[0]) + '</span>' + inl(itName(tt)) + '</span></button>';
+    }
+    return h + '</section>';
+  }
+  function refreshNowCard() { $$('[data-nowcard]').forEach(function (el) { var w = el.getAttribute('data-nowcard'); el.outerHTML = nowCardHtml(S.cur, w === 'ov' ? 'ov' : +w); }); }
+  // after a "goto-item" jump: open + centre the item (instead of jumping to the top)
+  function scrollToItem() {
+    if (!S.scrollItem) return false;
+    var li = $('.it[data-id="' + S.scrollItem + '"]'); S.scrollItem = null;
+    if (!li) return false;
+    li.scrollIntoView({ block: 'center' }); return true;
   }
 
   /* ---------------- metro map ---------------- */
@@ -1935,6 +2008,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
       case 'import': openImport(); return;
       case 'save-remote': saveRemote(false); return;
       case 'sync-hide': syncHide(true); refreshSyncBar(); return;
+      case 'goto-item': { var gid = b.getAttribute('data-id'); S.open[gid] = true; S.scrollItem = gid; var gh = t.id + '--d' + (+b.getAttribute('data-d') + 1); if (location.hash === '#' + gh) { render(true); scrollToItem(); } else location.hash = gh; return; }
       case 'promote': promoteTrip(t); return;
       case 'reload-remote': S.remote.state = 'loading'; render(true); loadRemote(); return;
       case 'discard-local':
@@ -2039,9 +2113,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
   });
   D.addEventListener('dragend', function () { drag = null; $$('.ed[draggable]').forEach(function (x) { x.removeAttribute('draggable'); x.classList.remove('drag-over'); }); });
 
-  window.addEventListener('hashchange', function () { render(false); window.scrollTo(0, 0); });
+  window.addEventListener('hashchange', function () { render(false); if (!scrollToItem()) window.scrollTo(0, 0); });
   window.addEventListener('pagehide', saveNow);
-  setInterval(function () { if (S.cur && !S.edit) placeNow(); }, 60000);
+  setInterval(function () { if (S.cur && !S.edit) { placeNow(); refreshNowCard(); } }, 60000);
+  D.addEventListener('visibilitychange', function () { if (D.visibilityState === 'visible' && S.cur && !S.edit) { placeNow(); refreshNowCard(); } });
   /* GAS: coming back to the tab after 5+ minutes picks up the owner's latest save (no polling, to stay inside quota) */
   D.addEventListener('visibilitychange', function () { if (IS_GAS && D.visibilityState === 'visible' && !S.edit && !S.remote.busy && Date.now() - S.remote.at > 300000) loadRemote(); });
   /* GAS: the page runs in an iframe, so copy our hash to the address bar to keep links shareable.
