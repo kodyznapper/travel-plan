@@ -30,7 +30,7 @@ TRAVEL PLAN TEMPLATE · v1
      transport     เดินทางหลัก
      transport_alt เดินทางรอง
      cost          ระยะเวลา / ค่าใช้จ่าย
-     notes         รอบๆ / หมายเหตุ
+     notes         สถานที่น่าสนใจรอบๆ / หมายเหตุ
      map           URL Google Maps (ถ้าไม่ใส่ เว็บค้นจาก zh หรือ en ให้) · "-" = ไม่ต้องมีลิงก์
    ภาษาอังกฤษ (ไม่บังคับ): เพิ่ม field _en ได้ transport_en · transport_alt_en · cost_en · notes_en
    ชื่อสถานที่ภาษาอังกฤษใช้ field en เดิม · เว็บในโหมด EN ใช้ค่า _en ถ้ามี ไม่มีก็แสดงข้อความภาษาเดิม
@@ -99,7 +99,7 @@ summary_en: Short day summary in English (optional)
 - line_alt: G, R
 - transport_alt: เดินทางรอง
 - cost: ~30 นาที / ~100
-- notes: รอบๆ / หมายเหตุ
+- notes: สถานที่น่าสนใจรอบๆ / หมายเหตุ
 
 ## ห้ามพลาดวันนี้
 - สิ่งที่ห้ามพลาด

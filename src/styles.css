@@ -335,6 +335,9 @@ details.more>.md{padding:0 16px 16px}
 .syncbar.dirty{background:var(--or-soft);border-color:var(--or)}
 .syncbar.dirty .ic{color:var(--or)}
 .syncbar .btn .ic{color:inherit}
+.syncbar .sb-x{background:transparent;border-color:transparent;margin:-6px -8px -6px 0;color:var(--dim)}
+.syncbar .sb-x .ic{color:inherit}
+.syncbar .sb-x:hover{border-color:var(--line);color:var(--text)}
 .ed{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
 .ed.drag-over{border-color:var(--cy);box-shadow:0 0 0 2px var(--cy-soft)}
 .ed-bar{display:flex;align-items:center;gap:6px;margin-bottom:10px}

@@ -77,7 +77,7 @@ item = `{ id, time, title, en, zh, type, status, highlight, line, transport, tra
 
 **Router:** hash `#home` หรือ `#<tripId>--<tab>` โดย tab = `overview | d1..dN | pack | todo | ref | plan` (`plan` เห็นเฉพาะโหมดวางแผน)
 
-**localStorage keys:** `tp1.trips`, `tp1.settings` (`theme`, `planning`, `lang`, `owner`), `tp1.seed` (hash ของ seed ล่าสุด ไม่ใช้บน GAS), `tp1.key` (รหัสแก้ไขที่ยืนยันแล้ว เฉพาะ GAS เก็บแบบข้อความธรรมดา ลบเมื่อกด "ลืมรหัส" / ออกจากโหมดเจ้าของ / server ตอบ BAD_KEY) ถ้าเปลี่ยนรูปแบบข้อมูลแบบที่ของเก่าอ่านไม่ได้ ให้เพิ่มเลขเวอร์ชันของ key (`tp2.*`) พร้อมเขียน migration ห้ามทับเงียบๆ
+**localStorage keys:** `tp1.trips`, `tp1.settings` (`theme`, `planning`, `lang`, `owner`, `syncHide` = เจ้าของปิดแถบ "ตรงกับแผนบน Drive" ไว้ เฉพาะ GAS), `tp1.seed` (hash ของ seed ล่าสุด ไม่ใช้บน GAS), `tp1.key` (รหัสแก้ไขที่ยืนยันแล้ว เฉพาะ GAS เก็บแบบข้อความธรรมดา ลบเมื่อกด "ลืมรหัส" / ออกจากโหมดเจ้าของ / server ตอบ BAD_KEY) ถ้าเปลี่ยนรูปแบบข้อมูลแบบที่ของเก่าอ่านไม่ได้ ให้เพิ่มเลขเวอร์ชันของ key (`tp2.*`) พร้อมเขียน migration ห้ามทับเงียบๆ
 
 **Owner mode:** `S.settings.owner` (false เป็นค่าเริ่มต้น) ถ้าเป็น false `render()` บังคับ `planning=false` ทำให้ไม่มีปุ่มแก้ไข แท็บวางแผน badge สถานะ หรือเครื่องมือ import/export (ทุกอย่างผูกกับ `S.settings.planning`) ผู้ใช้เดิมที่เคยเปิดโหมดวางแผนก่อนมีฟีเจอร์นี้ถูก migrate ให้เป็นเจ้าของ (`owner = planning` ตอน `initData`) ปลดล็อก/ออก: ตั้งค่า → แตะบรรทัด `แผนเที่ยว v…` 7 ครั้งใน 1.5 วินาทีต่อครั้ง / ปุ่ม "ออกจากโหมดเจ้าของ" `APP_VERSION` อยู่ต้นไฟล์ `app.js` ให้เพิ่มเลขทุกครั้งที่ release
 
@@ -170,9 +170,9 @@ node --check src/app.js && node --check src/parser.js     # syntax
 # e2e ต้องติดตั้งครั้งแรก
 pip install playwright && playwright install chromium
 python3 tests/e2e/ftest.py      # import/ซ้ำ/แก้/ย้าย/ลบ+undo/checklist/export/seed conflict (12 checks)
-python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en (14 checks)
+python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en, ป้าย "สถานที่น่าสนใจรอบๆ", ชื่อแท็บ, รายการเขตเวลาทั้งโลก + UTC (21 checks)
 python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
-python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, ไฟล์ใน Drive ว่าง + ปุ่มใช้แผนนี้เป็นแผนบน Drive, EN (40 checks)
+python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, ไฟล์ใน Drive ว่าง + ปุ่มใช้แผนนี้เป็นแผนบน Drive, ปุ่ม X ปิดแถบ sync, EN (42 checks)
 node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง build ก่อน; make test ทำให้)
 
 # ถ้า pip ติดตั้งลง Python ของระบบไม่ได้ (macOS/Homebrew) ให้ใช้ venv:
@@ -241,7 +241,10 @@ dashboard + ปฏิทินรายเดือน · เมนูตาม 
   2. ✅ อ่านจาก Drive: `getTrip()` ตัด `# วางแผน` + comment สำหรับผู้ชม หน้าแสดงสำเนาในเครื่องก่อนแล้วอัปเดตจาก server ติ๊กของผู้ชมอยู่ในเครื่องเขา
   3. ✅ บันทึกของเจ้าของ: ใส่รหัส (ตั้งค่า หรือตอนกดบันทึก), `saveTrip` ตรวจรหัส + กันเขียนทับ + backup, แถบสถานะบันทึกแล้ว/ยังไม่บันทึก, ทิ้งการแก้ไข
   4. ✅ ไม่ใช้ seed บน GAS (seed ใช้แค่ `setup()` ครั้งแรก) · sync มือถือ↔โน้ตบุ๊ก = โหลดจาก Drive ทุกครั้งที่เปิด/กลับมาที่แท็บหลัง 5 นาที
+  5. ✅ (v2.3.0) แถบ "ตรงกับแผนบน Drive" มีปุ่ม X ปิดได้ (จำในเครื่อง `tp1.settings.syncHide`) แถบสีส้ม (ยังไม่บันทึก / error / แผนยังไม่อยู่บน Drive) ปิดไม่ได้ และเมื่อเกิดสถานะสีส้ม `syncHide` ถูกล้าง แถบสีฟ้าจึงกลับมาหลังบันทึกครั้งถัดไป (logic อยู่ใน `syncBarHtml` / `syncHide`)
   - ⏳ เหลือ: ทดสอบตาม checklist ใน README (iPhone/Safari, บันทึกครั้งที่สองติดกัน, ดาวน์โหลด, ฟอนต์/CDN) แล้วแก้ข้อ `❓` ในข้อ 4 · ทางเลือกเดิม (capability `db`/`user` ของ Artifact) พักไว้
+
+- v2.3.0 ✅ ปรับ UI ตามที่ Kody ขอ (2026-11-05): ช่องเขตเวลาแนะนำเขตเวลาทั้งโลกจาก `Intl.supportedValuesOf('timeZone')` (browser ที่ไม่มีใช้ `TZ` 14 เมืองเดิม) พร้อม label UTC ณ วันเริ่มทริป (`tzOptions`, cache ต่อวันที่) ยังเป็นช่องพิมพ์ + `<datalist>` · ป้าย field `notes` = "สถานที่น่าสนใจรอบๆ / หมายเหตุ" (EN "Nearby places / notes") คีย์ `notes:` ใน md ไม่เปลี่ยน · ชื่อแท็บ `Trip Plans - วางแผนเที่ยว` คงที่ทุกภาษา (Artifact: `<title>` ใน `build.py` + `D.title` ใน `render()` · GAS: `setTitle()` ใน `Code.gs`) · ปุ่ม X ปิดแถบ sync (ดู 2c ข้อ 5)
 
 **Phase 3 ⏳ — สร้าง/แก้แผนในเว็บได้ครบ**
 ปุ่ม "แผนใหม่" (เปล่า / คัดลอกโครง) · preview markdown ข้างช่องแก้ · ตรวจข้อมูลแล้วเตือน (เวลาซ้อน/ไม่เรียง, วันที่นอกช่วงทริป, วันไม่มี route) · ปุ่มเรียงตามเวลา · undo/redo หลายขั้น · field timezone ต่อรายการ (แก้ปัญหาข้อ 6.1) · เพิ่มคำแปล `_en` ให้ field ที่ยังไม่มี (must/caution/flights/stays)
