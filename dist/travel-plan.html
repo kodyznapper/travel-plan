@@ -1,0 +1,1838 @@
+<!doctype html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1116">
+<title>แผนเที่ยว</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root,:root[data-theme="dark"]{
+  --s1:#0E1116;--s2:#151A22;--card:#1C222B;--card2:#252C37;--line:#2E3745;
+  --text:#EEF1F5;--body:#A9B1BD;--dim:#8B95A3;
+  --or:#F05032;--cy:#22D3EE;--on-acc:#0E1116;
+  --or-soft:rgba(240,80,50,.13);--cy-soft:rgba(34,211,238,.10);--scrim:rgba(4,6,9,.66);
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --s1:#0E1116;--s2:#151A22;--card:#1C222B;--card2:#252C37;--line:#2E3745;
+    --text:#EEF1F5;--body:#A9B1BD;--dim:#8B95A3;
+    --or:#F05032;--cy:#22D3EE;--on-acc:#0E1116;
+    --or-soft:rgba(240,80,50,.13);--cy-soft:rgba(34,211,238,.10);--scrim:rgba(4,6,9,.66);
+  }
+}
+:root[data-theme="light"]{
+  --s1:#F3F5F8;--s2:#E8ECF1;--card:#FBFCFD;--card2:#EEF1F5;--line:#D3DAE3;
+  --text:#151A22;--body:#3A4351;--dim:#5B6573;
+  --or:#C2410C;--cy:#0E7490;--on-acc:#FBFCFD;
+  --or-soft:rgba(194,65,12,.09);--cy-soft:rgba(14,116,144,.08);--scrim:rgba(21,26,34,.42);
+  color-scheme:light;
+}
+:root{
+  --f:'IBM Plex Sans Thai',Tahoma,sans-serif;
+  --zh:'IBM Plex Sans Thai','Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --m:'JetBrains Mono','Courier New',monospace;
+  --tb:56px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 128px);background:var(--s1)}
+body{margin:0;background:var(--s1);color:var(--text);font:400 16px/1.6 var(--f);-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility}
+body.lock{overflow:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--s1)}
+a{color:var(--cy)}
+h1,h2,h3{margin:0;line-height:1.3}
+p{margin:0}
+button{font:inherit}
+.ic{width:20px;height:20px;flex:none}
+.muted{color:var(--dim);font-size:14px}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px;border-radius:8px}
+[hidden]{display:none!important}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:var(--s1);border-bottom:1px solid var(--line)}
+.tb-in{max-width:1120px;margin:0 auto;height:var(--tb);display:flex;align-items:center;gap:8px;padding:0 16px}
+.brand{font-weight:700;font-size:19px;color:var(--text);text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.mark{display:flex;align-items:center;gap:3px}
+.mark i{display:block;width:12px;height:12px;border-radius:50%;border:3px solid var(--or)}
+.mark i+i{width:8px;height:8px;border:0;background:var(--cy)}
+.tb-title{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.tb-title b{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-title small{font-size:12.5px;color:var(--dim)}
+.tb-sp{flex:1}
+.ibtn{width:40px;height:40px;flex:none;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);display:grid;place-items:center;cursor:pointer;text-decoration:none;padding:0}
+.ibtn:hover{border-color:var(--dim)}
+.ibtn.sm{width:34px;height:34px;border-radius:8px}
+.ibtn.sm .ic{width:17px;height:17px}
+.ibtn:disabled{opacity:.35;cursor:default}
+.ibtn.danger{color:var(--or)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:500;font-size:14.5px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--dim)}
+.btn .ic{width:18px;height:18px}
+.btn.pri{background:var(--or);border-color:var(--or);color:var(--on-acc);font-weight:600}
+.btn.cy{background:var(--cy);border-color:var(--cy);color:var(--on-acc);font-weight:600}
+.btn.danger{color:var(--or);border-color:var(--or)}
+.btn.sm{min-height:32px;padding:0 10px;font-size:13.5px;border-radius:8px}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.add{border-style:dashed;background:transparent;color:var(--body);width:100%}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding:20px 16px 72px}
+.two{display:grid;gap:14px}
+@media (min-width:820px){.two{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:28px 0 12px}
+.sec-h h2{font-size:20px;font-weight:600}
+.o{--dc:var(--or)}
+.c{--dc:var(--cy)}
+
+/* ---------- tabs ---------- */
+.tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--tb));z-index:20;background:var(--s1);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:1120px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:8px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs-in::-webkit-scrollbar{display:none}
+.tab{position:relative;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;padding:3px 14px;border-radius:12px;border:1px solid var(--line);color:var(--body);text-decoration:none;font-size:14px;font-weight:500;line-height:1.2}
+.tab:hover{border-color:var(--dim)}
+.tab.day{min-width:62px;padding:3px 10px}
+.tab.day b{font-family:var(--m);font-size:14px;font-weight:700;color:var(--dc)}
+.tab.day small{font-size:12px;color:var(--dim)}
+.tab[aria-current]{background:var(--text);border-color:var(--text);color:var(--s1)}
+.tab.day[aria-current]{background:var(--dc);border-color:var(--dc)}
+.tab.day[aria-current] b,.tab.day[aria-current] small{color:var(--on-acc)}
+.tab .tdot{position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--or);border:2px solid var(--s1)}
+.tab.plan{border-style:dashed}
+
+/* ---------- dashboard ---------- */
+.dash-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin:8px 0 20px}
+.dash-head h1{font-size:clamp(30px,6vw,44px);font-weight:700;letter-spacing:-.015em}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.dash-grid{display:grid;gap:20px;align-items:start}
+@media (min-width:960px){.dash-grid{grid-template-columns:1fr 372px}}
+.tlist{display:grid;gap:14px}
+.tcard{display:grid;grid-template-columns:1fr auto;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 18px 20px;text-decoration:none;color:inherit;position:relative;overflow:hidden}
+.tcard:hover{border-color:var(--dim)}
+.tcard::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--dc)}
+.tcard.past{opacity:.55}
+.tcard h2{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.tc-place{color:var(--body);font-size:15px;margin-top:2px}
+.tc-state{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.tc-state b{font-family:var(--m);font-size:34px;line-height:1;color:var(--dc);font-weight:700}
+.tc-state span{font-size:14px;color:var(--body)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px 18px;margin:14px 0 0}
+.facts div{min-width:0}
+.facts dt{font-size:12.5px;color:var(--dim)}
+.facts dd{margin:0;font-size:15px;font-weight:500}
+.stamp{display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--zh);font-weight:700;background:var(--or);color:var(--on-acc);border-radius:12px;padding:10px 8px;line-height:1.1;font-size:26px;align-self:start}
+.stamp.wide{font-size:16px;padding:8px 10px;max-width:120px;text-align:center}
+.stamp.lg{font-size:clamp(36px,9vw,60px);padding:14px 12px;border-radius:16px;gap:4px}
+.stamp.lg.wide{font-size:20px}
+.now-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--or);color:var(--on-acc);text-decoration:none;font-weight:600;margin-bottom:18px}
+.now-banner .ic{width:22px;height:22px}
+.empty{text-align:left;padding:28px 22px}
+.empty h2{font-size:22px;margin-bottom:8px}
+.empty p{color:var(--body);margin-bottom:16px}
+
+/* calendar */
+.cal-det{background:var(--card);border:1px solid var(--line);border-radius:18px}
+.cal-det>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:600}
+.cal-det>summary::-webkit-details-marker{display:none}
+.cal-det>summary .ic{transition:transform .2s}
+.cal-det[open]>summary .ic{transform:rotate(180deg)}
+.cal{padding:0 12px 14px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-head b{font-size:16px}
+.flip{display:grid;transform:scaleX(-1)}
+.cal-wd,.cw{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.cal-wd span{text-align:center;font-size:12.5px;color:var(--dim);padding:4px 0}
+.cw{border-top:1px solid var(--line);padding:3px 0 6px;row-gap:3px;min-height:46px}
+.cd{grid-row:1;text-align:center;font-family:var(--m);font-size:13px;color:var(--body);padding:3px 0}
+.cd.out{opacity:.4}
+.cd.today span{background:var(--text);color:var(--s1);border-radius:999px;padding:1px 6px;font-weight:700}
+.cbar{display:block;height:21px;line-height:21px;margin:0 1px;border-radius:6px;font-size:12px;font-weight:600;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;background:var(--dc);color:var(--on-acc)}
+.cbar.past{opacity:.4}
+.cbar.cl{border-top-left-radius:0;border-bottom-left-radius:0;margin-left:0}
+.cbar.cr{border-top-right-radius:0;border-bottom-right-radius:0;margin-right:0}
+.cal-foot{display:flex;justify-content:flex-end;margin-top:8px}
+
+/* ---------- overview ---------- */
+.ov-hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;margin:6px 0 8px}
+.ov-hero h1{font-size:clamp(32px,7vw,58px);font-weight:700;line-height:1.08;letter-spacing:-.02em;margin:4px 0 6px}
+.ov-place{color:var(--body);font-size:16px}
+.ov-state{margin-top:14px;display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--dc)}
+.ov-state .ic{width:18px;height:18px}
+.metro-card{padding:16px 0 6px;margin-top:22px;--mbg:var(--card)}
+.metro-card h2{font-size:15px;font-weight:600;color:var(--body);padding:0 18px 4px}
+.metro{width:100%;min-height:40px}
+.metro svg{display:block;width:100%;height:auto;overflow:visible}
+.m-seg{fill:none;stroke-width:6;stroke-linecap:round}
+.m-seg.o{stroke:var(--or)}.m-seg.c{stroke:var(--cy)}
+.m-node{fill:var(--mbg,var(--s2));stroke-width:3.5}
+.m-node.o{stroke:var(--or)}.m-node.c{stroke:var(--cy)}
+.m-node.end{stroke-width:5}
+.m-label{fill:var(--body);font:500 13px var(--f)}
+.m-tag{font:700 12px var(--m)}
+.m-tag.o{fill:var(--or)}.m-tag.c{fill:var(--cy)}
+.metro svg.anim .m-seg{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:mdraw .5s cubic-bezier(.3,.6,.3,1) forwards}
+.metro svg.anim .m-node,.metro svg.anim text{opacity:0;animation:mfade .3s ease-out forwards}
+@keyframes mdraw{to{stroke-dashoffset:0}}
+@keyframes mfade{to{opacity:1}}
+.dlist{display:grid;gap:10px}
+.drow{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-decoration:none;color:inherit}
+.drow:hover{border-color:var(--dc)}
+.drow .dn{font-family:var(--m);font-size:30px;font-weight:700;color:var(--dc);line-height:1;text-align:center}
+.drow .dd{font-size:13.5px;color:var(--dim)}
+.drow h3{font-size:17px;font-weight:600}
+.drow .dr{font-size:14px;color:var(--body);margin-top:2px}
+.drow .dc-n{font-size:13px;color:var(--dim);text-align:right;white-space:nowrap}
+.today-chip{display:inline-block;font-size:12px;font-weight:700;background:var(--or);color:var(--on-acc);border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:1px}
+.fl{display:grid;gap:12px}
+.flt{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.flt:last-child{border-bottom:0;padding-bottom:0}
+.flt .code{font-family:var(--m);font-weight:700;font-size:18px;color:var(--cy)}
+.flt .route{font-weight:600}
+.flt .time{grid-column:1/-1;font-size:15px;color:var(--body)}
+.flt .time b{font-family:var(--m);font-weight:700;color:var(--text);margin-left:6px}
+.flt .meta{grid-column:1/-1;font-size:14px;color:var(--body)}
+.card h2.ch{font-size:15px;font-weight:600;color:var(--body);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.stay-name{font-weight:600;font-size:17px}
+.bar{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--cy);border-radius:12px;padding:16px 18px}
+.bar.or{border-left-color:var(--or)}
+.bar h2,.bar h3{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar.or h2,.bar.or h3{color:var(--or)}
+.bar:not(.or) h2,.bar:not(.or) h3{color:var(--cy)}
+.trip-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;padding-top:18px;border-top:1px dashed var(--line)}
+.trip-tools p{flex-basis:100%;font-size:13.5px;color:var(--dim)}
+
+/* ---------- day ---------- */
+.day-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-top:4px}
+.dbadge{width:84px;height:84px;border-radius:18px;background:var(--dc);color:var(--on-acc);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.dbadge span{font-size:13px;font-weight:600}
+.dbadge b{font-family:var(--m);font-size:42px;font-weight:700;margin-top:4px}
+.dh-date{color:var(--dc);font-weight:600;font-size:15px}
+.day-head h1{font-size:clamp(24px,5vw,36px);font-weight:700;letter-spacing:-.01em;margin:2px 0 6px}
+.dh-sum{color:var(--body);font-size:15px}
+.stay{grid-column:1/-1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center}
+.stay .ic{color:var(--dc)}
+.stay small{display:block;font-size:12.5px;color:var(--dim)}
+.stay b{font-weight:600}
+@media (min-width:860px){.day-head{grid-template-columns:auto 1fr 280px}.stay{grid-column:auto}}
+.band{position:relative;background:var(--s2);border:1px solid var(--line);border-radius:18px;padding:10px 0 2px;margin:18px 0;overflow:hidden;--mbg:var(--s2)}
+.band::after{content:attr(data-n);position:absolute;right:10px;bottom:-0.32em;font:700 120px/1 var(--m);color:var(--dc);opacity:.07;pointer-events:none}
+.tl-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.tl-tools .muted{font-size:13.5px}
+
+/* timeline */
+.tl{--tc:64px;--nc:22px;list-style:none;margin:0;padding:0;position:relative}
+.tl::before{content:"";position:absolute;left:calc(var(--tc) + 8px + var(--nc) / 2 - 1px);top:14px;bottom:14px;width:2px;background:var(--line)}
+.it{display:grid;grid-template-columns:var(--tc) var(--nc) minmax(0,1fr);column-gap:8px;margin-bottom:10px}
+.it-time{font-family:var(--m);font-weight:700;font-size:15px;text-align:right;padding-top:13px;line-height:1.25;color:var(--text);word-break:break-word}
+.it-time small{display:block;font-weight:500;font-size:12.5px;color:var(--dim)}
+.it-node{position:relative}
+.it-node::after{content:"";position:absolute;left:calc(var(--nc) / 2 - 8px);top:16px;width:16px;height:16px;border-radius:50%;background:var(--s1);border:3.5px solid var(--dc);box-sizing:border-box}
+.it.hl .it-node::after{background:var(--dc)}
+.it-body{min-width:0}
+.it-main{width:100%;display:grid;grid-template-columns:40px minmax(0,1fr) 18px;gap:12px;align-items:start;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;color:inherit;cursor:pointer}
+.it-main:hover{border-color:var(--dim)}
+.it-main.static{cursor:default}
+.it-main.static:hover{border-color:var(--line)}
+.it.hl .it-main{border-color:var(--or);background:linear-gradient(var(--or-soft),var(--or-soft)),var(--card)}
+.it-icon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--card2);color:var(--dc)}
+.it-icon .ic{width:22px;height:22px}
+.it-t{display:block;font-weight:600;font-size:16px;line-height:1.4}
+.zh{font-family:var(--zh);font-weight:500;color:var(--dim);font-size:14px;margin-left:6px}
+.it-en{display:block;color:var(--dim);font-size:13.5px;line-height:1.4}
+.it-line{display:block;color:var(--body);font-size:14px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.it-tags:empty{display:none}
+.chev{color:var(--dim);margin-top:10px;transition:transform .2s}
+.chev .ic{width:18px;height:18px}
+.it.open .chev{transform:rotate(180deg)}
+.it-detail{display:none;margin:6px 0 2px 0;padding:12px 14px;border-left:3px solid var(--dc);background:var(--card);border-radius:0 12px 12px 0}
+.it.open .it-detail{display:block}
+.it-detail dl{margin:0;display:grid;gap:10px}
+.it-detail dt{font-size:12.5px;color:var(--dim);font-weight:500}
+.it-detail dd{margin:0;font-size:15px;color:var(--text);line-height:1.55}
+.it-detail .maplink{margin-top:12px}
+.now{display:grid;grid-template-columns:var(--tc) var(--nc) minmax(0,1fr);column-gap:8px;align-items:center;margin:-2px 0 10px}
+.now-t{font:700 13px var(--m);color:var(--or);text-align:right}
+.now-dot{justify-self:center;width:12px;height:12px;border-radius:50%;background:var(--or);box-shadow:0 0 0 4px var(--or-soft)}
+.now-l{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--or)}
+.now-l::after{content:"";flex:1;height:2px;background:var(--or)}
+@media (max-width:560px){
+  .tl{--tc:50px;--nc:18px}
+  .it-time{font-size:13.5px}
+  .it-main{grid-template-columns:34px minmax(0,1fr) 16px;gap:10px;padding:10px}
+  .it-icon{width:34px;height:34px;border-radius:9px}
+  .it-icon .ic{width:19px;height:19px}
+  .dbadge{width:70px;height:70px;border-radius:16px}
+  .dbadge b{font-size:34px}
+}
+.daynav{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.daynav a{flex:1;max-width:48%}
+.daynav .next{margin-left:auto;justify-content:flex-end}
+details.more{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px}
+details.more>summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.more>summary::-webkit-details-marker{display:none}
+details.more[open]>summary .ic{transform:rotate(180deg)}
+details.more>.md{padding:0 16px 16px}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;line-height:1.5;padding:0 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.badge.b-ok{color:var(--cy)}
+.badge.b-doc{color:var(--dim)}
+.badge.b-warn{color:var(--or)}
+.badge.hl{background:var(--or);border-color:var(--or);color:var(--on-acc)}
+
+/* markdown */
+.md{color:var(--body);font-size:15px;line-height:1.65}
+.md>*+*{margin-top:10px}
+.md p,.md li{color:var(--body)}
+.md strong{color:var(--text);font-weight:600}
+.md ul,.md ol{padding-left:22px;margin:6px 0}
+.md li+li{margin-top:4px}
+.md h2,.md h3,.md h4{color:var(--text);font-size:16px;margin-top:16px}
+.md blockquote{margin:8px 0;padding:8px 14px;border-left:3px solid var(--cy);background:var(--cy-soft);border-radius:0 10px 10px 0}
+.md code,.it-detail code,.it-line code{font-family:var(--m);font-size:.88em;background:var(--card2);padding:1px 6px;border-radius:6px;color:var(--cy)}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+.tw table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}
+.tw th,.tw td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.tw th{font-size:13px;font-weight:600;color:var(--dim);background:var(--card2);white-space:nowrap}
+.tw tr:last-child td{border-bottom:0}
+.tw td{color:var(--body)}
+.tw tr.tap{cursor:pointer}
+.tw tr.tap:hover td,.tw tr.tap:focus-visible td{background:var(--cy-soft)}
+.tap-hint{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--dim);margin-top:8px}
+.tap-hint .ic{width:16px;height:16px}
+
+/* checklists */
+.ph{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px;margin:6px 0 14px}
+.ph h1{font-size:clamp(26px,5vw,38px);font-weight:700}
+.prog{font-family:var(--m);font-weight:700;color:var(--cy)}
+.pbar{height:6px;border-radius:6px;background:var(--card2);overflow:hidden;margin-bottom:18px}
+.pbar i{display:block;height:100%;background:var(--cy);border-radius:6px;transition:width .25s}
+.grp{margin-bottom:14px}
+.grp header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.grp h2{font-size:18px;font-weight:600}
+.checks{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:2px}
+.ck{display:flex;gap:12px;align-items:flex-start;padding:9px 6px;border-radius:10px;cursor:pointer;line-height:1.5}
+.ck:hover{background:var(--card2)}
+.ck{position:relative}
+.ck input{position:absolute;left:6px;top:10px;width:22px;height:22px;margin:0;opacity:0;cursor:pointer}
+.cb{flex:none;width:22px;height:22px;margin:1px 0 0;border:2px solid var(--dim);border-radius:6px;display:grid;place-items:center;background:transparent;box-sizing:border-box;transition:background .15s,border-color .15s}
+.cb svg{width:14px;height:14px;opacity:0;stroke:var(--on-acc);fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.ck input:checked + .cb{background:var(--cy);border-color:var(--cy)}
+.ck input:checked + .cb svg{opacity:1}
+.ck input:focus-visible + .cb{outline:2px solid var(--cy);outline-offset:2px}
+.ck.done span{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--dim)}
+.todo{display:grid;grid-template-columns:1fr;gap:2px;padding:4px 0;border-bottom:1px solid var(--line)}
+.todo:last-child{border-bottom:0}
+.due{margin-left:40px;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--dim);font-family:var(--m)}
+.todo.over .due{color:var(--or);font-weight:700}
+.ref-sec{margin-bottom:14px}
+.ref-sec header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.ref-sec h2{font-size:18px;font-weight:600}
+
+/* edit */
+.editbar{display:flex;align-items:center;gap:10px;background:var(--cy-soft);border:1px solid var(--cy);border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+.editbar .ic{color:var(--cy)}
+.ed{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.ed.drag-over{border-color:var(--cy);box-shadow:0 0 0 2px var(--cy-soft)}
+.ed-bar{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.ed-bar b{flex:1;font-size:14px;font-weight:600;color:var(--body);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grip{cursor:grab;color:var(--dim);display:none;padding:4px}
+@media (hover:hover) and (pointer:fine){.grip{display:grid}}
+.ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ed-grid .w2,.ed-grid .wf{grid-column:1/-1}
+@media (min-width:760px){.ed-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.ed-grid .w2{grid-column:span 2}}
+.ed-grid label,.fld{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--dim);font-weight:500;min-width:0}
+.ed-grid label.chk,.fld.chk{flex-direction:row;align-items:center;gap:8px;font-size:14px;color:var(--text);padding-top:18px}
+input,select,textarea{width:100%;background:var(--s1);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:400 16px/1.45 var(--f)}
+input[type="checkbox"]{width:20px;height:20px;accent-color:var(--cy)}
+textarea{resize:vertical;min-height:44px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px var(--cy-soft)}
+.ed-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin-bottom:6px}
+.ed-row.todo-e{grid-template-columns:150px minmax(0,1fr) auto}
+@media (max-width:560px){.ed-row.todo-e{grid-template-columns:1fr auto}.ed-row.todo-e>input:first-child{grid-column:1/-1}}
+.rt{display:flex;gap:4px}
+.stack{display:grid;gap:12px}
+
+/* modal + fullscreen + toast */
+.modal-back{position:fixed;inset:0;background:var(--scrim);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--s2);border:1px solid var(--line);border-radius:20px 20px 0 0;width:100%;max-width:640px;max-height:88vh;overflow:auto;padding:22px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+@media (min-width:700px){.modal-back{align-items:center;padding:20px}.modal{border-radius:20px;padding:24px}}
+.modal h2{font-size:21px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--body)}
+.mbtns{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:18px}
+.mbtns.col{flex-direction:column;align-items:stretch}
+.set{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set b{font-weight:600}
+.set .muted{margin-top:2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+.seg button{border:0;background:transparent;color:var(--body);padding:8px 14px;cursor:pointer;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--text);color:var(--s1)}
+.sw{flex:none;width:52px;height:30px;border-radius:999px;border:1px solid var(--line);background:var(--card2);position:relative;cursor:pointer;padding:0}
+.sw span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--dim);transition:transform .2s}
+.sw[aria-checked="true"]{background:var(--cy);border-color:var(--cy)}
+.sw[aria-checked="true"] span{transform:translateX(22px);background:var(--on-acc)}
+.note{font-size:13.5px;color:var(--dim);margin-top:14px}
+.file{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--line);border-radius:14px;padding:20px;margin:14px 0 10px;cursor:pointer;color:var(--text);font-weight:600}
+.file:hover{border-color:var(--cy)}
+.file input{position:absolute;opacity:0;width:1px;height:1px}
+.file:focus-within{border-color:var(--cy)}
+.paste>summary{cursor:pointer;color:var(--body);font-size:14.5px;padding:6px 0}
+.paste textarea{margin:8px 0;font-family:var(--m);font-size:13.5px}
+.impsum{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14.5px}
+.impsum h3{font-size:17px;margin-bottom:4px}
+.impsum ul{margin:8px 0 0;padding-left:20px;color:var(--body)}
+.impsum .warns{margin-top:12px;color:var(--or)}
+.impsum .warns li{color:var(--or)}
+.impsum .ok{margin-top:10px;color:var(--cy);font-weight:600}
+.err{color:var(--or);margin-top:12px;font-weight:600}
+.copybox{width:100%;height:260px;font-family:var(--m);font-size:13px;margin-top:10px}
+.fs{position:fixed;inset:0;z-index:60;background:var(--s1);overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 64px) 22px calc(env(safe-area-inset-bottom,0px) + 32px);cursor:pointer}
+.fs-x{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:14px}
+.fs-in{max-width:900px;margin:0 auto;display:grid;gap:22px}
+.fs-cell small{display:block;font-size:14px;color:var(--dim);margin-bottom:2px}
+.fs-cell div{font-size:24px;line-height:1.4;color:var(--text);font-weight:500}
+.fs-cell.cjk div{font-family:var(--zh);font-size:clamp(40px,10vw,76px);font-weight:700;line-height:1.25}
+.fs-sec{font-size:clamp(24px,5.5vw,40px);line-height:1.5;color:var(--text)}
+.fs-sec .md,.fs-sec .md p{font-size:inherit;color:var(--text);font-family:var(--zh)}
+.fs-hint{text-align:center;color:var(--dim);font-size:14px;margin-top:36px}
+.toasts{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:70;display:grid;justify-items:center;gap:8px;pointer-events:none;padding:0 16px}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--text);color:var(--s1);border-radius:12px;padding:10px 14px;font-size:14.5px;font-weight:500;max-width:520px}
+.toast .btn{background:transparent;color:var(--s1);border-color:var(--s1)}
+
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- transit line chips + blocks (line colours are data, not UI accents) ---------- */
+.lchip{display:inline-flex;align-items:center;gap:6px;background:var(--lc);color:var(--li);border-radius:7px;padding:1px 9px 1px 7px;font-size:12.5px;font-weight:600;line-height:1.65;white-space:nowrap;max-width:100%}
+.lchip b{font-family:var(--m);font-weight:700}
+.lchip i{font-style:normal;font-weight:500;opacity:.9}
+.lchip.sm{padding:0 7px;font-size:12px;line-height:1.6}
+.lblk{position:relative;border:1px solid var(--line);border-radius:10px;padding:10px 12px 10px 18px;background:var(--tint,var(--card2));overflow:hidden}
+.lblk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--stripe,var(--dim))}
+.lchips{display:flex;flex-wrap:wrap;gap:6px}
+.lchips+.lbody{margin-top:8px}
+.lbody{color:var(--text);font-size:15px;line-height:1.55}
+.llegend{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}
+.ibtn.lang{font-family:var(--m);font-weight:700;font-size:13px;letter-spacing:.02em}
+.en-fields>summary{cursor:pointer;color:var(--body);font-size:14px;font-weight:500;padding:4px 0}
+.en-fields[open]>summary{margin-bottom:8px}
+@media (max-width:480px){.tb-in{gap:6px;padding:0 12px}.edbtn span{display:none}.edbtn{padding:0 11px;min-width:40px}}
+
+.note.ver{cursor:default;-webkit-user-select:none;user-select:none;padding:6px 0}
+
+</style>
+</head>
+<body>
+<header class="topbar" id="topbar"></header>
+<main id="app"></main>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<script>window.TP_SEED=["---\ntitle: Taiwan Trip 2026\nsubtitle: Taipei\ncountry: Taiwan\ncountry_native: 臺灣\nstart: 2026-11-12\nend: 2026-11-17\ntimezone: Asia/Taipei\ntravelers: 8\nstyle: ขนส่งสาธารณะเป็นหลัก · เดินระยะใกล้ (≤ ~15 นาที/ช่วง)\nstyle_en: Mainly public transport · short walks (≤ ~15 min per stretch)\nversion: v4.1\n---\n\n# ภาพรวม\n\n## เที่ยวบิน\n\n| เที่ยวบิน | วันที่ | เส้นทาง | ออก | ถึง | สถานะ | หมายเหตุ |\n|---|---|---|---|---|---|---|\n| FD230 | 2026-11-12 | DMK → TPE | 07:45 | 12:30 | ✅ | 🔎 Terminal 1 ❓ ยืนยันตามตั๋ว · เวลาถึงเป็นเวลาไต้หวัน (เร็วกว่าไทย 1 ชม.) |\n| FD231 | 2026-11-17 | TPE → DMK | 18:35 | 21:30 (เวลาไทย) | ✅ | ❓ เทอร์มินัลขากลับยังไม่ยืนยัน · PDF ระบุ 18:30 → ใช้ 18:35 |\n\n## ที่พัก\n\n| เช็กอิน | เช็กเอาต์ | ชื่อ | ที่อยู่ | หมายเหตุ | สถานะ |\n|---|---|---|---|---|---|\n| 2026-11-12 | 2026-11-17 | Hotel Midtown Richardson 德立莊酒店 | No.4 Xiushan St. · 臺北市中正區秀山街4號 | เช็กอิน 15:00 / เช็กเอาต์ 11:00 · ตรงข้าม Ximending ติด MRT Ximen (Exit 4/5) · ห้อง Double/Twin/Triple/Family · front desk 24 ชม. | 🔎 |\n\n## จำไว้ตลอดทริป\n\n- ไต้หวันเร็วกว่าไทย 1 ชม.\n- ไฟฟ้า 110V 60Hz ปลั๊กแบน (Type A/B) 🔎\n- ค่า MRT/รถเมล์ในแผนเป็นค่าประมาณ (MRT ระยะสั้น ~NT$20–35, รถเมล์ในเมือง ~NT$15 ต่อช่วง) ตรวจใน Google Maps / Taipei Metro Go ก่อนไป\n- ตลาดกลางคืนส่วนใหญ่รับเงินสด พกเงินสด NT$ ติดตัว\n- ⚠️ บุหรี่ไฟฟ้า/vape ห้ามนำเข้าและใช้ในไต้หวัน (ตรวจกฎศุลกากรล่าสุด)\n\n# Day 1 — 2026-11-12 · Far from Thailand Land of Smile\n\nroute: Taoyuan → Ximen → Longshan → Huashan → Ningxia\nstay: Hotel Midtown Richardson\nsummary: บินถึง Taoyuan → เข้า Ximen ฝากกระเป๋า → วัด Longshan → Huashan 1914 → ตลาด Ningxia → พัก\nsummary_en: Fly into Taoyuan → Ximen (drop bags) → Longshan Temple → Huashan 1914 → Ningxia Night Market → rest\n\n### 07:45–12:30 · ดอนเมือง → เถาหยวน\n- en: DMK → Taoyuan Intl Airport\n- zh: 桃園國際機場\n- type: flight\n- status: ✅\n- highlight: true\n- transport: FD230\n- cost: ~3 ชม. 45–55 นาที\n- notes: 🔎 FD230 ใช้ **Terminal 1** ❓ ยืนยันตามตั๋ว · ทำ TWAC ก่อนบิน\n\n### 12:45–13:15 · ตม. + รับกระเป๋า\n- zh: 入境\n- type: other\n- status: 📄\n- transport: เดินตามป้าย\n- cost: ~30 นาที\n- notes: ⚠️ ลงจริง 12:30 (PDF 12:45)\n- map: -\n\n### 13:30–14:30 · ไป Ximending\n- zh: 西門町\n- type: train\n- status: ✅\n- line: AIRPORT, G\n- transport: **Airport MRT Express (สีม่วง)** T1 (A12) → Taipei Main (A1) 35–38 นาที → **เดินใต้ดินตามป้าย Beimen / 捷運北門站 ~8–10 นาที (~300 ม.)** → **สาย Green (G)** ทิศ Xindian → **Ximen (G12)** 1 ป้าย → Exit 4 หรือ 5 → โรงแรม ~2 นาที\n- transport_alt: Airport MRT → BL ที่ Taipei Main (หาชานชาลา 10–15 นาที) · Taxi (≈NT$1,100–1,400/คัน 40–60 นาที — ไทย 6 คน = 2 คัน ≈NT$370–470/คน)\n- cost: Express NT$160 + G ~NT$20 · รวม ~70–90 นาที (ถึงโรงแรม ~14:30–15:00)\n- notes: 🔎 Express ทุก ~15 นาที · ลากกระเป๋าเดินใต้ดิน Taipei Main — ใช้ลิฟต์ตามป้าย\n- map: -\n\n### 14:30 · ฝากกระเป๋าที่โรงแรม\n- en: Hotel Midtown Richardson\n- zh: 德立莊酒店\n- type: hotel\n- status: 📄\n- transport: เดินจาก Ximen Exit 4/5\n- cost: เช็กอินจริง **15:00**\n- notes: 🔎 front desk 24 ชม. · ตรงข้าม Ximending · PDF: Master Wang Roast Pork Belly ❓ · Chun Shui Tang **春水堂** · FIERY Coffee ❓ · Yokoso Coffee ❓ · Nap Tea ❓\n\n### 14:45 · วัดหลงซาน\n- en: Longshan Temple\n- zh: 龍山寺\n- type: temple\n- status: 📄\n- line: BL\n- transport: MRT **BL** Ximen → Longshan Temple (1 ป้าย)\n- transport_alt: เดินจากโรงแรม ~18 นาที\n- cost: ~3–5 นาที / ~NT$20\n- notes: CP1 · 🔎 PDF เขียน \"จาก Taipei Main\" แต่จากโรงแรมแค่ 1 ป้าย · Wang's Broth (Bib) ❓ · **源芳刈包 Yuan Fang Gua Bao** (Bib) · Nayone Tea ❓\n\n### 16:15 · Huashan 1914\n- zh: 華山1914文化創意產業園區\n- type: museum\n- status: 📄\n- line: BL\n- transport: BL → **Zhongxiao Xinsheng 忠孝新生站 Exit 1** → เดินเข้าสวน\n- cost: ~10–12 นาที / ~NT$20–25 + เดิน 5–10 นาที\n- notes: CP2 · Goodbeitao [Xiao Long Bao] ❓ · Paper St. Coffee Company ❓ · ⚠️ อยู่ในสวนจริง ~45 นาที\n\n### 17:15 · กลับ Ximen\n- type: train\n- status: 📄\n- line: BL\n- transport: BL Zhongxiao Xinsheng → Ximen\n- cost: ~10 นาที / ~NT$20\n- notes: ⚠️ 17:30 = เวลาออกจาก Ximen (ตีความ)\n- map: -\n\n### 17:30 · ตลาดกลางคืน Ningxia\n- en: Night Market 1 · Ningxia\n- zh: 寧夏夜市\n- type: market\n- status: 📄\n- transport: 📄 รถเมล์ **229** → ลงป้าย Traffic Circle (**圓環 / 建成圓環**) ⚠️ ไม่ได้ตรวจยืนยันสาย 229\n- line_alt: BL, R\n- transport_alt: **MRT:** BL Ximen → Taipei Main → **R line** → Shuanglian (R12) Exit 1 → เดิน ~7 นาที\n- cost: ~25–35 นาที\n- notes: 🔎 แผงเปิด ~17:00 · **Liu Yu Zi 劉芋仔** (Bib) ต่อคิว 20–60 นาที เงินสด ~NT$25–50 · Rong's Pork Liver 豬肝榮仔 · Fang Jia Chicken Rice 方家雞肉飯 (Bib)\n\n### 19:30 · กลับโรงแรม\n- type: bus\n- status: 📄\n- transport: 📄 รถเมล์ 229 ย้อน\n- transport_alt: MRT ย้อนเส้นทางเดิม\n- cost: ~25–35 นาที\n- map: -\n\n## ห้ามพลาดวันนี้\n- ❓ Liu Yu Zi 劉芋仔 (Bib) ที่ตลาด Ningxia\n- ❓ วัดหลงซาน 龍山寺\n- ❓ Huashan 1914\n\n## ข้อควรระวัง\n- ❓ เช็กอินได้ 15:00 → ฝากกระเป๋าไว้ก่อนแล้วค่อยออกเที่ยว\n- ❓ ตม. + รับกระเป๋าใช้ ~30 นาที (ลงจริง 12:30)\n- ❓ รถเมล์ 229 ไป Ningxia ยังไม่ได้ตรวจ ถ้าไม่ชัวร์ใช้ MRT ไป Shuanglian แทน\n- ❓ Liu Yu Zi ต่อคิว 20–60 นาที รับเงินสดเท่านั้น\n\n# Day 2 — 2026-11-13 · New Day in Taiwan\n\nroute: Ximen → Jiufen → Raohe → Ximen\nstay: Hotel Midtown Richardson\nsummary: Fu Hang (Bib) → Jiufen → พัก → Raohe → ✅ Hotpot ~20:15\nsummary_en: Fu Hang (Bib) → Jiufen → rest → Raohe → ✅ Hotpot ~20:15\n\n### 09:00 · Fu Hang Soy Milk\n- zh: 阜杭豆漿\n- type: food\n- status: 📄\n- line: BL\n- transport: MRT **BL** Ximen → **Shandao Temple 善導寺站** (2 ป้าย) → Exit 5 → ตลาด Huashan ชั้น 2 (ตรวจป้ายจริง)\n- cost: ~5–8 นาที / ~NT$20\n- notes: Bib · คิวยาว เผื่อ 30–60 นาที · PDF เขียน 卓杭豆漿 ชื่อจริงคือ 阜杭豆漿\n\n### 10:30–12:30 · ไป Jiufen\n- zh: 九份\n- type: bus\n- status: 📄\n- line: BL\n- transport: MRT BL → **Ximen Exit 2** → เดิน ~50 ม. ไปป้าย **965** (หน้าตึก 國軍文藝活動中心 — ⚠️ ป้ายที่ติดทางออกไม่ใช่ 965)\n- transport_alt: รถ **1062** จาก Zhongxiao Fuxing Exit 2 (NT$101–113) · รถไฟ Taipei Main → Ruifang + รถเมล์ ~NT$15 · 🚗 รถเพื่อน (ถ้าไปด้วย)\n- cost: 965: **~NT$90** 60–90 นาที\n- notes: 🔎 จ่าย EasyCard · รถแน่น ต่อคิว\n- map: -\n\n### 12:30 · Jiufen Old Street\n- zh: 九份老街\n- type: market\n- status: 📄\n- transport: ป้าย \"Jiufen Old Street\"\n- notes: CP3 · 📄 A-Gan-Yi Taro Ball **阿柑姨芋圓** · A Zhu Peanut Ice Cream Roll **阿珠雪在燒** · Misty Dessert Kingdom ❓ · Ah Lan Hakka Glutinous Rice Cake **阿蘭草仔粿** · Hima café · Youshi Twilight Café · Lickato (Gelato) · Gaoli Zhao Ming Tea ❓\n\n### 15:00 · ออกจาก Jiufen\n- type: bus\n- status: 📄\n- transport: รถ **965** กลับ Ximen\n- transport_alt: 1062\n- cost: ~80–90 นาที / ~NT$90\n- notes: ❓ เวลารถเที่ยวสุดท้าย (ตรวจก่อนไป)\n- map: -\n\n### 16:30 · พักโรงแรม\n- type: hotel\n- status: 📄\n- notes: อาบน้ำ/พัก\n- map: -\n\n### 17:30 · ไป Raohe\n- zh: 饒河街觀光夜市\n- type: train\n- status: ✅\n- line: G\n- transport: MRT **G line** Ximen → **Songshan 松山站** (ตรง 7 ป้าย) → **Exit 5**\n- cost: ~15–20 นาที / ~NT$25–30\n- notes: 🔎 เห็นประตูตลาดทันที\n- map: -\n\n### 18:00–19:15 · ตลาดกลางคืน Raohe\n- en: Night Market 2 · Raohe\n- zh: 饒河街觀光夜市\n- type: market\n- status: ✅\n- cost: เวลาปิด/เปิด ❓ ยืดหยุ่นได้\n- notes: 📄 รูปใน PDF: ซาลาเปา / เนื้อเสียบไม้ / ชานมไข่มุก · ความรู้ทั่วไป: 福州世祖胡椒餅\n\n### 19:15 · ออกจาก Raohe → Ximen\n- type: train\n- status: ✅\n- line: G\n- transport: G line Songshan → Ximen\n- cost: ~15–20 นาที\n- notes: ถึง ~19:35–19:45 ✅ พอมีเวลาล้างหน้า ~15 นาที\n- map: -\n\n### 20:15 · Hotpot ที่ Ximending\n- en: Xin Hotpot Mala (ตีความ: New Mala)\n- zh: 新馬辣經典麻辣鍋\n- type: food\n- status: ✅\n- highlight: true\n- transport: เดินจากโรงแรม ~5–10 นาที\n- cost: บุฟเฟ่ต์ ~NT$698++/คน ❓ (ขึ้นกับสาขา/วัน) · เวลากินจำกัด ~2 ชม.\n- notes: 🔎 เปิด 11:30–02:00 (Hanzhong ปิด 00:00) → 20:15 เปิดแน่ · **จอง 8 ที่** (✅ เพื่อนกำลังจองสาขา Ximending ผ่าน inline/โทรร้าน) ศุกร์เย็นคนเยอะ ควรจองให้เสร็จเร็ว · ⚠️ ชื่อร้านเป็นการตีความ ให้เพื่อนยืนยันตอนจอง\n\n## ห้ามพลาดวันนี้\n- ❓ Fu Hang Soy Milk 阜杭豆漿 (Bib)\n- ❓ Jiufen Old Street · A-Gan-Yi Taro Ball 阿柑姨芋圓\n- ❓ Hotpot ~20:15 กับเพื่อน (จอง 8 ที่)\n\n## ข้อควรระวัง\n- ❓ ป้าย 965 อยู่หน้าตึก 國軍文藝活動中心 ไม่ใช่ป้ายที่ติดทางออก\n- ❓ ยังไม่รู้เวลารถ 965 เที่ยวสุดท้ายจาก Jiufen\n- ❓ Jiufen บันไดเยอะ ถ้าฝนตกจะลื่น\n- ❓ ออกจาก Raohe ไม่เกิน ~19:15 ให้ทัน Hotpot\n- ❓ ชื่อร้าน Hotpot ยังเป็นการตีความ ต้องให้เพื่อนยืนยัน\n\n## ข้อมูลเพิ่มเติม\n\n**สาขา 新馬辣 ใกล้ Ximen (🔎 Klook/Wongnai):** Ermei 二梅 (155 Xining S. Rd.) · Hanzhong 漢中 (6F, 52 Hanzhong St. · เดิน ~4 นาที จาก Ximen Exit 1) · Kunming 昆明 (37 Kunming St. · ~8 นาที) · Wuchang 武昌 (72 Sec.2 Wuchang St. · ~7 นาที)\n\n⚠️ **ถามเพื่อน:** จองสาขาไหน (ชื่อร้านจีนที่จอง) / เวลา 20:15 / จำนวน 8 ที่ ยืนยันแล้ว\n\n# Day 3 — 2026-11-14 · Log the Moment\n\nroute: Ximen → Shilin → Beitou → Tamsui\nstay: Hotel Midtown Richardson\nsummary: ✅ แผน A — National Palace Museum → วัด Guandu → Xinbeitou onsen → Tamsui (กลางคืน) → พัก → บาร์ (~22:00)\nsummary_en: ✅ Plan A — National Palace Museum → Guandu Temple → Xinbeitou onsen → Tamsui (night) → rest → bar (~22:00)\n\n### 08:45 · ออกจากโรงแรม\n- type: train\n- status: ✅\n- line: G, R\n- transport: MRT G Ximen → Zhongshan → R → **Shilin (R16) Exit 1**\n- cost: ~30 นาที / ~NT$25–35\n- notes: กินเช้า ❓ ตรวจว่ารวมกับห้องไหม\n- map: -\n\n### 09:30 · รถเมล์ R30 → NPM\n- type: bus\n- status: ✅\n- transport: ป้ายตรงข้าม Exit 1\n- transport_alt: แท็กซี่จากสถานี ~10 นาที\n- cost: ~10–15 นาที / ~NT$15\n- notes: ไปถึง ~10:00\n- map: -\n\n### 10:00–12:15 · พิพิธภัณฑ์พระราชวังแห่งชาติ\n- en: National Palace Museum\n- zh: 國立故宮博物院\n- type: museum\n- status: ✅\n- cost: NT$350/คน\n- notes: 🔎 ไฮไลต์: ผักกาดหยก 翠玉白菜 · หินรูปหมูสามชั้น 肉形石 · 毛公鼎 · ❓ ร้านอาหาร: **Silks Palace 故宮晶華** (ข้าง NPM, เสาร์ 11:00–20:00, ~NT$875+/คน) หรือกินที่ Shilin\n\n### 12:15–13:00 · มื้อกลางวัน (สุ่ม)\n- type: food\n- status: ✅\n- notes: ✅ ตามที่ผู้ใช้ให้สุ่มแถวนั้น\n- map: -\n\n### 13:00 · กลับ Shilin\n- type: bus\n- status: ✅\n- transport: R30 กลับ\n- cost: ~15 นาที\n- map: -\n\n### 13:15 · Shilin → Zhongyi (R24)\n- type: train\n- status: ✅\n- line: R\n- transport: MRT R\n- cost: ~20 นาที / ~NT$25–30\n- notes: 8 ป้าย\n- map: -\n\n### 13:45 · รถ 302 → วัด Guandu\n- type: bus\n- status: ✅\n- transport: ดู \"ทางไป Guandu\" ในข้อมูลเพิ่มเติมท้ายวัน\n- transport_alt: เดินจาก Guandu Station ~10–15 นาที\n- cost: ~10–15 นาที ❓ / ~NT$15\n- map: -\n\n### 14:00–15:00 · วัด Guandu\n- en: Guandu Temple\n- zh: 關渡宮\n- type: temple\n- status: ✅\n- cost: ฟรี 45–90 นาที\n- notes: CP5 · Mazu เก่าแก่ ~ปี 1661 · เสาร์คนแน่น\n\n### 15:00 · ไป Xinbeitou\n- type: bus\n- status: ⚠️\n- transport: 302 ทิศไป Wanhua → **北投國小** → MRT Beitou → Xinbeitou\n- line_alt: R\n- transport_alt: MRT: ซอยกลับ Zhongyi → Beitou (R22) → Xinbeitou (R22A)\n- cost: ~30–40 นาที / ~NT$30–40\n- notes: 📄 PDF เขียน 302/550 ไป Xinbeitou — 302 ผ่าน Beitou ✅ แต่ไม่ถึง Xinbeitou ตรง ๆ\n- map: -\n\n### 15:45–17:15 · Xinbeitou Onsen\n- zh: 新北投溫泉\n- type: onsen\n- status: ⚠️\n- cost: ดูตาราง onsen ในข้อมูลเพิ่มเติมท้ายวัน\n- notes: CP6 · ต้องจองก่อน (ยังไม่ได้จอง)\n\n### 17:30 · ไป Tamsui\n- type: train\n- status: ⚠️\n- line: R\n- transport: Xinbeitou → Beitou → R → **Tamsui 淡水站**\n- cost: ~35–45 นาที / ~NT$30–40\n- notes: ⚠️ ถึง ~18:10 → พระอาทิตย์ตก (~17:05–17:10) **พลาด**\n- map: -\n\n### 18:10–19:15 · Tamsui Old Street (กลางคืน)\n- zh: 淡水老街\n- type: market\n- status: ⚠️\n- notes: ความรู้ทั่วไป: 阿給, 鐵蛋, 魚丸湯\n\n### 19:15 · กลับ Ximen\n- type: train\n- status: ⚠️\n- line: R, G\n- transport: R Tamsui → Zhongshan → G → Ximen\n- cost: ~45–55 นาที / ~NT$35–45\n- notes: ถึง ~20:15 → **บาร์เลื่อนเป็น ~22:00**\n- map: -\n\n### ~22:00 · บาร์\n- en: Paw Bar / Utopia\n- type: nightlife\n- status: ❓\n- notes: ✅ เลื่อนเป็น ~22:00 · ที่อยู่/เวลาเปิดของ Paw Bar และ Utopia ❓ ยังไม่ได้ตรวจ\n- map: -\n\n## ห้ามพลาดวันนี้\n- ❓ NPM: ผักกาดหยก 翠玉白菜 · หินรูปหมูสามชั้น 肉形石\n- ❓ วัด Guandu 關渡宮\n- ❓ Xinbeitou onsen\n\n## ข้อควรระวัง\n- ❓ onsen Xinbeitou ต้องจองก่อน (ยังไม่ได้จอง)\n- ❓ ถ้า NPM ใช้เวลาเกิน 2 ชม. ให้ตัดวัด Guandu ก่อน\n- ❓ รถ 302 ต้องขึ้นฝั่งทิศไปวัด (ตรวจทิศใน Google Maps)\n- ❓ ถึง Tamsui หลังพระอาทิตย์ตก\n- ❓ ที่อยู่/เวลาเปิดของบาร์ยังไม่ได้ตรวจ\n\n## ข้อมูลเพิ่มเติม\n\n**ข้อมูลหลัก NPM (🔎):** NPM เปิด **ศ–ส ถึง ~21:00** (บางแหล่งว่าเปิด 09:00–17:00 ทุกวันที่เปิด, ตั๋วปิดขาย ~16:30; ปิดวันจันทร์) · ตั๋วผู้ใหญ่ **NT$350** · ใช้เวลา **อย่างน้อย 2–4 ชม.** · ที่อยู่ 221 Sec.2 Zhishan Rd., Shilin (士林區至善路二段221號) · ❓ ตรวจเวลาเปิดช่วงเย็นศุกร์/เสาร์ที่ npm.gov.tw ก่อนไป\n\n**ทางไป NPM (🔎):** MRT Red → **Shilin 士林站 (R16) Exit 1** → เดินข้ามถนน ~1–2 นาที → รถเมล์ **R30 (紅30)** / 255 / 304 / 815 / 300 / S18 / S19 → NPM ~10–15 นาที (R30 ลงหน้าตึกหลัก) · จาก Ximen: G line → Zhongshan (G14/R11) เปลี่ยน R line → Shilin ≈ 25–30 นาที\n\n**ทางไป Guandu แบบรถบัส (✅ / 🔎 ตรวจแล้ว):** MRT R ลง **Zhongyi 忠義站 (R24)** → ป้ายรถเมล์ **捷運忠義站** → **สาย 302** (สาย 223 ก็ผ่านแต่ไม่ไปหน้าวัดตรง ๆ ❓) → ลงป้าย **關渡宮 (Guandu Temple)** หน้าวัด · ⚠️ ต้องขึ้นฝั่งทิศไปวัด (ตรวจทิศใน Google Maps) · ❓ ความถี่ 302 ตรวจเรียลไทม์\n\n> ⚠️ เงื่อนไขแผน A: ถ้าเวลาเริ่มตึง ให้ตัดวัด Guandu ก่อน (ยังไป Zhongyi → Beitou → Xinbeitou ได้ตรงๆ) · บาร์ย้ายเป็น ~22:00 (ที่อยู่/เวลาเปิดของ Paw Bar และ Utopia ❓ ยังไม่ได้ตรวจ)\n\n**Onsen Xinbeitou — ข้อมูลที่ตรวจแล้ว (🔎) และสิ่งที่ต้องจอง**\n\n| ตัวเลือก (จาก PDF) | ข้อมูล |\n|---|---|\n| **Water House 享溫泉** | มีตั๋วขายออนไลน์ · วันเสาร์ **+NT$100/คน** ที่หน้างาน (ตั๋วใช้ได้ภายใน 90 วัน) |\n| **Silks Spring Resort Beitou = Wellspring by Silks 北投晶泉丰旅** | ห้องส่วนตัว 2 คน/90 นาที · ส่วนต่างวันเสาร์ ~NT$300–750 ต่อห้อง · จองรายชั่วโมงในเว็บโรงแรม |\n| Beitou Nanya Spring Spa Resort ❓ · Grand Villa Beitou ❓ | ยังหาข้อมูลไม่เจอ (ชื่ออาจไม่ตรงกับ PDF) |\n| (เสริม) สระสาธารณะแบบชุดว่ายน้ำ | ตัวอย่าง 皇池溫泉 ~NT$250/คน (ข้อมูลเก่า ❓) |\n| ✅ ต้องทำ | จองล่วงหน้า (Klook/Waug/เว็บโรงแรม) เวลา ~15:45 · ไทย 6 คน (ถ้าเพื่อนไปด้วย = 8) → ห้องส่วนตัวห้องละ 2 คน = 3–4 ห้อง หรือเลือกสระสาธารณะ · ❓ ยืนยันกฎชุดว่ายน้ำ |\n\n# Day 4 — 2026-11-15 · Lost on My Way\n\nroute: Fish Market → Taipei 101 → Zhongshan → Ximen\nstay: Hotel Midtown Richardson\nsummary: ตลาดปลา → วัด Xingtian → Taipei 101 → Pokémon Center → CKS Memorial Hall → Zhongshan → Ximending\nsummary_en: Fish market → Xingtian Temple → Taipei 101 → Pokémon Center → CKS Memorial Hall → Zhongshan → Ximending\n\n### 09:00 · ออกจากโรงแรม\n- type: bus\n- status: 📄\n- line: BL\n- transport: MRT BL → **Zhongxiao Xinsheng Exit 7** → รถเมล์ **643** → ป้าย **Taipei Fish Market 臺北漁市**\n- line_alt: O\n- transport_alt: MRT Orange → **Xingtian Temple 行天宮站** + เดิน ~14 นาที · แท็กซี่จากสถานี \u003c NT$100 · 🚗 รถเพื่อน\n- cost: ~35–45 นาที\n- notes: 🔎 ป้าย Fish Market มีสาย 49 / 643\n- map: -\n\n### 09:40 · ตลาดปลา Taipei Fish Market\n- en: Taipei Fish Market\n- zh: 臺北漁市\n- type: market\n- status: 📄\n- notes: CP8 · 上引水產 · 🔎 เปิด 07:00 · ⚠️ ร้านบางร้านเปิดช้า (Seafood Bar 10:30) · 📄 Top seafood · An an Seafood ❓ · Summer Savage · Aida Coffee ❓\n\n### 10:30 · วัด Xingtian\n- en: Xingtian Temple\n- zh: 行天宮\n- type: temple\n- status: 📄\n- transport: เดิน ~15–20 นาที\n- transport_alt: รถเมล์ 643/49 / แท็กซี่\n- cost: ฟรี\n- notes: CP9 · 🔎 สถานี Xingtian Temple ตกแต่งสวย ถ่ายรูปได้\n\n### 11:15 · ไปถ่ายรูป Taipei 101\n- type: train\n- status: 📄\n- line: O, R\n- transport: MRT Orange Xingtian Temple → **Dongmen** (เปลี่ยน) → **R line** → **Taipei 101/WTC (R03) Exit 2** → เดิน ~3 นาที\n- cost: ~25–30 นาที / ~NT$25–30\n- notes: 🔎 Four Four South Village **四四南村** (PDF เรียก Sisinan Village) · ❓ เวลาเปิด (ต่างกันตามแหล่ง)\n- map: -\n\n### 11:45 · Taipei 101\n- zh: 台北101\n- type: other\n- status: 📄\n- notes: CP10\n\n### 12:15 · Pokémon Center Taipei\n- zh: 寶可夢中心台北\n- type: shopping\n- status: 📄\n- line: BL\n- transport: MRT BL **Taipei City Hall (BL18) Exit 3** ~3 นาที (อยู่ Shin Kong Mitsukoshi Xinyi Place **A11 ชั้น 3**)\n- transport_alt: เดินจาก 101 ❓\n- cost: ❓ ตรวจระยะเดินใน Google Maps\n- notes: CP11 · 🔎 อาทิตย์เปิด **11:00–21:30** · 📄 เข้าฟรี · ✅ มื้อกลางวัน: สุ่มในห้าง Xinyi (ไม่ซ้ำ Din Tai Fung วัน 5)\n\n### 14:00 · อนุสรณ์สถานเจียงไคเชก\n- en: CKS Memorial Hall\n- zh: 中正紀念堂\n- type: museum\n- status: 📄\n- line: R\n- transport: MRT R **101/WTC → CKS** (ตรง ~12 นาที)\n- cost: ~12 นาที / ~NT$25\n- notes: CP12 · 📄 Huang Long Zhuang ❓ ชื่อจีน\n\n### 15:15 · ไป Zhongshan\n- zh: 中山站\n- type: train\n- status: 📄\n- line: G, R\n- transport: MRT G/R\n- cost: ~10 นาที / ~NT$20–25\n- map: -\n\n### 15:30 · ย่าน Zhongshan\n- zh: 中山區\n- type: cafe\n- status: 📄\n- notes: CP13 · 📄 Mian Xian Ding ❓ · Erlou Oyster Ramen ❓ · Simple Kaffa Flagship **興波咖啡** · Fika Fika Cafe\n\n### 16:45 · กลับ Ximen\n- type: train\n- status: 📄\n- line: G\n- transport: G Zhongshan → Ximen\n- cost: ~5–8 นาที\n- map: -\n\n### 17:45 · Ximending\n- zh: 西門町\n- type: food\n- status: 📄\n- transport: เดินจากโรงแรม\n- notes: CP14 · 📄 Liangshan Po **梁山泊小籠湯包** (ถ้าคนเยอะ → **刁民酸菜魚** Diao Min Sauerkraut Fish)\n\n### 19:00 · กลับโรงแรม\n- type: hotel\n- status: 📄\n- map: -\n\n## ห้ามพลาดวันนี้\n- ❓ ตลาดปลา Taipei Fish Market\n- ❓ ถ่ายรูป Taipei 101 + Four Four South Village 四四南村\n- ❓ Pokémon Center Taipei\n- ❓ อนุสรณ์สถานเจียงไคเชก\n\n## ข้อควรระวัง\n- ❓ ร้านในตลาดปลาบางร้านเปิดช้า (Seafood Bar 10:30)\n- ❓ ระยะเดิน Taipei 101 → Pokémon Center ยังไม่ได้ตรวจ\n- ❓ มื้อกลางวันอย่าซ้ำ Din Tai Fung (ไว้กินวันที่ 5)\n\n# Day 5 — 2026-11-16 · Last Day with you with me\n\nroute: Ximen → Wulai → Xinyi → Ximen\nstay: Hotel Midtown Richardson\nsummary: อาหารเช้า Ximen → Wulai → onsen 13:00 → Xinyi / Din Tai Fung (Taipei 101) → กลับ Ximen\nsummary_en: Breakfast in Ximen → Wulai → onsen 13:00 → Xinyi / Din Tai Fung (Taipei 101) → back to Ximen\n\n### 08:30 · อาหารเช้า Ximen\n- type: food\n- status: 📄\n- transport: เดินจากโรงแรม\n- notes: 📄 No Name **無名** (หน้า Starbucks ซื้อกับลุง) · Gan Mei Alley ❓ · Golden Flower Grilled Toast ❓\n- map: -\n\n### 09:15 · ไป Wulai\n- type: bus\n- status: 📄\n- line: G\n- transport: MRT **G line** Ximen → **Xindian 新店站** → หาป้ายรถ **849 烏來** **ข้างนอกสถานี** (ถนน Beixin 北新路)\n- transport_alt: 🚗 รถเพื่อน (ถ้าไปด้วย) · แท็กซี่ Xindian→Wulai ~NT$600 (ข้อมูลเก่า ❓)\n- cost: MRT ~25 นาที + รอรถ + บัส ~40 นาที\n- notes: 🔎 849 ทุก ~15–25 นาที · รถเล็ก ~20 ที่นั่ง · ทางโค้ง → ยาแก้เมารถ · EasyCard NT$15–45 ❓\n- map: -\n\n### 10:45 · Wulai\n- zh: 烏來\n- type: nature\n- status: 📄\n- transport: ลงปลายทาง Wulai\n- notes: CP15 · 📄 Old Street **烏來老街** (เดิน ~5 นาที) · Waterfall **烏來瀑布** (ทางเดินราบ ~1 กม. ฟรี) · Suspension Bridge · Log Cart **烏來台車** ❓ · 🔎 Atayal Museum 09:30–17:00 (แหล่งเก่า)\n\n### ~12:00 · มื้อกลางวัน (สุ่ม)\n- type: food\n- status: ✅\n- notes: 🔎 ร้านใกล้ Pause Landis: 烏來伯擔仔麵 (~2 นาที) · 山地美食屋 · 雅各道地原住民山豬肉香腸 · 翠山飲食店\n- map: -\n\n### 13:00–14:30 · Onsen Public / Private\n- en: Pause Landis Resort Wulai\n- type: onsen\n- status: ✅\n- highlight: true\n- transport: เดินจาก Old Street ~15 นาที → **Pause Landis Resort Wulai** (No.88 Sec.5 Xinwu Rd.)\n- transport_alt: Wulai Yamakawa 山之川 · Mitake ❓ ไม่พบข้อมูล\n- cost: 🔎 ตั๋ว Klook/Waug ~US$31–34 (public)\n- notes: PDF เขียน \"Pubic\" = Public · 🔎 **วันจันทร์เปิด 13:00–21:30 เท่านั้น** ✅ พอดี · สระสาธารณะแยกชาย/หญิง **เปลือย** · ❓ ซื้อ walk-in ที่หน้างานได้ไหม → **แนะนำซื้อตั๋วล่วงหน้า/โทรถามร้าน**\n\n### 15:00 · กลับไทเป\n- type: bus\n- status: ✅\n- line: G, R\n- transport: **ตัวเลือก 1:** 849 → **Xindian** → G → **CKS** → R → Taipei 101 (~1 ชม. 15 นาที)\n- line_alt: R\n- transport_alt: **ตัวเลือก 2:** 849 **ตรงถึง NTU Hospital (R09)** (~1 ชม. 17–36 นาที, ทุก 15 นาที) → R → 101 (6 ป้าย ~12 นาที) · 🚗 รถเพื่อน\n- cost: NT$15–45 + MRT ~NT$25–35\n- notes: 🔎 ขึ้นที่ปลายทาง Wulai (ต้นทาง) → ได้ที่นั่งแน่ ๆ · ⚠️ 849 **ไม่ลง Ximending** · PDF \"Xiadian\" = Xindian\n- map: -\n\n### ~16:30–16:50 · ย่าน Xinyi\n- zh: 信義區\n- type: shopping\n- status: ✅\n- notes: CP16 · ✅ Din Tai Fung **สาขา Taipei 101 鼎泰豐 101店** (B1, No.45 Shifu Rd.)\n\n### ~17:00 · Din Tai Fung\n- zh: 鼎泰豐 101店\n- type: food\n- status: ✅\n- line: R\n- transport: R line **101/WTC (R03)** → เดิน ~10 นาที (Exit 4)\n- line_alt: BL\n- transport_alt: BL Taipei City Hall Exit 2 ~10 นาที\n- cost: ~NT$300–600/คน ❓\n- notes: 🔎 เปิด 11:00–20:30 (ข้อมูลเว็บจอง) · **กดบัตรคิวหน้าร้านก่อน** (กลุ่ม 6–8 คน คิวนานขึ้น — ถ้ามีเพื่อนไปด้วยให้ลองโทร/ถามจองล่วงหน้า ❓) แล้วไปเดินห้าง รอสแกน QR สั่งล่วงหน้า · คิวอาจ 30 นาที–1 ชม.+ · ตั๋วคูปองออนไลน์ (Klook/Waug) ช่วยลดเวลารอ · Bai-Shui Tofu Pudding ❓ · ขนมฝาก **L'Atelier Lotus** (nougat) ❓\n\n### 19:00 · กลับ Ximen\n- type: train\n- status: 📄\n- line: R, G\n- transport: **R → CKS → G → Ximen**\n- cost: ~25–30 นาที / ~NT$25–30\n- notes: ⚠️ PDF เขียนลำดับสีสายกลับด้าน\n- map: -\n\n## ห้ามพลาดวันนี้\n- ❓ Wulai Old Street + น้ำตก 烏來瀑布\n- ❓ Onsen Pause Landis 13:00\n- ❓ Din Tai Fung สาขา Taipei 101\n\n## ข้อควรระวัง\n- ❓ Pause Landis วันจันทร์เปิด 13:00 เท่านั้น ห้ามไปก่อน\n- ❓ สระสาธารณะ Wulai ไม่ใส่ชุดว่ายน้ำ (เปลือย) ตกลงกับกลุ่มก่อน\n- ❓ รถ 849 รถเล็ก ~20 ที่นั่ง 6–8 คนอาจขึ้นไม่พร้อมกัน · ทางโค้ง กินยาแก้เมารถ\n- ❓ รถ 849 ไม่ลง Ximending\n- ❓ Din Tai Fung กดบัตรคิวก่อน คิวอาจ 30 นาที–1 ชม.+\n\n# Day 6 — 2026-11-17 · Good bye Taiwan / My Dear\n\nroute: Ximen → Taoyuan → DMK\nstay: กลับไทย · FD231 ถึง DMK 21:30 (เวลาไทย)\nsummary: ฟรีไทม์ → เช็กเอาต์ 11:00 ฝากกระเป๋า → นัดรวม 14:30 → สนามบิน → ✅ FD231 18:35\nsummary_en: Free time → check out 11:00 and store bags → meet 14:30 → airport → ✅ FD231 18:35\n\n### เช้า–11:00 · ฟรีไทม์\n- zh: 自由活動\n- type: free\n- status: 📄\n- notes: 📄 ช้อป/คาเฟ่/พัก\n- map: -\n\n### 11:00 · เช็กเอาต์ + ฝากกระเป๋า\n- zh: 退房\n- type: hotel\n- status: 📄\n- notes: 🔎 โรงแรมมีบริการเก็บกระเป๋า\n- map: -\n\n### 14:30 · นัดรวมที่โรงแรม\n- type: hotel\n- status: 📄\n- map: -\n\n### 14:45 · ไปสนามบิน\n- zh: 桃園機場\n- type: train\n- status: 📄\n- line: G, AIRPORT\n- transport: **G line Ximen → Beimen (G13) → เดินใต้ดิน ~8–10 นาที → Taipei Main (A1)** → **Airport MRT Express** → **T1 (A12)** ❓\n- line_alt: BL\n- transport_alt: MRT BL Ximen → Taipei Main (แต่หาชานชาลา Airport MRT 10–15 นาที) · แท็กซี่\n- cost: ~70–80 นาที / NT$160 + ~NT$20\n- notes: 🔎 Express ทุก 15 นาที · ❓ ยืนยันเทอร์มินัล (T2 = A13) · ❓ AirAsia เช็กอินที่ A1 (in-town) ได้ไหม\n- map: -\n\n### 15:40 · ถึงสนามบิน\n- type: flight\n- status: 📄\n- notes: ⚠️ ถ้าใช้เส้นทางด้านบน ถึง ~16:00 → ยังเหลือ ~2.5 ชม.\n- map: -\n\n### 18:35 · FD231 TPE → DMK\n- type: flight\n- status: ✅\n- highlight: true\n- cost: ถึง 21:30 (เวลาไทย)\n- notes: PDF ระบุ 18:30 — ใช้ 18:35\n- map: -\n\n## ห้ามพลาดวันนี้\n- ❓ FD231 ออก 18:35\n\n## ข้อควรระวัง\n- ❓ ยืนยันเทอร์มินัลขากลับ (T1 = A12 / T2 = A13)\n- ❓ ตรวจว่า AirAsia เช็กอินที่ Taipei Main (A1) ได้ไหม\n- ❓ นัดรวมที่โรงแรม 14:30\n\n# เตรียมของ\n\n## กระเป๋า\n\n| กระเป๋า | น้ำหนัก/ขนาด | หมายเหตุ |\n|---|---|---|\n| ✅ กระเป๋าใบใหญ่ (check-in) | **20 kg** (ซื้อน้ำหนักเพิ่ม) | เผื่อของฝากขากลับ · ไม่ใส่ power bank/แบตลิเธียม/ไฟแช็ก · ตรวจว่าซื้อครบ **ทั้ง FD230 และ FD231** |\n| ✅ carry-on | **7 kg** | ❓ ตรวจว่า 7 kg รวมกระเป๋าสะพายไหม |\n| ✅ กระเป๋าสะพาย | — | เอกสาร เงิน มือถือ power bank |\n| ✅ กระเป๋า CPAP (อุปกรณ์การแพทย์) | — | ดูหมวด กระเป๋า CPAP |\n\n## กระเป๋า CPAP\n- [ ] เครื่อง + หน้ากาก + สายท่อลม + สายรัด\n- [ ] อะแดปเตอร์ — **ตรวจป้ายแรงดัน (ควรรองรับ 100–240V)** เพราะไต้หวัน 110V\n- [ ] รางปลั๊ก/ปลั๊กแปลง (Type A/B) สำหรับข้างเตียง\n- [ ] ถังน้ำ humidifier — เทน้ำทิ้งก่อนเดินทาง\n- [ ] ใบรับรองแพทย์/ใบสั่งยา (ภาษาอังกฤษ) ระบุรุ่น\n- [ ] พกขึ้นเครื่อง ไม่ใส่ check-in · แบตถอดได้ (ถ้ามี) เก็บในกระเป๋าถือ\n- [ ] ❓ ตรวจกับ AirAsia: อุปกรณ์การแพทย์นับรวม 7 kg ไหม ต้องแจ้งล่วงหน้าไหม (หาเงื่อนไขเฉพาะไม่เจอ)\n- [ ] ❓ ถ้าจะใช้บนเครื่อง ต้องแจ้งสายการบินล่วงหน้า\n- [ ] ❓ แจ้งโรงแรมเรื่องปลั๊กข้างเตียง/น้ำกลั่น (ถ้าต้องใช้)\n\n## เอกสาร / เงิน / สื่อสาร\n- [ ] พาสปอร์ต (≥ 6 เดือน) + สำเนา\n- [ ] ตั๋ว FD230/FD231 · ใบจองโรงแรม · **TWAC QR**\n- [ ] ประกันการเดินทาง ❓\n- [ ] เงินสด NT$ (ตลาดกลางคืนรับเงินสด, Liu Yu Zi เงินสด) + บัตร\n- [ ] **EasyCard 悠遊卡** (MRT, รถเมล์, Airport MRT)\n- [ ] eSIM/SIM/pocket Wi-Fi ❓ · แอป Google Maps (ออฟไลน์ไทเป) / Taipei Metro Go\n- [ ] การ์ดโรงแรมภาษาจีน (ดูข้อมูลอ้างอิง)\n- [ ] ✅ **หลักฐานจองร้าน**: Hotpot (8 ที่), Onsen Xinbeitou, Din Tai Fung (บัตรคิว/คูปอง)\n\n## เสื้อผ้า / อากาศ\n\n> พ.ย. ไทเปโดยประมาณ ~19–26°C ฝนบ่อยทางเหนือ/ภูเขา (Jiufen, Wulai) — ตรวจพยากรณ์ก่อนบิน 1 สัปดาห์\n\n- [ ] เสื้อบางหลายชั้น + แจ็กเก็ตกันลม/ฝน · ร่มพับ\n- [ ] รองเท้านุ่ม + ถุงเท้าสำรอง\n- [ ] ชุดว่ายน้ำ + หมวกว่ายน้ำ (ใช้ที่ Xinbeitou แบบสระสาธารณะ ตรวจกฎ) · ผ้าเช็ดตัว · กระเป๋ากันน้ำ (⚠️ Wulai Pause Landis สระสาธารณะ **ไม่ใส่ชุดว่ายน้ำ**)\n- [ ] เสื้อผ้าสำหรับบาร์ (Day 3) + บัตรประชาชน/พาสปอร์ต\n- [ ] ครีมกันแดด / แว่นกันแดด\n\n## ยา / เบ็ดเตล็ด\n- [ ] ยาประจำตัว (พกในกระเป๋าถือ)\n- [ ] ยาแก้เมารถ (Wulai ทางโค้ง) · ยาแก้ปวด/ท้องเสีย · พลาสเตอร์\n- [ ] พาวเวอร์แบงก์ (กระเป๋าถือ) + สายชาร์จ + หัวปลั๊ก\n- [ ] ทิชชู่เปียก/ถุงซิป/ถุงขยะ\n- [ ] ⚠️ **บุหรี่ไฟฟ้า/vape ห้ามนำเข้าและใช้ในไต้หวัน** (ตรวจกฎศุลกากรล่าสุด)\n- [ ] เว้นที่ว่างในกระเป๋าใหญ่สำหรับของฝาก\n\n# To-do\n\n- [ ] ก่อน 2026-11-12 · ยืนยันจำนวนคน (8 = ไทย 6 + เพื่อน 2?) · ห้องพัก (ไทย 6 คน) · เพื่อนไปวันไหนบ้าง (ถ้าอยากใช้รถเพื่อน)\n- [ ] ก่อน 2026-11-12 · ซื้อน้ำหนัก 20 kg ทั้งสองเที่ยว · ตรวจเงื่อนไข carry-on 7 kg + CPAP\n- [ ] 2026-11-09 – 2026-11-11 · กรอก **TWAC** ที่ `twac.immigration.gov.tw` เก็บ QR ไว้\n- [ ] ก่อน 2026-11-13 · ✅ เพื่อนจอง Hotpot สาขา Ximending **20:15 (8 ที่)** — เช็กยืนยันชื่อร้านและเวลา\n- [ ] ก่อน 2026-11-14 · **จอง onsen Xinbeitou (~15:45)** · ตรวจเวลา NPM · ตรวจที่อยู่/เวลา Paw Bar & Utopia (บาร์ ~22:00)\n- [ ] ก่อน 2026-11-16 · ซื้อตั๋ว/ถามร้าน Pause Landis (เปิด 13:00 วันจันทร์) · ตรวจคิว Din Tai Fung 101\n- [ ] ก่อน 2026-11-17 · ยืนยัน Terminal ขากลับ · ตรวจ in-town check-in ที่ Taipei Main\n\n# ข้อมูลอ้างอิง\n\n## ข้อมูลเข้าเมือง\n\n- พาสปอร์ตไทย: **ยกเว้นวีซ่า 14 วัน** (ขยายถึง 31 ก.ค. 2027) · พาสปอร์ตเหลืออายุ ≥ 6 เดือน · ตั๋วขากลับ · ใบจองโรงแรม · เงินเพียงพอ 🔎\n- **Taiwan Arrival Card (TWAC)** ออนไลน์ — ส่วนใหญ่ระบุ \"ภายใน 3 วันก่อนเข้า\" (บางแหล่ง 7 วัน) → ทำ **9–11 พ.ย.** ที่ `twac.immigration.gov.tw` เก็บ QR ไว้ 🔎\n- ไฟฟ้าไต้หวัน 110V 60Hz ปลั๊กแบน (Type A/B) 🔎\n\n## เบอร์ฉุกเฉิน\n\n| เรื่อง | เบอร์ | หมายเหตุ |\n|---|---|---|\n| ตำรวจ | **110** | 🔎 |\n| ไฟไหม้ / รถพยาบาล | **119** | 🔎 |\n| ฉุกเฉินมือถือ (สัญญาณไม่ดี) | 112 | 🔎 ช้ากว่า 110/119 |\n| ศูนย์ข้อมูลท่องเที่ยว 24 ชม. | 0800-011-765 | 🔎 EN/JP/KR · จากมือถือต่างประเทศ +886-2-2349-1500 |\n| ตำรวจพูดอังกฤษ / Tourist info ไทเป | +886-2-2717-3737 | 🔎 |\n| สายด่วนชาวต่างชาติ | 1990 (เดิม 0800-024-111) | 🔎 แหล่งข้อมูลยังแสดงทั้งสองเบอร์ |\n| สนามบิน Taoyuan ฉุกเฉิน 24 ชม. | +886-3-398-2050 | 🔎 · เคาน์เตอร์ T1 +886-3-398-2143 |\n| TTEO (สำนักงานการค้าและเศรษฐกิจไทย) ไทเป | +886-2-2775-2211 | ⚠️ จากเว็บบุคคลที่สาม — ตรวจที่ `tteo.thaiembassy.org` |\n| กรมการกงสุล Call Center 24 ชม. | +66-2-572-8442 | ⚠️ จากความจำ — ตรวจที่ `consular.mfa.go.th` |\n| โรงแรม / สายการบิน / ประกัน | ❓ ใส่จากใบจอง | |\n\n## การ์ดแท็กซี่ (โรงแรม)\n\n請帶我到「德立莊酒店 Midtown Richardson」,臺北市中正區秀山街4號,謝謝。\n\n*Qǐng dài wǒ dào Délìzhuāng Jiǔdiàn, Táiběi shì Zhōngzhèng qū Xiùshān jiē 4 hào, xièxie.*\n\n## ประโยคใช้บ่อย\n\n| สถานการณ์ | จีน | Pinyin | อ่านแบบไทย (โดยประมาณ) |\n|---|---|---|---|\n| สวัสดี | 你好 | nǐ hǎo | หนี่ ห่าว |\n| ขอบคุณ | 謝謝 | xièxie | เซี่ยเซี่ย |\n| ขอโทษ / ขอทาง | 不好意思 | bù hǎoyìsi | ปู้ ห่าว อี้ซือ |\n| เท่าไหร่ | 多少錢? | duōshǎo qián | ตัวเสา เฉียน |\n| ขอถามหน่อย…อยู่ที่ไหน | 請問…在哪裡? | qǐngwèn… zài nǎlǐ | ฉิ่งเวิ่น…ไจ้ หนาหลี่ |\n| ห้องน้ำอยู่ที่ไหน | 廁所在哪裡? | cèsuǒ zài nǎlǐ | เช่อสั่ว ไจ้ หนาหลี่ |\n| เอาอันนี้ | 我要這個 | wǒ yào zhège | หว่อ เย่า เจ้อเกอ |\n| ไม่เผ็ด | 不要辣 | bú yào là | ปู๋ เย่า ล่า |\n| ไม่ใส่ผักชี | 不要香菜 | bú yào xiāngcài | ปู๋ เย่า เซียงไช่ |\n| ชานม: ไม่น้ำแข็ง / น้ำแข็งน้อย | 去冰 / 少冰 | qù bīng / shǎo bīng | ชวี่ ปิง / เส่า ปิง |\n| ชานม: หวานน้อย / ไม่หวาน | 微糖 / 無糖 | wēi táng / wú táng | เหวย ถาง / อู๋ ถาง |\n| ทานที่ร้าน / ห่อกลับ | 內用 / 外帶 | nèiyòng / wàidài | เน่ยยง / ไว่ไต้ |\n| เช็กบิล | 結帳 | jiézhàng | เจี๋ย จ้าง |\n| รูดบัตรได้ไหม | 可以刷卡嗎? | kěyǐ shuākǎ ma | เขออี่ ซั่วข่า ม้า |\n| จองไว้แล้ว (8 คน) | 我有訂位,八位 | wǒ yǒu dìngwèi, bā wèi | หว่อ โหย่ว ติ้งเว่ย, ปา เว่ย |\n| ช่วยเรียกแท็กซี่ | 請幫我叫計程車 | qǐng bāng wǒ jiào jìchéngchē | ฉิ่ง ปัง หว่อ เจี้ยว จี้เฉิงเชอ |\n| หลงทาง | 我迷路了 | wǒ mílù le | หว่อ หมี๋หลู่ เลอ |\n| ต้องการความช่วยเหลือ | 我需要幫助 | wǒ xūyào bāngzhù | หว่อ ซวีเย่า ปังจู้ |\n| เรียกรถพยาบาล | 請叫救護車 | qǐng jiào jiùhùchē | ฉิ่ง เจี้ยว จิ้วหู้เชอ |\n\n## คำที่เจอบ่อย\n\n| ไทย | English | จีนตัวเต็ม | Pinyin |\n|---|---|---|---|\n| รถไฟฟ้า MRT | MRT / Metro | 捷運 | jiéyùn |\n| สถานี | Station | 站 | zhàn |\n| ทางออก | Exit | 出口 | chūkǒu |\n| เปลี่ยนสาย | Transfer | 轉乘 | zhuǎnchéng |\n| ตู้ซื้อตั๋ว | Ticket machine | 售票機 | shòupiàojī |\n| บัตร EasyCard | EasyCard | 悠遊卡 | yōuyóukǎ |\n| รถเมล์ | Bus | 公車 | gōngchē |\n| แท็กซี่ | Taxi | 計程車 | jìchéngchē |\n| ตลาดกลางคืน | Night market | 夜市 | yèshì |\n| ออนเซ็น | Hot spring | 溫泉 | wēnquán |\n| ห้องน้ำ | Toilet | 廁所 / 洗手間 | cèsuǒ / xǐshǒujiān |\n| ซุปเต้าหู้ | Soy milk | 豆漿 | dòujiāng |\n| เสี่ยวหลงเปา | Soup dumpling | 小籠包 | xiǎolóngbāo |\n| ชานมไข่มุก | Bubble milk tea | 珍珠奶茶 | zhēnzhū nǎichá |\n| เต้าหู้เหม็น | Stinky tofu | 臭豆腐 | chòudòufu |\n| หอยทอด | Oyster omelette | 蚵仔煎 | ézǎi jiān |\n| ลูกชิ้นเผือก | Taro balls | 芋圓 | yùyuán |\n| เต้าฮวย | Tofu pudding | 豆花 | dòuhuā |\n| หม้อไฟ | Hot pot | 火鍋 | huǒguō |\n| พิพิธภัณฑ์พระราชวังแห่งชาติ | National Palace Museum | 國立故宮博物院 | guólì gùgōng bówùyuàn |\n| สาย MRT | Red / Blue / Green / Orange / Brown | 淡水信義線 / 板南線 / 松山新店線 / 中和新蘆線 / 文湖線 | — |\n| Airport MRT | Express / Commuter | 直達車 / 普通車 | zhídáchē / pǔtōngchē |\n\n# วางแผน\n\n## สัญลักษณ์\n\n| สัญลักษณ์ | ความหมาย |\n|---|---|\n| ✅ | ผู้ใช้ยืนยันแล้ว |\n| 📄 | ตามไฟล์ PDF (ยังไม่ได้ตรวจกับแหล่งอื่น) |\n| 🔎 | ตรวจเพิ่มจากเว็บแล้ว |\n| ⚠️ | ขัดแย้ง / เสี่ยงผิด / ต้องยืนยัน |\n| ❓ | ยังไม่ทราบ ต้องหาข้อมูลเพิ่ม |\n\n## ข้อมูลกลุ่มและที่มา\n\n- **กลุ่ม:** ✅ รวม **8 คน** (ผู้ชาย อายุประมาณ 30–40) — ตีความว่า คนไทย 6 + เพื่อนไต้หวัน 2 (เพื่อนมีรถส่วนตัว) ⚠️ ยืนยันตัวเลข · ❓ ยังไม่ทราบว่าเพื่อนไปด้วยวันไหนบ้าง (ถือว่าเจอกันที่ Hotpot Day 2 เป็นอย่างน้อย)\n- **เดินทาง:** ขนส่งสาธารณะเป็นหลัก เดินระยะใกล้ (ผู้ใช้ตอบเรื่องเดินว่า \"ชิวๆ\" = ไม่มีเพดานชัดเจน → ถือว่าเดินต่อเนื่อง ≤ ~15 นาที/ช่วงโอเค)\n- **ที่มา:** `Taiwan_2026.pdf` (6 หน้า ภาพการ์ตูน) + ข้อมูลที่ผู้ใช้ยืนยัน + ตรวจเพิ่มจากเว็บ (พ.ย. 2026)\n- **v4:** แปลงจาก v3 เป็นรูปแบบ template ของเว็บ · กล่อง \"ห้ามพลาด / ข้อควรระวัง\" รายวันเป็นร่างที่ Claude สรุปจากข้อมูลในไฟล์ (ติด ❓ ทุกบรรทัด รอตรวจ) · เพิ่มรายการ \"~22:00 บาร์\" ใน Day 3 จากบรรทัดสรุปวันเดิม\n\n## ข้อมูลที่ยืนยันแล้ว (จากผู้ใช้)\n\n| รายการ | รายละเอียด |\n|---|---|\n| ✅ ทริป | 12–17 พ.ย. 2026 = 6 วัน 5 คืน |\n| ✅ FD230 (12 พ.ย.) | ออก 07:45 → ถึง 12:30 (สอดคล้องกับเวลาไต้หวันที่เร็วกว่าไทย 1 ชม. — ยืนยันตามตั๋ว) |\n| ✅ FD231 (17 พ.ย.) | TPE → DMK ออก 18:35 ถึง 21:30 (เวลาไทย) |\n| ✅ Day 1 | ใช้เส้นทางตามต้นฉบับ (Airport MRT → G line เข้า Ximen) |\n| ✅ Day 2 | นัด Hotpot ที่ Ximending ~**20:15** · เพื่อนเตรียมจองสาขา Ximending · เวลา Raohe ยืดหยุ่นได้ |\n| ✅ Day 3 | ✅ **แผน A**: NPM → Guandu (ลง **Zhongyi** แล้วต่อรถบัส) → Xinbeitou onsen (ต้องจอง ยังไม่ได้จอง) → Tamsui · ✅ ยอมรับว่าไป Tamsui ตอนกลางคืน (พลาดพระอาทิตย์ตก) และเลื่อนบาร์ ~22:00 |\n| ✅ Day 4–5 | มื้อกลางวันสุ่มเอาแถวนั้น · Din Tai Fung ไปสาขาแถว Taipei 101 · onsen Wulai ยังไม่ชัวร์ |\n| 🔎 โรงแรม | Hotel Midtown Richardson 德立莊酒店 · No.4 Xiushan St. · 臺北市中正區秀山街4號 · เช็กอิน 15:00 / เช็กเอาต์ 11:00 · ตรงข้าม Ximending ติด MRT Ximen (Exit 4/5) · ห้อง Double/Twin/Triple/Family |\n\n## จุดขัดแย้ง / ตกหล่น\n\n| # | จุดที่พบ | สถานะ / รายละเอียด |\n|---|---|---|\n| 1 | Day 1: G line จาก Taipei Main | **แก้ข้อสังเกตเดิม:** PDF ใช้ได้จริง — จาก Airport MRT A1 เดินใต้ดิน ~8–10 นาที (~300 ม.) ไป **Beimen (G13)** แล้วขึ้นสาย G ไป Ximen 1 ป้าย และเร็ว/สั้นกว่าหาชานชาลา BL/R ที่ Taipei Main (เดิน 10–15 นาที) → ✅ ใช้แผนเดิม |\n| 2 | Day 2: 20:15 Hotpot | ✅ ปรับเวลา Raohe แล้ว (ออก ~19:15) · ✅ เพื่อนเตรียมจองสาขา Ximending **8 ที่** · ⚠️ ชื่อ \"Xin Hotpot Mala\" น่าจะเป็น **新馬辣** (ตรวจแล้ว **辛殿 Xin Dian ไม่มีสาขา Ximending**) — ให้เพื่อนยืนยันชื่อร้านตอนจอง |\n| 3 | Day 3: NPM แทน CKS | ✅ เลือกแผน A · วันแน่น: ถึง Tamsui ~18:10 (หลังพระอาทิตย์ตก) · ถ้า NPM ใช้เวลานานกว่า 2 ชม. ให้ตัด Guandu Temple ก่อน |\n| 4 | Day 3: Zhongyi + รถบัส | 🔎 ตรวจแล้ว: **สาย 302** จอดที่ **捷運忠義站 (Zhongyi)** และป้าย **關渡宮 (Guandu Temple)** ✅ · สาย **550** จอดป้ายวัด Guandu แต่ ❓ ยังไม่ยืนยันว่าจอด Zhongyi |\n| 5 | Day 3: Guandu → Xinbeitou | 🔎 302 (ทิศไป Wanhua) ผ่าน Zhongyi → ถนน Zhongyang N. Rd. → **北投國小** (เขต Beitou) → จากนั้นต่อ MRT Beitou → Xinbeitou · ❓ ระยะเดินป้าย 北投國小 → สถานี Beitou ตรวจใน Google Maps |\n| 6 | Day 3: onsen | ⚠️ ต้องจอง (ยังไม่จอง) · ห้องส่วนตัวส่วนใหญ่ 2 คน/ห้อง → 4–6 คนต้องหลายห้อง หรือใช้สระสาธารณะ (ชุดว่ายน้ำ) |\n| 7 | Day 5: รถ 849 ลง Ximending? | 🔎 **ไม่ใช่** — 849 วิ่ง Wulai → Xindian → ... → **NTU Hospital MRT / Taipei Main** (ไม่พบข้อมูลว่าจอด Ximen) · แต่ลง NTU Hospital (R line) ต่อไป Taipei 101 ได้ตรง ๆ |\n| 8 | Day 5: PDF 16:30 ถึง Ximen → 16:50 Xinyi | ⚠️ เป็นไปไม่ได้ทางเวลา · แก้แล้ว (ดู Day 5) |\n| 9 | Day 5: Pause Landis ปิดซ่อมวันจันทร์ | 🔎 วันจันทร์ (16 พ.ย.) สระสาธารณะเปิด **13:00–21:30** เท่านั้น → ตรงกับแผน 13:00 พอดี ห้ามไปก่อน 13:00 |\n| 10 | Day 5: อ่างสาธารณะ Wulai | 🔎 แยกชาย/หญิง **ไม่ต้องใส่ชุดว่ายน้ำ (เปลือย)** — ตกลงกับกลุ่มก่อนว่าโอเค |\n| 11 | Day 2: ข้อความจีนผิดใน PDF | **卓杭豆漿** → ชื่อจริง **阜杭豆漿** |\n| 12 | Day 2: Jiufen | บันไดเยอะ ฝนลื่น (ผู้ใช้ตอบว่าเดินชิวๆ → รับได้) |\n| 13 | Day 4: ตลาดปลา 09:40 | อาคารเปิด 07:00 แต่ร้านบางร้านเปิดช้า (Seafood Bar 10:30) |\n| 14 | Day 4/5: ตัวสะกดผิดใน PDF | \"Pubic Onsen\" → Public · \"Shongshan\" → Songshan · \"Xiadian\" → Xindian |\n| 15 | Day 5 กลับ Ximen | ลำดับสีสายใน PDF กลับด้าน (ต้อง R → CKS → G) |\n| 16 | จำนวนคน | ✅ 8 คน (ตีความ ไทย 6 + เพื่อน 2) · แท็กซี่ 4 ที่นั่ง/คัน → ไทย 6 คน = 2 คัน · รถ 849 รถเล็ก ~20 ที่นั่ง → 6–8 คนอาจขึ้นไม่พร้อมกัน · ❓ เพื่อนไปวันไหน/ใช้รถวันไหน (ละไว้ก่อน) |\n| 17 | Day 6: เทอร์มินัลขากลับ | ❓ ข้อมูลเที่ยวบิน FD230 ระบุ Terminal 1 — ขากลับยังไม่ยืนยัน |\n\n## แหล่งข้อมูล\n\n*แหล่งข้อมูลที่ตรวจเพิ่ม: travel.taipei, taipeitourism.org, wefuntaiwan.com, nomadotravel.app, smile.com.tw, OpenStreetMap (เส้นทางรถเมล์ 302), ห้องสมุดเทศบาลไทเป (ป้ายรถเมล์), rome2rio (รถ 849), Waug/Klook/KKday/Trip.com (onsen, Din Tai Fung), OpenTable/Klook (Hotpot), Visit Taipei / dgsociety.org / igelu.org (Beimen walk), nationthailand.com / envoyglobal.com (วีซ่า) — ราคา เวลา และเส้นทางอาจเปลี่ยน ให้ตรวจซ้ำก่อนเดินทาง*\n"];window.TP_TEMPLATE="\u003c!--\nTRAVEL PLAN TEMPLATE · v1\nใช้กับเว็บแผนเที่ยว (Travel Plan) — import ไฟล์นี้ได้โดยตรง\n\nวิธีใช้กับ Claude:\nแนบไฟล์นี้ + ข้อมูลดิบของทริป แล้วสั่งว่า\n\"สร้างแผนตาม travel-plan-template.md ห้ามเปลี่ยนชื่อหัวข้อและชื่อ field\nอะไรที่ไม่รู้ให้ใส่ ❓ ห้ามเดา\"\n\nกฎของไฟล์ (เว็บอ่านตามนี้):\n1. ส่วน --- ด้านบนสุด = ข้อมูลทริป (key: value ทีละบรรทัด)\n   วันที่ใช้รูปแบบ YYYY-MM-DD (ค.ศ.) · timezone ใช้ชื่อแบบ Asia/Taipei\n2. หัวข้อระดับ # ใช้ชื่อตามนี้เท่านั้น:\n   # ภาพรวม · # Day N — YYYY-MM-DD · ธีมของวัน · # เตรียมของ · # To-do · # ข้อมูลอ้างอิง · # วางแผน\n3. ใต้ # Day: บรรทัด route / stay / summary ก่อนรายการแรก\n   route คั่นจุดด้วย → (เว็บใช้วาดเส้นทาง) · ใส่ 2–5 จุด\n4. แต่ละรายการ = ### เวลา · ชื่อ (ภาษาไทย)\n   เวลาเขียนได้หลายแบบ: 09:00 · 09:00–10:30 · ~12:00 · เช้า–11:00\n   ตามด้วย field แบบ \"- key: value\" หนึ่งบรรทัดต่อ field (ใส่เฉพาะที่มี):\n     en            ชื่ออังกฤษ\n     zh            ชื่อจีน/ภาษาท้องถิ่น (ใช้สร้างลิงก์ Google Maps)\n     type          flight · train · bus · taxi · walk · hotel · food · cafe · market\n                   temple · museum · shopping · onsen · nature · nightlife · free · other\n     status        ✅ ยืนยันแล้ว · 📄 ตามเอกสาร · 🔎 ตรวจเว็บแล้ว · ⚠️ ต้องยืนยัน · ❓ ยังไม่ทราบ\n     highlight     true = รายการสำคัญ (เวลาตายตัว จองแล้ว พลาดไม่ได้)\n     line          สายรถไฟ/MRT ของ \"เดินทางหลัก\" คั่นด้วย , เรียงตามลำดับที่ใช้ เช่น BL, G\n                   รหัสที่รู้จัก: R BL G O BR Y AIRPORT HSR TRA (ไทเป) · สายอื่นใช้ ชื่อ#RRGGBB เช่น Yamanote#80C241\n                   ใส่เฉพาะสายที่ข้อความ transport ระบุไว้จริง ห้ามเดา\n     line_alt      เหมือน line แต่สำหรับ \"เดินทางรอง\"\n     transport     เดินทางหลัก\n     transport_alt เดินทางรอง\n     cost          ระยะเวลา / ค่าใช้จ่าย\n     notes         รอบๆ / หมายเหตุ\n     map           URL Google Maps (ถ้าไม่ใส่ เว็บค้นจาก zh หรือ en ให้) · \"-\" = ไม่ต้องมีลิงก์\n   ภาษาอังกฤษ (ไม่บังคับ): เพิ่ม field _en ได้ transport_en · transport_alt_en · cost_en · notes_en\n   ชื่อสถานที่ภาษาอังกฤษใช้ field en เดิม · เว็บในโหมด EN ใช้ค่า _en ถ้ามี ไม่มีก็แสดงข้อความภาษาเดิม\n   ระดับวัน: theme_en · summary_en (วางไว้ถัดจาก route/stay/summary) · ระดับทริป: title_en · subtitle_en · style_en\n   ค่าของ field ต้องอยู่บรรทัดเดียว ถ้ามีหลายเรื่องให้คั่นด้วย \" · \"\n   ใช้ **ตัวหนา** และ `code` ได้\n5. ## ห้ามพลาดวันนี้ / ## ข้อควรระวัง = รายการ \"- \" ทีละบรรทัด\n   ## ข้อมูลเพิ่มเติม = markdown อิสระ (ตาราง ย่อหน้า quote ได้)\n6. # เตรียมของ: แบ่งหมวดด้วย ## · ของที่ต้องติ๊กใช้ \"- [ ] \" (เสร็จแล้ว \"- [x] \")\n   บรรทัดอื่นในหมวด (ตาราง, ย่อหน้า) แสดงเป็นหมายเหตุของหมวด\n7. # To-do: \"- [ ] กำหนด · งาน\" (ไม่มีกำหนดใส่ \"-\")\n   ถ้ากำหนดมีวันที่ YYYY-MM-DD เว็บจะเตือนเมื่อเลยกำหนด\n8. # ข้อมูลอ้างอิง: แบ่งด้วย ## เป็น markdown อิสระ\n   แถวในตารางแตะเพื่อเปิดเต็มจอได้ (เหมาะกับประโยคภาษาท้องถิ่น การ์ดแท็กซี่)\n9. # วางแผน: markdown อิสระ แสดงเฉพาะ \"โหมดวางแผน\"\n   (จุดขัดแย้ง สิ่งที่ยังไม่ยืนยัน แหล่งข้อมูล)\n10. ข้อความในกล่องคอมเมนต์นี้ เว็บไม่อ่าน ลบทิ้งได้\n-->\n---\ntitle: ชื่อทริป\nsubtitle: เมืองหลัก\ncountry: ชื่อประเทศ (อังกฤษ)\ncountry_native: ชื่อประเทศภาษาท้องถิ่น\nstart: 2027-01-01\nend: 2027-01-03\ntimezone: Asia/Bangkok\ntravelers: 2\nstyle: รูปแบบการเดินทาง\nstyle_en: Travel style in English (optional)\nversion: v1\n---\n\n# ภาพรวม\n\n## เที่ยวบิน\n\n| เที่ยวบิน | วันที่ | เส้นทาง | ออก | ถึง | สถานะ | หมายเหตุ |\n|---|---|---|---|---|---|---|\n| XX000 | 2027-01-01 | AAA → BBB | 00:00 | 00:00 | ❓ | |\n\n## ที่พัก\n\n| เช็กอิน | เช็กเอาต์ | ชื่อ | ที่อยู่ | หมายเหตุ | สถานะ |\n|---|---|---|---|---|---|\n| 2027-01-01 | 2027-01-03 | ชื่อที่พัก | ที่อยู่ | | ❓ |\n\n## จำไว้ตลอดทริป\n\n- เรื่องที่ต้องจำตลอดทริป\n\n# Day 1 — 2027-01-01 · ธีมของวัน\n\nroute: จุดเริ่ม → จุดกลาง → จุดจบ\nstay: ชื่อที่พัก\nsummary: สรุปวันสั้นๆ\nsummary_en: Short day summary in English (optional)\n\n### 09:00 · ชื่อสถานที่\n- en: English name\n- zh: 本地名稱\n- type: temple\n- status: ❓\n- line: BL\n- transport: เดินทางหลัก\n- transport_en: Main transport in English (optional)\n- line_alt: G, R\n- transport_alt: เดินทางรอง\n- cost: ~30 นาที / ~100\n- notes: รอบๆ / หมายเหตุ\n\n## ห้ามพลาดวันนี้\n- สิ่งที่ห้ามพลาด\n\n## ข้อควรระวัง\n- สิ่งที่ต้องระวัง\n\n## ข้อมูลเพิ่มเติม\n\nข้อมูลอื่นของวันนี้ (ไม่มีก็ลบหัวข้อนี้ได้)\n\n# เตรียมของ\n\n## เอกสาร\n- [ ] พาสปอร์ต\n\n# To-do\n\n- [ ] ก่อน 2027-01-01 · งานที่ต้องทำ\n\n# ข้อมูลอ้างอิง\n\n## เบอร์ฉุกเฉิน\n\n| เรื่อง | เบอร์ | หมายเหตุ |\n|---|---|---|\n| ตำรวจ | ❓ | |\n\n# วางแผน\n\n## จุดที่ยังไม่ยืนยัน\n\n- ❓\n";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script>
+/* Travel plan markdown <-> model. Runs in browser (window.TP) and node (module.exports). */
+(function (root) {
+  'use strict';
+
+  var STATUS = [
+    ['✅', 'ยืนยันแล้ว'],
+    ['📄', 'ตามเอกสาร'],
+    ['🔎', 'ตรวจเว็บแล้ว'],
+    ['⚠️', 'ต้องยืนยัน'],
+    ['❓', 'ยังไม่ทราบ']
+  ];
+  var STATUS_WORDS = { confirmed: '✅', doc: '📄', web: '🔎', warn: '⚠️', unknown: '❓' };
+  var TYPES = ['flight', 'train', 'bus', 'taxi', 'walk', 'hotel', 'food', 'cafe', 'market',
+    'temple', 'museum', 'shopping', 'onsen', 'nature', 'nightlife', 'free', 'other'];
+  var ITEM_KEYS = ['en', 'zh', 'type', 'status', 'highlight', 'line', 'transport', 'transport_en', 'line_alt', 'transport_alt', 'transport_alt_en', 'cost', 'cost_en', 'notes', 'notes_en', 'map'];
+  var META_KEYS = ['title', 'title_en', 'subtitle', 'subtitle_en', 'country', 'country_native', 'start', 'end', 'timezone', 'travelers', 'style', 'style_en', 'version'];
+  var DAY_KEYS = ['route', 'stay', 'summary', 'summary_en', 'theme_en'];
+
+  /* Transit line registry. hex values are approximate display colours from memory, nudged where needed so 12.5px chip text reaches 4.5:1 (G, TRA). Not official brand values. */
+  var LINES = {
+    R: { hex: '#E3002C', en: 'Red Line', th: 'สายสีแดง', zh: '淡水信義線' },
+    BL: { hex: '#0070BD', en: 'Blue Line', th: 'สายสีน้ำเงิน', zh: '板南線' },
+    G: { hex: '#008357', en: 'Green Line', th: 'สายสีเขียว', zh: '松山新店線' },
+    O: { hex: '#F8B61C', en: 'Orange Line', th: 'สายสีส้ม', zh: '中和新蘆線' },
+    BR: { hex: '#C48C31', en: 'Brown Line', th: 'สายสีน้ำตาล', zh: '文湖線' },
+    Y: { hex: '#FFDB00', en: 'Circular Line', th: 'สายสีเหลือง', zh: '環狀線' },
+    AIRPORT: { hex: '#8246AF', en: 'Airport MRT', th: 'แอร์พอร์ต MRT', zh: '機場捷運' },
+    HSR: { hex: '#E8601C', en: 'High Speed Rail', th: 'รถไฟความเร็วสูง', zh: '台灣高鐵' },
+    TRA: { hex: '#52708F', en: 'Taiwan Railways', th: 'รถไฟท้องถิ่น', zh: '臺鐵' }
+  };
+  var LINE_ALIAS = { RED: 'R', BLUE: 'BL', GREEN: 'G', ORANGE: 'O', BROWN: 'BR', YELLOW: 'Y', CIRCULAR: 'Y', A: 'AIRPORT', 'AIRPORT MRT': 'AIRPORT', THSR: 'HSR' };
+  // "BL, G, AIRPORT" or custom "Name#RRGGBB" -> [{code, hex|null, known, en, th, zh}]
+  function parseLines(str) {
+    return String(str || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean).map(function (tok) {
+      var m = tok.match(/^(.*?)\s*#([0-9a-fA-F]{6})$/);
+      if (m) { var nm = m[1] || ('#' + m[2]); return { code: nm, hex: '#' + m[2].toUpperCase(), known: true, en: nm, th: nm, zh: '' }; }
+      var up = tok.toUpperCase(), key = LINES[up] ? up : LINE_ALIAS[up];
+      if (key) { var d = LINES[key]; return { code: key, hex: d.hex, known: true, en: d.en, th: d.th, zh: d.zh }; }
+      return { code: tok, hex: null, known: false, en: tok, th: tok, zh: '' };
+    });
+  }
+
+  var FLIGHT_COLS = [['เที่ยวบิน', 'flight'], ['วันที่', 'date'], ['เส้นทาง', 'route'], ['ออก', 'dep'], ['ถึง', 'arr'], ['สถานะ', 'status'], ['หมายเหตุ', 'note']];
+  var STAY_COLS = [['เช็กอิน', 'checkin'], ['เช็กเอาต์', 'checkout'], ['ชื่อ', 'name'], ['ที่อยู่', 'address'], ['หมายเหตุ', 'note'], ['สถานะ', 'status']];
+
+  var SEC = { overview: 'ภาพรวม', pack: 'เตรียมของ', todo: 'To-do', ref: 'ข้อมูลอ้างอิง', plan: 'วางแผน' };
+  var DAYSEC = { must: 'ห้ามพลาดวันนี้', caution: 'ข้อควรระวัง', extra: 'ข้อมูลเพิ่มเติม' };
+
+  var uidN = 0;
+  function uid() { uidN++; return 'x' + Date.now().toString(36) + uidN.toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  function normStatus(s) {
+    s = (s || '').trim();
+    if (!s) return '';
+    if (s.charAt(0) === '⚠') return '⚠️';
+    for (var i = 0; i < STATUS.length; i++) if (s.indexOf(STATUS[i][0]) === 0) return STATUS[i][0];
+    return STATUS_WORDS[s.toLowerCase()] || '';
+  }
+  function isDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s || '') && !isNaN(Date.parse(s + 'T00:00:00Z')); }
+  function trimBlank(lines) {
+    var a = 0, b = lines.length;
+    while (a < b && !lines[a].trim()) a++;
+    while (b > a && !lines[b - 1].trim()) b--;
+    return lines.slice(a, b);
+  }
+  function oneLine(s) { return String(s == null ? '' : s).replace(/\s*\n+\s*/g, ' · ').trim(); }
+  function cell(s) { return oneLine(s).replace(/\|/g, '\\|'); }
+
+  function splitRow(l) {
+    var s = l.trim();
+    if (s.charAt(0) === '|') s = s.slice(1);
+    if (s.charAt(s.length - 1) === '|' && s.charAt(s.length - 2) !== '\\') s = s.slice(0, -1);
+    var out = [], cur = '';
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charAt(i);
+      if (c === '\\' && s.charAt(i + 1) === '|') { cur += '|'; i++; continue; }
+      if (c === '|') { out.push(cur.trim()); cur = ''; } else cur += c;
+    }
+    out.push(cur.trim());
+    return out;
+  }
+  function isSep(row) { return row.every(function (c) { return /^:?-{2,}:?$/.test(c) || c === ''; }) && row.some(function (c) { return /-/.test(c); }); }
+
+  // first markdown table in lines -> {headers, rows}
+  function findTable(lines) {
+    var start = -1;
+    for (var i = 0; i < lines.length; i++) if (lines[i].trim().charAt(0) === '|') { start = i; break; }
+    if (start < 0) return null;
+    var t = [];
+    for (var j = start; j < lines.length && lines[j].trim().charAt(0) === '|'; j++) t.push(splitRow(lines[j]));
+    if (t.length < 2 || !isSep(t[1])) return null;
+    return { headers: t[0], rows: t.slice(2) };
+  }
+  function tableToObjects(tbl, cols, warn, where) {
+    if (!tbl) return [];
+    var idx = {};
+    cols.forEach(function (c) {
+      var k = tbl.headers.indexOf(c[0]);
+      if (k < 0) warn(where + ': ไม่พบคอลัมน์ "' + c[0] + '"');
+      idx[c[1]] = k;
+    });
+    return tbl.rows.filter(function (r) { return r.some(function (c) { return c; }); }).map(function (r) {
+      var o = { id: uid() };
+      cols.forEach(function (c) { var k = idx[c[1]]; o[c[1]] = k >= 0 ? (r[k] || '') : ''; });
+      if ('status' in o) o.status = normStatus(o.status) || o.status;
+      return o;
+    });
+  }
+
+  function splitH2(lines) {
+    var pre = [], secs = [], cur = null, fence = false;
+    lines.forEach(function (l) {
+      if (/^\s*```/.test(l)) fence = !fence;
+      var m = !fence && l.match(/^##\s+(?!#)(.*)$/);
+      if (m) { cur = { title: m[1].trim(), lines: [] }; secs.push(cur); return; }
+      (cur ? cur.lines : pre).push(l);
+    });
+    return { pre: pre, secs: secs };
+  }
+  function listItems(lines) {
+    var out = [];
+    lines.forEach(function (l) {
+      var m = l.match(/^\s*[-*]\s+(.*)$/);
+      if (m && m[1].trim()) out.push(m[1].trim());
+    });
+    return out;
+  }
+
+  function emptyTrip() {
+    return {
+      id: '', meta: { title: '', title_en: '', subtitle: '', subtitle_en: '', country: '', country_native: '', start: '', end: '', timezone: '', travelers: '', style: '', style_en: '', version: '' },
+      overview: { flights: [], stays: [], remember: '', extra: [] },
+      days: [], pack: [], todo: [], ref: [], plan: '',
+      metaExtra: {}
+    };
+  }
+
+  function parse(md) {
+    var warnings = [];
+    function warn(s) { warnings.push(s); }
+    var trip = emptyTrip();
+    var text = String(md || '').replace(/\r\n?/g, '\n').replace(/<!--[\s\S]*?-->/g, '');
+    var lines = text.split('\n');
+    var i = 0;
+    while (i < lines.length && !lines[i].trim()) i++;
+    if (lines[i] && lines[i].trim() === '---') {
+      i++;
+      for (; i < lines.length && lines[i].trim() !== '---'; i++) {
+        var m = lines[i].match(/^\s*([A-Za-z_]+)\s*:\s*(.*)$/);
+        if (!m) { if (lines[i].trim()) warn('front matter: อ่านบรรทัดนี้ไม่ได้ "' + lines[i].trim() + '"'); continue; }
+        var k = m[1].trim(), v = m[2].trim();
+        if (META_KEYS.indexOf(k) >= 0) trip.meta[k] = v; else { trip.metaExtra[k] = v; warn('front matter: ไม่รู้จัก field "' + k + '" (เก็บไว้ให้)'); }
+      }
+      i++;
+    } else warn('ไม่พบส่วน --- (ข้อมูลทริป) ด้านบนไฟล์');
+
+    // split H1 blocks
+    var blocks = [], pre = [], cur = null, fence = false;
+    for (; i < lines.length; i++) {
+      var l = lines[i];
+      if (/^\s*```/.test(l)) fence = !fence;
+      var h = !fence && l.match(/^#\s+(?!#)(.*)$/);
+      if (h) { cur = { title: h[1].trim(), lines: [] }; blocks.push(cur); continue; }
+      (cur ? cur.lines : pre).push(l);
+    }
+    if (trimBlank(pre).length) { warn('มีข้อความก่อนหัวข้อ # แรก — ย้ายไปไว้ในส่วนวางแผน'); trip.plan = trimBlank(pre).join('\n'); }
+
+    blocks.forEach(function (b) {
+      var dm = b.title.match(/^Day\s+(\d+)\s*[—–-]\s*(\S+)\s*(?:·\s*(.*))?$/i);
+      if (dm) return trip.days.push(parseDay(dm, b.lines, warn));
+      switch (b.title) {
+        case SEC.overview: return parseOverview(trip, b.lines, warn);
+        case SEC.pack: return (trip.pack = parsePack(b.lines));
+        case SEC.todo: return (trip.todo = parseTodo(b.lines));
+        case SEC.ref: return (trip.ref = splitH2(b.lines).secs.map(function (s) { return { id: uid(), title: s.title, md: trimBlank(s.lines).join('\n') }; }).concat(refPre(b.lines)));
+        case SEC.plan: trip.plan = (trip.plan ? trip.plan + '\n\n' : '') + trimBlank(b.lines).join('\n'); return;
+        default:
+          warn('ไม่รู้จักหัวข้อ "# ' + b.title + '" — ใส่ไว้ในข้อมูลอ้างอิง');
+          trip.ref.push({ id: uid(), title: b.title, md: trimBlank(b.lines).join('\n') });
+      }
+    });
+
+    var mt = trip.meta;
+    if (!mt.title) warn('ไม่มี title');
+    if (!isDate(mt.start) && trip.days.length && isDate(trip.days[0].date)) { mt.start = trip.days[0].date; warn('start ไม่ถูกต้อง — ใช้วันที่ของ Day แรกแทน'); }
+    if (!isDate(mt.end) && trip.days.length && isDate(trip.days[trip.days.length - 1].date)) { mt.end = trip.days[trip.days.length - 1].date; warn('end ไม่ถูกต้อง — ใช้วันที่ของ Day สุดท้ายแทน'); }
+    if (!isDate(mt.start)) warn('start ต้องเป็น YYYY-MM-DD');
+    if (!isDate(mt.end)) warn('end ต้องเป็น YYYY-MM-DD');
+    if (!mt.timezone) warn('ไม่มี timezone — ใช้เวลาของเครื่องแทน');
+    if (!trip.days.length) warn('ไม่พบ # Day ในไฟล์');
+    trip.days.forEach(function (d, k) {
+      if (+d.n !== k + 1) warn('Day ' + d.n + ' อยู่ลำดับที่ ' + (k + 1) + ' — เว็บนับใหม่ตามลำดับในไฟล์');
+    });
+    return { trip: trip, warnings: warnings };
+  }
+
+  function refPre(lines) {
+    var p = trimBlank(splitH2(lines).pre);
+    return p.length ? [{ id: uid(), title: '', md: p.join('\n') }] : [];
+  }
+
+  function parseOverview(trip, lines, warn) {
+    var s = splitH2(lines);
+    if (trimBlank(s.pre).length) trip.overview.extra.push({ id: uid(), title: '', md: trimBlank(s.pre).join('\n') });
+    s.secs.forEach(function (sec) {
+      if (sec.title === 'เที่ยวบิน') trip.overview.flights = tableToObjects(findTable(sec.lines), FLIGHT_COLS, warn, 'เที่ยวบิน');
+      else if (sec.title === 'ที่พัก') trip.overview.stays = tableToObjects(findTable(sec.lines), STAY_COLS, warn, 'ที่พัก');
+      else if (sec.title === 'จำไว้ตลอดทริป') trip.overview.remember = trimBlank(sec.lines).join('\n');
+      else trip.overview.extra.push({ id: uid(), title: sec.title, md: trimBlank(sec.lines).join('\n') });
+    });
+  }
+
+  function parseDay(dm, lines, warn) {
+    var day = { id: uid(), n: +dm[1], date: dm[2], theme: (dm[3] || '').trim(), theme_en: '', route: '', stay: '', summary: '', summary_en: '', items: [], must: [], caution: [], extra: '' };
+    var where = 'Day ' + day.n;
+    if (!isDate(day.date)) warn(where + ': วันที่ "' + day.date + '" ต้องเป็น YYYY-MM-DD');
+    var mode = 'head', item = null, sec = null, extraParts = [];
+    function flushSec() {
+      if (!sec) return;
+      if (sec.title === DAYSEC.must) day.must = day.must.concat(listItems(sec.lines));
+      else if (sec.title === DAYSEC.caution) day.caution = day.caution.concat(listItems(sec.lines));
+      else if (sec.title === DAYSEC.extra) extraParts.push(trimBlank(sec.lines).join('\n'));
+      else { warn(where + ': ไม่รู้จัก "## ' + sec.title + '" — ใส่ไว้ในข้อมูลเพิ่มเติม'); extraParts.push('### ' + sec.title + '\n\n' + trimBlank(sec.lines).join('\n')); }
+      sec = null;
+    }
+    var fence = false;
+    lines.forEach(function (l) {
+      if (/^\s*```/.test(l)) fence = !fence;
+      var h3 = !fence && l.match(/^###\s+(?!#)(.*)$/);
+      var h2 = !fence && l.match(/^##\s+(?!#)(.*)$/);
+      if (h3 && mode !== 'sec') {
+        var t = h3[1].trim(), mm = t.match(/^(.*?)\s*·\s*(.*)$/);
+        item = { id: uid(), time: mm ? mm[1].trim() : '', title: mm ? mm[2].trim() : t, extra: {} };
+        ITEM_KEYS.forEach(function (k) { item[k] = ''; }); item.type = 'other'; item.highlight = false;
+        if (!mm) warn(where + ': รายการ "' + t + '" ไม่มี " · " คั่นเวลากับชื่อ');
+        day.items.push(item); mode = 'item'; return;
+      }
+      if (h2) { flushSec(); sec = { title: h2[1].trim(), lines: [] }; mode = 'sec'; item = null; return; }
+      if (mode === 'sec') { sec.lines.push(l); return; }
+      if (!l.trim()) return;
+      if (mode === 'head') {
+        var km = l.match(/^\s*([a-z_]+)\s*:\s*(.*)$/);
+        if (km && DAY_KEYS.indexOf(km[1]) >= 0) { day[km[1]] = km[2].trim(); return; }
+        warn(where + ': อ่านบรรทัดนี้ไม่ได้ "' + l.trim() + '"');
+        return;
+      }
+      // item field
+      var fm = l.match(/^\s*-\s*([a-z_]+)\s*:\s?(.*)$/);
+      if (!fm) { warn(where + ' / ' + item.title + ': อ่านบรรทัดนี้ไม่ได้ — ต่อท้าย notes'); item.notes = item.notes ? item.notes + ' · ' + l.trim() : l.trim(); return; }
+      var key = fm[1], val = fm[2].trim();
+      if (ITEM_KEYS.indexOf(key) < 0) { item.extra[key] = val; warn(where + ' / ' + item.title + ': ไม่รู้จัก field "' + key + '" (เก็บไว้ให้)'); return; }
+      if (key === 'highlight') item.highlight = /^(true|yes|1|ใช่)$/i.test(val);
+      else if (key === 'status') { item.status = normStatus(val); if (val && !item.status) warn(where + ' / ' + item.title + ': status "' + val + '" ไม่รู้จัก'); }
+      else if (key === 'type') { var tv = val.toLowerCase(); if (TYPES.indexOf(tv) < 0) { warn(where + ' / ' + item.title + ': type "' + val + '" ไม่รู้จัก — ใช้ other'); tv = 'other'; } item.type = tv; }
+      else if (key === 'line' || key === 'line_alt') {
+        item[key] = val;
+        parseLines(val).forEach(function (l) { if (!l.known) warn(where + ' / ' + item.title + ': ไม่รู้จักสาย "' + l.code + '" — ใช้สีกลาง (ใส่ ' + l.code + '#RRGGBB เพื่อกำหนดสี)'); });
+      } else item[key] = val;
+    });
+    flushSec();
+    day.extra = extraParts.filter(function (x) { return x; }).join('\n\n');
+    if (!day.route) warn(where + ': ไม่มี route');
+    return day;
+  }
+
+  function parsePack(lines) {
+    var s = splitH2(lines), groups = [];
+    var all = (trimBlank(s.pre).length ? [{ title: '', lines: s.pre }] : []).concat(s.secs);
+    all.forEach(function (sec) {
+      var g = { id: uid(), title: sec.title, items: [], note: '' }, note = [];
+      sec.lines.forEach(function (l) {
+        var m = l.match(/^\s*[-*]\s+\[( |x|X)\]\s+(.*)$/);
+        if (m) g.items.push({ id: uid(), text: m[2].trim(), done: m[1] !== ' ' });
+        else note.push(l);
+      });
+      g.note = trimBlank(note).join('\n');
+      groups.push(g);
+    });
+    return groups;
+  }
+
+  function parseTodo(lines) {
+    var out = [];
+    lines.forEach(function (l) {
+      var m = l.match(/^\s*[-*]\s+\[( |x|X)\]\s+(.*)$/);
+      if (!m) return;
+      var body = m[2].trim(), dm = body.match(/^(.*?)\s+·\s+(.*)$/);
+      var due = dm ? dm[1].trim() : '', txt = dm ? dm[2].trim() : body;
+      if (due === '-') due = '';
+      out.push({ id: uid(), due: due, text: txt, done: m[1] !== ' ' });
+    });
+    return out;
+  }
+
+  /* ---------- serialize ---------- */
+  function toMarkdown(t) {
+    var o = [], m = t.meta || {};
+    o.push('---');
+    META_KEYS.forEach(function (k) { if (/_en$/.test(k) && !String(m[k] || '').trim()) return; o.push(k + ': ' + oneLine(m[k])); });
+    Object.keys(t.metaExtra || {}).forEach(function (k) { o.push(k + ': ' + oneLine(t.metaExtra[k])); });
+    o.push('---', '');
+
+    o.push('# ' + SEC.overview, '');
+    o.push('## เที่ยวบิน', '', tableMd(FLIGHT_COLS, t.overview.flights), '');
+    o.push('## ที่พัก', '', tableMd(STAY_COLS, t.overview.stays), '');
+    if ((t.overview.remember || '').trim()) o.push('## จำไว้ตลอดทริป', '', t.overview.remember.trim(), '');
+    (t.overview.extra || []).forEach(function (s) { if (s.title) o.push('## ' + oneLine(s.title), ''); if ((s.md || '').trim()) o.push(s.md.trim(), ''); });
+
+    (t.days || []).forEach(function (d, k) {
+      o.push('# Day ' + (k + 1) + ' — ' + d.date + (d.theme ? ' · ' + oneLine(d.theme) : ''), '');
+      DAY_KEYS.forEach(function (key) { if (d[key]) o.push(key + ': ' + oneLine(d[key])); });
+      o.push('');
+      (d.items || []).forEach(function (it) {
+        o.push('### ' + oneLine(it.time) + ' · ' + oneLine(it.title));
+        ITEM_KEYS.forEach(function (key) {
+          var v = it[key];
+          if (key === 'highlight') { if (v) o.push('- highlight: true'); return; }
+          if (key === 'type' && !v) return;
+          if (v != null && String(v).trim() !== '') o.push('- ' + key + ': ' + oneLine(v));
+        });
+        Object.keys(it.extra || {}).forEach(function (key) { o.push('- ' + key + ': ' + oneLine(it.extra[key])); });
+        o.push('');
+      });
+      if ((d.must || []).length) { o.push('## ' + DAYSEC.must); d.must.forEach(function (x) { o.push('- ' + oneLine(x)); }); o.push(''); }
+      if ((d.caution || []).length) { o.push('## ' + DAYSEC.caution); d.caution.forEach(function (x) { o.push('- ' + oneLine(x)); }); o.push(''); }
+      if ((d.extra || '').trim()) o.push('## ' + DAYSEC.extra, '', d.extra.trim(), '');
+    });
+
+    if ((t.pack || []).length) {
+      o.push('# ' + SEC.pack, '');
+      t.pack.forEach(function (g) {
+        if (g.title) o.push('## ' + oneLine(g.title), '');
+        if ((g.note || '').trim()) o.push(g.note.trim(), '');
+        g.items.forEach(function (x) { o.push('- [' + (x.done ? 'x' : ' ') + '] ' + oneLine(x.text)); });
+        o.push('');
+      });
+    }
+    if ((t.todo || []).length) {
+      o.push('# ' + SEC.todo, '');
+      t.todo.forEach(function (x) { o.push('- [' + (x.done ? 'x' : ' ') + '] ' + (oneLine(x.due) || '-') + ' · ' + oneLine(x.text)); });
+      o.push('');
+    }
+    if ((t.ref || []).length) {
+      o.push('# ' + SEC.ref, '');
+      t.ref.forEach(function (s) { if (s.title) o.push('## ' + oneLine(s.title), ''); if ((s.md || '').trim()) o.push(s.md.trim(), ''); });
+    }
+    if ((t.plan || '').trim()) o.push('# ' + SEC.plan, '', t.plan.trim(), '');
+    return o.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+  }
+  function tableMd(cols, rows) {
+    var h = '| ' + cols.map(function (c) { return c[0]; }).join(' | ') + ' |';
+    var s = '|' + cols.map(function () { return '---'; }).join('|') + '|';
+    var b = (rows || []).map(function (r) { return '| ' + cols.map(function (c) { return cell(r[c[1]]); }).join(' | ') + ' |'; });
+    return [h, s].concat(b).join('\n');
+  }
+
+  var api = {
+    parse: parse, toMarkdown: toMarkdown, normStatus: normStatus, isDate: isDate, uid: uid, oneLine: oneLine,
+    STATUS: STATUS, TYPES: TYPES, ITEM_KEYS: ITEM_KEYS, META_KEYS: META_KEYS, FLIGHT_COLS: FLIGHT_COLS, STAY_COLS: STAY_COLS,
+    emptyTrip: emptyTrip, LINES: LINES, parseLines: parseLines
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.TP = api;
+})(this);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var TP = window.TP;
+  var D = document;
+  function $(s, el) { return (el || D).querySelector(s); }
+  function $$(s, el) { return Array.prototype.slice.call((el || D).querySelectorAll(s)); }
+
+  /* ---------------- icons ---------------- */
+  var IC = {
+    flight: '<path d="M21 4 3 11l7 2 2 7 3-5 4 3z"/><path d="m10 13 5-4"/>',
+    train: '<rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 10h12M9 17l-2 4M15 17l2 4"/><circle cx="9.5" cy="13.5" r="1"/><circle cx="14.5" cy="13.5" r="1"/>',
+    bus: '<rect x="4" y="3" width="16" height="15" rx="2.5"/><path d="M4 10h16M8 18v2M16 18v2"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
+    taxi: '<path d="M5 17v-5l2-5h10l2 5v5z"/><path d="M5 12h14M10 4h4v3"/><circle cx="8.5" cy="17" r="1.8"/><circle cx="15.5" cy="17" r="1.8"/>',
+    walk: '<circle cx="13" cy="4.5" r="1.8"/><path d="m10 21 2.5-6 2.5 2.5V21M12.5 15l-1-5.5 3.5-1.5 2 4 3 1M11.5 9.5 8 12v3"/>',
+    hotel: '<path d="M3 19V6M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="1.8"/>',
+    food: '<path d="M3 12h18a9 8 0 0 1-18 0z"/><path d="M14 3l-2.5 6M19 4l-4.5 5"/>',
+    cafe: '<path d="M4 9h12v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8 3v3M12 3v3M3 21h15"/>',
+    market: '<path d="M3 9 5 4h14l2 5z"/><path d="M5 11v9h14v-9M10 20v-5h4v5"/>',
+    temple: '<path d="M2 9.5 12 4l10 5.5z"/><path d="M5 9.5V12h14V9.5M6 12v8M18 12v8M3 20h18M10 20v-4h4v4"/>',
+    museum: '<path d="M3 9 12 4l9 5z"/><path d="M5 9v8M9.5 9v8M14.5 9v8M19 9v8M3 17h18M2 20h20"/>',
+    shopping: '<path d="M5 8h14l-1.2 13H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+    onsen: '<path d="M3 13h18c0 4.4-4 7-9 7s-9-2.6-9-7z"/><path d="M8 3c-1 1.5 1 2.5 0 4.5M12 3c-1 1.5 1 2.5 0 4.5M16 3c-1 1.5 1 2.5 0 4.5"/>',
+    nature: '<path d="M2 20 9 8l4 6 3-4 6 10z"/><circle cx="17" cy="5" r="2"/>',
+    nightlife: '<path d="M5 4h14l-7 8z"/><path d="M12 12v7M8 20h8M15 6.5l3-3"/>',
+    free: '<path d="M12 3l2.4 6.2L21 12l-6.6 2.8L12 21l-2.4-6.2L3 12l6.6-2.8z"/>',
+    other: '<circle cx="12" cy="12" r="9"/><circle cx="8" cy="12" r=".9"/><circle cx="12" cy="12" r=".9"/><circle cx="16" cy="12" r=".9"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+    gear: '<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',
+    back: '<path d="m15 5-7 7 7 7"/>',
+    chev: '<path d="m6 9 6 6 6-6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+    up: '<path d="m6 14 6-6 6 6"/>',
+    down: '<path d="m6 10 6 6 6-6"/>',
+    grip: '<circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/>',
+    pin: '<path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+    expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    x: '<path d="M6 6l12 12M18 6 6 18"/>',
+    upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+    download: '<path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>',
+    star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+    alert: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>',
+    edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+    check: '<path d="m5 12 4.5 4.5L19 7"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>'
+  };
+  function icon(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.other) + '</svg>'; }
+
+  var LANG = 'th';
+  var APP_VERSION = 'v2.1';
+  var CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
+
+  var EXACT = {"เสร็จ": "Done", "แก้ไข": "Edit", "ภาพรวม": "Overview", "เตรียมของ": "Packing", "ข้อมูลอ้างอิง": "Reference", "วางแผน": "Planning", "วันที่": "Date", "เที่ยวบิน": "Flight", "เส้นทาง": "Route", "สถานะ": "Status", "ออก": "Departs", "ถึง": "Arrives", "หมายเหตุ": "Notes", "ชื่อ": "Name", "เช็กอิน": "Check-in", "เช็กเอาต์": "Check-out", "ที่อยู่": "Address", "ข้อความ": "Text", "หัวข้อ": "Section", "เนื้อหา": "Content", "สรุปวัน": "Day summary", "เวลา": "Time", "ประเภท": "Type", "หมวด": "Group", "ชื่อทริป": "Trip name", "เมืองหลัก": "Main city", "ประเทศ": "Country", "เวอร์ชัน": "Version", "จำนวนคน": "Travelers", "เขตเวลา": "Time zone", "วันเริ่ม": "Start date", "วันสิ้นสุด": "End date", "ธีมของวัน": "Day theme", "ห้ามพลาดวันนี้": "Must-do today", "ข้อควรระวัง": "Watch out", "คืนนี้นอนที่": "Tonight’s stay", "ปลายทางคืนนี้": "Tonight’s destination", "เดินทางหลัก": "Main transport", "เดินทางรอง": "Alternative transport", "เวลา / ค่าใช้จ่าย": "Time / cost", "รอบๆ / หมายเหตุ": "Nearby / notes", "ย่อทั้งหมด": "Collapse all", "ขยายทั้งหมด": "Expand all", "ไม่ระบุ": "Not set", "รายการใหม่": "New item", "หัวข้อใหม่": "New section", "หมวดใหม่": "New group", "บันทึกไฟล์แล้ว": "File saved", "คัดลอกแล้ว": "Copied", "เลือกข้อความแล้ว กดคัดลอกเอง": "Text selected — press copy yourself", "เขียนทับแผนแล้ว": "Plan overwritten", "นำเข้าแผนแล้ว": "Plan imported", "รีเซ็ตแล้ว": "Reset done", "ลบแผนแล้ว": "Plan deleted", "ลบแล้ว": "Deleted", "เปลี่ยนเป็นธีมสว่าง": "Switch to light theme", "เปลี่ยนเป็นธีมมืด": "Switch to dark theme", "ชื่อประเทศภาษาท้องถิ่น": "Country name (local language)", "รูปแบบการเดินทาง": "Travel style", "ลิงก์ Google Maps": "Google Maps link", "รายการสำคัญ": "Mark as important", "ชื่อ (ไทย)": "Name (Thai)", "เนื้อหา (markdown)": "Content (markdown)", "ชื่อหมวด": "Group name", "หมายเหตุของหมวด (markdown)": "Group notes (markdown)", "เส้นทาง (คั่นด้วย →)": "Route (separate with →)", "เพิ่มวัน": "Add day", "เพิ่มเที่ยวบิน": "Add flight", "เพิ่มที่พัก": "Add stay", "เพิ่มหัวข้อ": "Add section", "เพิ่มรายการ": "Add item", "เพิ่มหมวด": "Add group", "เพิ่มงาน": "Add task", "เว้นว่าง = ค้นจากชื่อจีน · ใส่ - = ไม่มีลิงก์": "Leave blank = search by Chinese name · enter - = no link", "09:00 หรือ 09:00–10:30": "09:00 or 09:00–10:30", "中文 / ชื่อท้องถิ่น": "中文 / local name", "สายที่ใช้วันนี้": "Lines used today", "สายรถไฟ / MRT (เดินทางหลัก)": "Transit line (main)", "สายรถไฟ / MRT (เดินทางรอง)": "Transit line (alternative)", "BL, G, AIRPORT หรือ ชื่อ#RRGGBB": "BL, G, AIRPORT or Name#RRGGBB", "ภาษา / Language": "Language", "แผนเที่ยว": "Trip Plans", "ที่พัก": "Stay", "(ไม่มีชื่อ)": "(untitled)", "จบแล้ว": "Finished", "ธีม": "Theme", "ตั้งค่า": "Settings", "เปิดโหมดเจ้าของแล้ว": "Owner mode on", "ออกจากโหมดเจ้าของแล้ว": "Left owner mode"};
+  var PHR = {" · แผนเที่ยว": " · Trip Plans", "กลับหน้ารวมแผน": "Back to all plans", "</span>แผนเที่ยว</a>": "</span>Trip Plans</a>", "<h1>แผนเที่ยว</h1>": "<h1>Trip Plans</h1>", "aria-label=\"ตั้งค่า\"": "aria-label=\"Settings\"", "<span>นำเข้าแผน</span>": "<span>Import plan</span>", "<h2>นำเข้าแผน</h2>": "<h2>Import plan</h2>", "<span>สำรองทั้งหมด (.json)</span>": "<span>Back up all (.json)</span>", "<span>กำลังเที่ยว ": "<span>On trip: ", " · วันที่ ": " · day ", " จาก ": " of ", " — เปิดแผนวันนี้</span></a>": " — open today’s plan</span></a>", "<h2>ยังไม่มีแผน</h2>": "<h2>No plans yet</h2>", "นำเข้าไฟล์ .md ที่สร้างตาม template เพื่อเริ่มใช้งาน": "Import an .md file created from the template to get started", "><summary><span>ปฏิทิน · ": "><summary><span>Calendar · ", "</b><span>กำลังเที่ยว</span>": "</b><span>On trip</span>", "<span>จบแล้ว</span>": "<span>Finished</span>", "<span>วันที่ยังไม่ครบ</span>": "<span>Dates incomplete</span>", "<dt>วันที่</dt>": "<dt>Dates</dt>", "<dt>ระยะเวลา</dt>": "<dt>Duration</dt>", "<dt>ผู้เดินทาง</dt>": "<dt>Travelers</dt>", "aria-label=\"เดือนก่อน\"": "aria-label=\"Previous month\"", "aria-label=\"เดือนถัดไป\"": "aria-label=\"Next month\"", ">เดือนนี้</button>": ">This month</button>", " aria-label=\"วันที่ ": " aria-label=\"Day ", "title=\"วันนี้\"": "title=\"Today\"", "<span class=\"today-chip\">วันนี้</span>": "<span class=\"today-chip\">Today</span>", "<span>โหมดแก้ไข · บันทึกอัตโนมัติในเครื่องนี้ ส่งออก .md หรือ .json เพื่อเก็บสำรอง</span>": "<span>Edit mode · changes save automatically on this device. Export .md or .json for a backup</span>", "aria-label=\"ส่วนของแผน\"": "aria-label=\"Plan sections\"", "<span>กำลังเที่ยว วันที่ ": "<span>On trip · day ", "<span>ทริปนี้จบแล้ว</span>": "<span>This trip has finished</span>", "<dt>การเดินทาง</dt>": "<dt>Travel style</dt>", "<h2>เส้นทางทั้งทริป</h2>": "<h2>Whole-trip route</h2>", "<h2>แผนรายวัน</h2>": "<h2>Daily plan</h2>", "<h2>เดินทางและที่พัก</h2>": "<h2>Flights and stays</h2>", "เที่ยวบิน</h2>": "Flights</h2>", "ที่พัก</h2>": "Stays</h2>", "จำไว้ตลอดทริป</h2>": "Keep in mind</h2>", "เวอร์ชัน ": "Version ", "แก้ไขล่าสุดในเครื่องนี้ ": "Last edited on this device: ", "<span>ส่งออก .md</span>": "<span>Export .md</span>", "<span>ส่งออก .json</span>": "<span>Export .json</span>", "<span>ลบแผนนี้</span>": "<span>Delete this plan</span>", "<span>วันที่</span>": "<span>Day</span>", " · แตะเพื่อดูวิธีเดินทางและรายละเอียด": " · tap an item for transport and details", "ห้ามพลาดวันนี้</h3>": "Must-do today</h3>", "ข้อควรระวัง</h3>": "Watch out</h3>", "<span>ข้อมูลเพิ่มเติม</span>": "<span>More info</span>", "<span>ภาพรวม</span>": "<span>Overview</span>", "<span>เตรียมของ</span>": "<span>Packing</span>", "<span class=\"badge hl\">สำคัญ</span>": "<span class=\"badge hl\">Important</span>", "<span>เปิดใน Google Maps</span>": "<span>Open in Google Maps</span>", "<h1>เตรียมของ</h1>": "<h1>Packing</h1>", "<p class=\"muted\">ยังไม่มีรายการ</p>": "<p class=\"muted\">No items yet</p>", "การติ๊กเก็บในเครื่องนี้เท่านั้น": "Checkmarks are stored on this device only", "<h1>To-do ก่อนเดินทาง</h1>": "<h1>Pre-trip to-dos</h1>", " · เลยกำหนด": " · overdue", " · วันที่เทียบตามเวลาของปลายทาง": " · dates are compared using destination time", "แตะแถวเพื่อเปิดเต็มจอ": "Tap a row to view full screen", "<h1>ข้อมูลอ้างอิง</h1>": "<h1>Reference</h1>", "<p class=\"muted\">ยังไม่มีข้อมูล</p>": "<p class=\"muted\">No data yet</p>", "<span>เต็มจอ</span>": "<span>Full screen</span>", "<h1>วางแผน</h1>": "<h1>Planning</h1>", "เห็นเฉพาะโหมดวางแผน": "Visible in planning mode only", "aria-label=\"ย้ายขึ้น\"": "aria-label=\"Move up\"", "aria-label=\"ย้ายลง\"": "aria-label=\"Move down\"", "aria-label=\"ลบ\"": "aria-label=\"Delete\"", "title=\"ลากเพื่อย้าย\"": "title=\"Drag to move\"", "<h1>แก้ไขภาพรวม</h1>": "<h1>Edit overview</h1>", "<h2>วันในทริป</h2>": "<h2>Trip days</h2>", "<h2>จำไว้ตลอดทริป</h2>": "<h2>Keep in mind</h2>", "<h2>หัวข้ออื่นในภาพรวม</h2>": "<h2>Other overview sections</h2>", "<h1>แก้ไข Day ": "<h1>Edit Day ", "<h2>รายการ</h2>": "<h2>Items</h2>", "font-size:15px\">รายการ</h2>": "font-size:15px\">Items</h2>", "aria-label=\"รายการ\"": "aria-label=\"Item\"", "<h2>กล่องท้ายวัน</h2>": "<h2>End-of-day boxes</h2>", "หนึ่งบรรทัดต่อหนึ่งข้อ": "one per line", "<h2>ข้อมูลเพิ่มเติม</h2>": "<h2>More info</h2>", "<h1>แก้ไขเตรียมของ</h1>": "<h1>Edit packing list</h1>", "<h1>แก้ไข To-do</h1>": "<h1>Edit to-dos</h1>", "กำหนด เช่น \"ก่อน 2026-11-12\" — ใส่วันที่แบบ YYYY-MM-DD เพื่อให้เว็บเตือนเมื่อเลยกำหนด": "Due date, e.g. \"before 2026-11-12\" — use YYYY-MM-DD so the app can flag overdue tasks", "placeholder=\"กำหนด\" aria-label=\"กำหนด\"": "placeholder=\"Due\" aria-label=\"Due\"", "placeholder=\"งาน\" aria-label=\"งาน\"": "placeholder=\"Task\" aria-label=\"Task\"", "<h1>แก้ไขข้อมูลอ้างอิง</h1>": "<h1>Edit reference</h1>", "<h1>แก้ไขวางแผน</h1>": "<h1>Edit planning notes</h1>", "ตอนนี้ (เวลาท้องถิ่น)": "Now (local time)", "เส้นทาง: ": "Route: ", "<button class=\"btn sm\">เลิกทำ</button>": "<button class=\"btn sm\">Undo</button>", "aria-label=\"ปิด\"": "aria-label=\"Close\"", "แตะที่ใดก็ได้เพื่อปิด": "Tap anywhere to close", "ดาวน์โหลดจากหน้านี้ไม่ได้ คัดลอกข้อความด้านล่างไปบันทึกเป็นไฟล์แทน": "Downloads aren’t available on this page. Copy the text below and save it as a file instead.", "data-res=\"x\">ปิด</button>": "data-res=\"x\">Close</button>", "data-copy>คัดลอก</button>": "data-copy>Copy</button>", "<li>รวม ": "<li>Total items: ", " รายการ · เตรียมของ ": " · packing items: ", " ชิ้น · To-do ": " · to-dos: ", " · ข้อมูลอ้างอิง ": " · reference sections: ", " หัวข้อ</li></ul>": "</li></ul>", "<div class=\"warns\"><b>ต้องตรวจ ": "<div class=\"warns\"><b>Needs review: ", " จุด</b><ul>": "</b><ul>", "อ่านได้ครบ ไม่พบปัญหา": "Read fully, no problems found", "ไฟล์ .md ตาม template หรือไฟล์สำรอง .json จากเว็บนี้": ".md files that follow the template, or .json backups from this site", "<span>เลือกไฟล์</span>": "<span>Choose file</span>", "วางหรือแก้ข้อความ markdown ก่อนบันทึก": "Paste or edit markdown before saving", "placeholder=\"วางเนื้อหาไฟล์ .md ที่นี่\"": "placeholder=\"Paste the contents of an .md file here\"", "ตรวจข้อความ": "Check text", "data-res=\"cancel\">ยกเลิก</button>": "data-res=\"cancel\">Cancel</button>", "disabled>บันทึกแผน</button>": "disabled>Save plan</button>", "<div class=\"impsum\"><h3>ไฟล์สำรอง ": "<div class=\"impsum\"><h3>Backup file · plans: ", " แผน</h3><ul>": "</h3><ul>", "อ่านไฟล์ JSON ไม่ได้ ตรวจว่าเป็นไฟล์สำรองจากเว็บนี้": "Can’t read this JSON file. Check that it’s a backup from this site.", "บันทึกไม่ได้: ต้องมี title, start, end และอย่างน้อย 1 Day": "Can’t save: title, start, end and at least 1 Day are required", "อ่านไฟล์ไม่ได้": "Can’t read this file", "<h2>มีแผนนี้อยู่แล้ว</h2>": "<h2>This plan already exists</h2>", " มีอยู่ในเครื่องนี้แล้ว": " already exists on this device", ">เขียนทับแผนเดิม</button>": ">Overwrite existing plan</button>", ">เก็บเป็นอีกแผน</button>": ">Keep as a separate plan</button>", "<h2>ตั้งค่า</h2>": "<h2>Settings</h2>", "<b>ธีม</b>": "<b>Theme</b>", "<b>ภาษา / Language</b>": "<b>Language</b>", "เริ่มต้นเป็นธีมมืด": "Dark by default", "\">มืด</button>": "\">Dark</button>", "\">สว่าง</button>": "\">Light</button>", "<b>โหมดวางแผน</b>": "<b>Planning mode</b>", "แสดงสถานะข้อมูล หน้าวางแผน และเครื่องมือแก้ไข นำเข้า ส่งออก": "Shows data status, the planning page, and tools for editing, importing and exporting", "aria-label=\"โหมดวางแผน\"": "aria-label=\"Planning mode\"", "<b>ใช้แผนที่มากับลิงก์</b>": "<b>Use the plan from the link</b>", "ล้างการแก้ไขในเครื่องนี้ของแผนที่มากับลิงก์ แล้วโหลดใหม่ (การติ๊กยังอยู่)": "Clears this device’s edits to link-provided plans and reloads them (checkmarks are kept)", "data-set=\"reset\">รีเซ็ต</button>": "data-set=\"reset\">Reset</button>", "แผน การแก้ไข และการติ๊ก เก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น": "Plans, edits and checkmarks are stored in this browser only", "เบราว์เซอร์นี้ไม่ให้บันทึกข้อมูล การแก้ไขจะหายเมื่อปิดหน้า": "This browser doesn’t allow saving data. Edits will be lost when you close the page.", "data-res=\"ok\">เสร็จ</button>": "data-res=\"ok\">Done</button>", "<h2>รีเซ็ตแผนจากลิงก์</h2>": "<h2>Reset link-provided plans</h2>", "การแก้ไขในเครื่องนี้ของแผนที่มากับลิงก์จะหายไป ส่งออก .md หรือ .json เก็บไว้ก่อนถ้ายังต้องใช้": "Your edits to link-provided plans on this device will be lost. Export .md or .json first if you still need them.", "data-res=\"yes\">รีเซ็ต</button>": "data-res=\"yes\">Reset</button>", "<h2>ลบแผนนี้?</h2>": "<h2>Delete this plan?</h2>", "” จะถูกลบจากเครื่องนี้ ส่งออก .md เก็บไว้ก่อนถ้ายังต้องใช้": "” will be deleted from this device. Export .md first if you still need it.", "data-res=\"no\">ยกเลิก</button>": "data-res=\"no\">Cancel</button>", "data-res=\"yes\">ลบแผน</button>": "data-res=\"yes\">Delete plan</button>", "<h2>แผนนี้มีเวอร์ชันใหม่จากลิงก์</h2>": "<h2>A newer version of this plan came with the link</h2>", "มากับลิงก์นี้ แต่ในเครื่องนี้มีการแก้ไขไว้": "came with this link, but this device has local edits", "data-res=\"new\">ใช้เวอร์ชันใหม่</button>": "data-res=\"new\">Use new version</button>", "data-res=\"keep\">เก็บของในเครื่อง</button>": "data-res=\"keep\">Keep local version</button>", "<b>โหมดเจ้าของ</b>": "<b>Owner mode</b>", "เปิดโหมดวางแผน การแก้ไข นำเข้า ส่งออก การแก้ไขอยู่ในเครื่องนี้เท่านั้น คนอื่นไม่เห็น": "Unlocks planning mode, editing, import and export. Edits stay on this device — nobody else sees them", "data-set=\"owner-off\">ออกจากโหมดเจ้าของ</button>": "data-set=\"owner-off\">Leave owner mode</button>"};
+  var PHR_KEYS = Object.keys(PHR).sort(function (a, b) { return b.length - a.length; });
+  var T_CACHE = {};
+  function T(s) {
+    if (LANG !== 'en') return s;
+    var c = T_CACHE[s]; if (c !== undefined) return c;
+    var o = s;
+    if (Object.prototype.hasOwnProperty.call(EXACT, s)) o = EXACT[s];
+    else for (var i = 0; i < PHR_KEYS.length; i++) { var k = PHR_KEYS[i]; if (o.indexOf(k) >= 0) o = o.split(k).join(PHR[k]); }
+    T_CACHE[s] = o; return o;
+  }
+  var TYPE_TH = { flight: 'เครื่องบิน', train: 'รถไฟ / MRT', bus: 'รถเมล์', taxi: 'แท็กซี่ / รถ', walk: 'เดิน', hotel: 'ที่พัก', food: 'อาหาร', cafe: 'คาเฟ่', market: 'ตลาด / ถนนคนเดิน', temple: 'วัด / ศาลเจ้า', museum: 'พิพิธภัณฑ์ / ศิลปะ', shopping: 'ช้อปปิ้ง', onsen: 'ออนเซ็น / สปา', nature: 'ธรรมชาติ', nightlife: 'บาร์ / กลางคืน', free: 'เวลาว่าง', other: 'อื่นๆ' }; /*noT*/
+  var TYPE_EN = { flight: 'Flight', train: 'Train / MRT', bus: 'Bus', taxi: 'Taxi / car', walk: 'Walk', hotel: 'Stay', food: 'Food', cafe: 'Cafe', market: 'Market / street', temple: 'Temple / shrine', museum: 'Museum / art', shopping: 'Shopping', onsen: 'Onsen / spa', nature: 'Nature', nightlife: 'Bars / nightlife', free: 'Free time', other: 'Other' };
+  function typeLabel(x) { return (LANG === 'en' ? TYPE_EN : TYPE_TH)[x] || ''; }
+  var STATUS_CLS = { '✅': 'b-ok', '🔎': 'b-ok', '📄': 'b-doc', '⚠️': 'b-warn', '❓': 'b-warn' };
+  var STATUS_TH = {}; TP.STATUS.forEach(function (s) { STATUS_TH[s[0]] = s[1]; });
+  var STATUS_EN = { '✅': 'Confirmed', '📄': 'From document', '🔎': 'Web-checked', '⚠️': 'Needs check', '❓': 'Unknown' };
+  function statusLabel(x) { return (LANG === 'en' ? STATUS_EN : STATUS_TH)[x] || ''; }
+  function statusOpts() { return [['', T('ไม่ระบุ')]].concat(TP.STATUS.map(function (x) { return [x[0], x[0] + ' ' + statusLabel(x[0])]; })); }
+  /* counts with units (noT: both languages written out here) */
+  var UNITS = { plan: ['แผน', 'plan', 'plans'], night: ['คืน', 'night', 'nights'], day: ['วัน', 'day', 'days'], person: ['คน', 'person', 'people'], stop: ['จุด', 'stop', 'stops'], item: ['รายการ', 'item', 'items'] }; /*noT*/
+  function unit(n, u) { var x = UNITS[u]; return LANG === 'en' ? (n === 1 ? x[1] : x[2]) : x[0]; }
+  function cnt(n, u) { return n + ' ' + unit(n, u); }
+  function durLabel(n) { return LANG === 'en' ? cnt(n, 'day') + ' ' + cnt(Math.max(0, n - 1), 'night') : n + ' วัน ' + Math.max(0, n - 1) + ' คืน'; } /*noT*/
+  function countdown(n) { return LANG === 'en' ? 'Departs in ' + cnt(n, 'day') : 'อีก ' + n + ' วันจะออกเดินทาง'; } /*noT*/
+  function daysToGo(n) { return LANG === 'en' ? (n === 1 ? 'day to go' : 'days to go') : 'วันก่อนเดินทาง'; } /*noT*/
+  /* content in the current language: field_en when present, else the base field */
+  function L(o, k) { if (!o) return ''; if (LANG === 'en') { var v = o[k + '_en']; if (v != null && String(v).trim()) return v; } return o[k] == null ? '' : o[k]; }
+  var TZ = ['Asia/Bangkok', 'Asia/Taipei', 'Asia/Tokyo', 'Asia/Seoul', 'Asia/Hong_Kong', 'Asia/Shanghai', 'Asia/Singapore', 'Asia/Ho_Chi_Minh', 'Asia/Kuala_Lumpur', 'Europe/London', 'Europe/Paris', 'America/New_York', 'America/Los_Angeles', 'Australia/Sydney'];
+
+  /* ---------------- text ---------------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var EMO_RE = /[ \t]?(?:✅|📄|🔎|⚠\uFE0F?|❓)\uFE0F?/gu;
+  function stripE(s) {
+    return String(s == null ? '' : s).replace(EMO_RE, '').replace(/\([ \t]*\)/g, '').replace(/[ \t]{2,}/g, ' ')
+      .replace(/^([ \t]*[-*|]?[ \t]*)·[ \t]*/gm, '$1').replace(/·[ \t]*·/g, '·').replace(/[ \t]*·[ \t]*$/gm, '').trim();
+  }
+  function vis(s) { return S.settings.planning ? String(s == null ? '' : s) : stripE(s); }
+  function inl(s) {
+    return esc(vis(s)).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+  function prepMd(s) { return vis(s).replace(/</g, '&lt;'); }
+  function linkify(h) { return h.replace(/<a href=/g, '<a target="_blank" rel="noopener" href='); }
+  function wrapTables(h) { return h.replace(/<table>/g, '<div class="tw"><table>').replace(/<\/table>/g, '</table></div>'); }
+  function mdHtml(s) {
+    if (!String(s || '').trim()) return '';
+    if (!window.marked) return '<p>' + esc(vis(s)).replace(/\n/g, '<br>') + '</p>';
+    return linkify(wrapTables(window.marked.parse(prepMd(s))));
+  }
+  function hasCJK(s) { return /[\u3400-\u9FFF\uF900-\uFAFF]/.test(s || ''); }
+
+  /* ---------------- dates ---------------- */
+  var MON_S = { th: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'], en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] }; /*noT*/
+  var MON_F = { th: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'], en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }; /*noT*/
+  var WD_L = { th: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'], en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] }; /*noT*/
+  var WD_C = { th: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'], en: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] }; /*noT*/
+  function MS() { return MON_S[LANG]; }
+  function MF() { return MON_F[LANG]; }
+  function WD() { return WD_L[LANG]; }
+  function dp(s) { var a = s.split('-').map(Number); return { y: a[0], m: a[1], d: a[2], wd: new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay() }; }
+  function addDays(s, n) { return new Date(Date.parse(s + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10); }
+  function diffDays(a, b) { return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 864e5); }
+  function fmtDate(s, wd, year) {
+    if (!TP.isDate(s)) return s || '';
+    var p = dp(s);
+    return (wd ? WD()[p.wd] + ' ' : '') + p.d + ' ' + MS()[p.m - 1] + (year === false ? '' : ' ' + p.y);
+  }
+  function fmtRange(a, b) {
+    if (!TP.isDate(a) || !TP.isDate(b)) return [a, b].filter(Boolean).join(' – ');
+    var A = dp(a), B = dp(b);
+    if (a === b) return fmtDate(a);
+    if (A.y === B.y && A.m === B.m) return A.d + '–' + B.d + ' ' + MS()[A.m - 1] + ' ' + A.y;
+    if (A.y === B.y) return A.d + ' ' + MS()[A.m - 1] + ' – ' + B.d + ' ' + MS()[B.m - 1] + ' ' + A.y;
+    return fmtDate(a) + ' – ' + fmtDate(b);
+  }
+  function nowIn(tz) {
+    var o = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }, parts;
+    try { if (tz) o.timeZone = tz; parts = new Intl.DateTimeFormat('en-CA', o).formatToParts(new Date()); }
+    catch (e) { delete o.timeZone; parts = new Intl.DateTimeFormat('en-CA', o).formatToParts(new Date()); }
+    function g(t) { var p = parts.filter(function (x) { return x.type === t; })[0]; return p ? p.value : '00'; }
+    var h = g('hour') === '24' ? '00' : g('hour');
+    return { date: g('year') + '-' + g('month') + '-' + g('day'), min: (+h) * 60 + (+g('minute')), hm: h + ':' + g('minute') };
+  }
+  function startMin(time) { var m = String(time || '').match(/(\d{1,2}):(\d{2})/); return m ? (+m[1]) * 60 + (+m[2]) : -1; }
+  function tripState(t) {
+    var mt = t.meta, n = nowIn(mt.timezone), today = n.date;
+    if (!TP.isDate(mt.start) || !TP.isDate(mt.end)) return { status: 'unknown', today: today };
+    var total = diffDays(mt.start, mt.end) + 1;
+    if (today < mt.start) return { status: 'upcoming', today: today, left: diffDays(today, mt.start), total: total };
+    if (today > mt.end) return { status: 'past', today: today, total: total };
+    var idx = -1; t.days.forEach(function (d, i) { if (d.date === today) idx = i; });
+    return { status: 'ongoing', today: today, dayIdx: idx, k: diffDays(mt.start, today) + 1, total: total };
+  }
+  function dayCls(i) { return i % 2 ? 'c' : 'o'; }
+  function tripCls(i) { return i % 2 ? 'c' : 'o'; }
+
+  /* ---------------- state + storage ---------------- */
+  var K = { trips: 'tp1.trips', set: 'tp1.settings', seed: 'tp1.seed' };
+  var storageOK = true;
+  function lsGet(k) { try { var v = localStorage.getItem(k); return v == null ? null : JSON.parse(v); } catch (e) { storageOK = false; return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { storageOK = false; return false; } }
+  var S = { trips: [], settings: { theme: 'dark', planning: false, lang: 'th', owner: false }, edit: false, open: {}, cal: null, calOpen: null, cur: null, tab: 'overview', focus: null, drawn: {} };
+  var saveT = null;
+  function saveSoon() { clearTimeout(saveT); saveT = setTimeout(saveNow, 300); }
+  function saveNow() { clearTimeout(saveT); lsSet(K.trips, S.trips); }
+  function edited() { if (S.cur) { S.cur.localEdited = true; S.cur.updatedAt = Date.now(); } saveSoon(); }
+
+  function fnv(s) { var h = 0x811c9dc5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(16); }
+  var SEEDS = (window.TP_SEED || []).slice();
+  var SEED_HASH = fnv(SEEDS.join('\n<<seed>>\n'));
+
+  function makeId(meta) {
+    var base = String(meta.title || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    if (!base) base = 'trip';
+    if (/^comment-/.test(base)) base = 't-' + base;
+    base += '-' + (TP.isDate(meta.start) ? meta.start : 'x');
+    var id = base, k = 2;
+    while (S.trips.some(function (t) { return t.id === id; })) id = base + '-' + (k++);
+    return id;
+  }
+  function clearChecks(t) { (t.pack || []).forEach(function (g) { g.items.forEach(function (x) { x.done = false; }); }); (t.todo || []).forEach(function (x) { x.done = false; }); }
+  function carryChecks(oldT, newT) {
+    var pm = {}, tm = {};
+    (oldT.pack || []).forEach(function (g) { g.items.forEach(function (x) { pm[g.title + '|' + x.text] = x.done; }); });
+    (oldT.todo || []).forEach(function (x) { tm[x.due + '|' + x.text] = x.done; });
+    (newT.pack || []).forEach(function (g) { g.items.forEach(function (x) { var k = g.title + '|' + x.text; if (k in pm) x.done = pm[k]; }); });
+    (newT.todo || []).forEach(function (x) { var k = x.due + '|' + x.text; if (k in tm) x.done = tm[k]; });
+  }
+  function normalizeTrip(x) {
+    var t = TP.emptyTrip();
+    t.meta = Object.assign(t.meta, x.meta || {});
+    t.metaExtra = x.metaExtra || {};
+    t.overview = Object.assign(t.overview, x.overview || {});
+    ['days', 'pack', 'todo', 'ref'].forEach(function (k) { if (Array.isArray(x[k])) t[k] = x[k]; });
+    t.plan = x.plan || '';
+    t.days.forEach(function (d) { d.id = d.id || TP.uid(); d.items = d.items || []; d.must = d.must || []; d.caution = d.caution || []; d.items.forEach(function (it) { it.id = it.id || TP.uid(); it.extra = it.extra || {}; }); });
+    return t;
+  }
+  function sameTrip(a, b) { return a.meta.title === b.meta.title && a.meta.start === b.meta.start; }
+
+  function seedTrips() { return SEEDS.map(function (md) { var t = TP.parse(md).trip; clearChecks(t); return t; }); }
+
+  function initData() {
+    var tr = lsGet(K.trips);
+    S.trips = Array.isArray(tr) ? tr.map(function (x) { var t = normalizeTrip(x); t.id = x.id; t.origin = x.origin; t.localEdited = x.localEdited; t.updatedAt = x.updatedAt; return t; }) : [];
+    var savedSet = lsGet(K.set) || {};
+    if (savedSet.owner === undefined) savedSet.owner = !!savedSet.planning;   // anyone who already used planning mode before owner mode existed is the owner
+    S.settings = Object.assign({ theme: 'dark', planning: false, lang: 'th', owner: false }, savedSet);
+    var conflicts = [];
+    if (lsGet(K.seed) !== SEED_HASH) {
+      seedTrips().forEach(function (t) {
+        var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0];
+        if (!ex) { t.id = makeId(t.meta); t.origin = 'seed'; t.localEdited = false; t.updatedAt = Date.now(); S.trips.push(t); }
+        else if (!ex.localEdited) { replaceTrip(ex, t, false); }
+        else conflicts.push([ex, t]);
+      });
+      lsSet(K.seed, SEED_HASH); saveNow();
+    }
+    return conflicts;
+  }
+  function replaceTrip(oldT, newT, edited_) {
+    carryChecks(oldT, newT);
+    newT.id = oldT.id; newT.origin = oldT.origin || 'seed'; newT.localEdited = !!edited_; newT.updatedAt = Date.now();
+    S.trips[S.trips.indexOf(oldT)] = newT;
+    return newT;
+  }
+
+  /* ---------------- router ---------------- */
+  function parseHash() {
+    var h = decodeURIComponent(location.hash.slice(1));
+    if (!h || h === 'home') return { view: 'home' };
+    var i = h.indexOf('--');
+    return { view: 'trip', id: i < 0 ? h : h.slice(0, i), tab: i < 0 ? 'overview' : h.slice(i + 2) };
+  }
+  function go(h) { if (location.hash === '#' + h) render(true); else location.hash = h; }
+
+  /* ---------------- render root ---------------- */
+  function applyTheme() {
+    D.documentElement.setAttribute('data-theme', S.settings.theme);
+    var m = $('meta[name="theme-color"]'); if (m) m.setAttribute('content', S.settings.theme === 'light' ? '#F3F5F8' : '#0E1116');
+  }
+  function render(keep) {
+    var y = window.scrollY;
+    applyTheme();
+    LANG = S.settings.lang === 'en' ? 'en' : 'th'; D.documentElement.setAttribute('lang', LANG);
+    if (!S.settings.owner) S.settings.planning = false;   // viewers never get planning/edit tools
+    var r = parseHash(), trip = null;
+    if (r.view === 'trip') {
+      trip = S.trips.filter(function (t) { return t.id === r.id; })[0];
+      if (!trip) { history.replaceState(null, '', '#home'); r = { view: 'home' }; }
+    }
+    if (!trip) S.edit = false;
+    if (!S.settings.planning) S.edit = false;
+    S.cur = trip;
+    var tab = trip ? validTab(trip, r.tab) : '';
+    S.tab = tab;
+    $('#topbar').innerHTML = topbarHtml(trip);
+    $('#app').innerHTML = trip ? tripHtml(trip, tab) : dashHtml();
+    D.title = trip ? L(trip.meta, 'title') + T(' · แผนเที่ยว') : T('แผนเที่ยว');
+    afterRender();
+    if (keep) window.scrollTo(0, y);
+  }
+  function validTab(t, tab) {
+    if (tab === 'overview' || tab === 'pack' || tab === 'todo' || tab === 'ref') return tab;
+    if (tab === 'plan') return S.settings.planning ? 'plan' : 'overview';
+    var m = /^d(\d+)$/.exec(tab || '');
+    if (m && +m[1] >= 1 && +m[1] <= t.days.length) return tab;
+    return 'overview';
+  }
+  function topbarHtml(trip) {
+    var left = trip
+      ? T('<a class="ibtn" href="#home" aria-label="กลับหน้ารวมแผน">') + icon('back') + '</a><div class="tb-title"><b>' + esc(L(trip.meta, 'title')) + '</b><small>' + esc(fmtRange(trip.meta.start, trip.meta.end)) + '</small></div>'
+      : T('<a class="brand" href="#home"><span class="mark" aria-hidden="true"><i></i><i></i></span>แผนเที่ยว</a>');
+    var edit = (trip && S.settings.planning) ? '<button class="btn edbtn ' + (S.edit ? 'cy' : '') + '" data-act="edit-toggle" aria-label="' + (S.edit ? T('เสร็จ') : T('แก้ไข')) + '" aria-pressed="' + S.edit + '">' + icon(S.edit ? 'check' : 'edit') + '<span>' + (S.edit ? T('เสร็จ') : T('แก้ไข')) + '</span></button>' : '';
+    var dark = S.settings.theme !== 'light';
+    return '<div class="tb-in">' + left + '<div class="tb-sp"></div>' + edit +
+      '<button class="ibtn lang" data-act="lang" aria-label="' + (LANG === 'en' ? 'Switch to Thai' : 'Switch to English') + '">' + (LANG === 'en' ? 'TH' : 'EN') + '</button>' +
+      '<button class="ibtn" data-act="theme" aria-label="' + (dark ? T('เปลี่ยนเป็นธีมสว่าง') : T('เปลี่ยนเป็นธีมมืด')) + '">' + icon(dark ? 'sun' : 'moon') + '</button>' +
+      T('<button class="ibtn" data-act="settings" aria-label="ตั้งค่า">') + icon('gear') + '</button></div>';
+  }
+
+  /* ---------------- dashboard ---------------- */
+  function sortedTrips() {
+    var rank = { ongoing: 0, upcoming: 1, unknown: 2, past: 3 };
+    return S.trips.map(function (t, i) { return { t: t, i: i, s: tripState(t) }; }).sort(function (a, b) {
+      if (rank[a.s.status] !== rank[b.s.status]) return rank[a.s.status] - rank[b.s.status];
+      if (a.s.status === 'past') return a.t.meta.start < b.t.meta.start ? 1 : -1;
+      return a.t.meta.start < b.t.meta.start ? -1 : 1;
+    });
+  }
+  function dashHtml() {
+    var list = sortedTrips();
+    var tools = S.settings.planning
+      ? '<div class="tools"><button class="btn pri" data-act="import">' + icon('upload') + T('<span>นำเข้าแผน</span></button><button class="btn" data-act="export-all"') + (S.trips.length ? '' : ' disabled') + '>' + icon('download') + T('<span>สำรองทั้งหมด (.json)</span></button><button class="btn" data-act="template">') + icon('download') + '<span>Template (.md)</span></button></div>'
+      : '';
+    var ongoing = list.filter(function (x) { return x.s.status === 'ongoing'; })[0];
+    var banner = ongoing ? '<a class="now-banner" href="#' + esc(ongoing.t.id) + (ongoing.s.dayIdx >= 0 ? '--d' + (ongoing.s.dayIdx + 1) : '') + '">' + icon('clock') + T('<span>กำลังเที่ยว ') + esc(L(ongoing.t.meta, 'title')) + T(' · วันที่ ') + ongoing.s.k + T(' จาก ') + ongoing.s.total + T(' — เปิดแผนวันนี้</span></a>') : '';
+    var cards = list.length ? list.map(function (x) { return tripCard(x.t, x.s, x.i); }).join('')
+      : T('<div class="card empty"><h2>ยังไม่มีแผน</h2><p>นำเข้าไฟล์ .md ที่สร้างตาม template เพื่อเริ่มใช้งาน</p><div class="tools"><button class="btn pri" data-act="import">') + icon('upload') + T('<span>นำเข้าแผน</span></button><button class="btn" data-act="template">') + icon('download') + '<span>Template (.md)</span></button></div></div>';
+    if (S.calOpen == null) S.calOpen = window.matchMedia('(min-width:960px)').matches;
+    if (!S.cal) S.cal = defaultCalMonth(list);
+    return T('<div class="wrap"><div class="dash-head"><div><h1>แผนเที่ยว</h1><p class="muted">') + cnt(S.trips.length, 'plan') + '</p></div>' + tools + '</div>' + banner +
+      '<div class="dash-grid"><div class="tlist">' + cards + '</div><details class="cal-det"' + (S.calOpen ? ' open' : '') + T('><summary><span>ปฏิทิน · ') + calLabel() + '</span>' + icon('chev') + '</summary>' + calHtml() + '</details></div></div>';
+  }
+  function tripCard(t, s, i) {
+    var mt = t.meta, n = s.total || 0;
+    var state = s.status === 'upcoming' ? '<b>' + s.left + '</b><span>' + daysToGo(s.left) + '</span>'
+      : s.status === 'ongoing' ? '<b>' + s.k + '/' + s.total + T('</b><span>กำลังเที่ยว</span>')
+        : s.status === 'past' ? T('<span>จบแล้ว</span>') : T('<span>วันที่ยังไม่ครบ</span>');
+    var place = [L(mt, 'subtitle'), mt.country].filter(Boolean).join(', ');
+    return '<a class="tcard ' + tripCls(i) + (s.status === 'past' ? ' past' : '') + '" href="#' + esc(t.id) + '"><div>' +
+      '<div class="tc-state">' + state + '</div><h2>' + esc(L(mt, 'title')) + '</h2>' + (place ? '<p class="tc-place">' + esc(place) + '</p>' : '') +
+      T('<dl class="facts"><div><dt>วันที่</dt><dd>') + esc(fmtRange(mt.start, mt.end)) + '</dd></div>' +
+      (n ? T('<div><dt>ระยะเวลา</dt><dd>') + durLabel(n) + '</dd></div>' : '') +
+      (mt.travelers ? T('<div><dt>ผู้เดินทาง</dt><dd>') + esc(mt.travelers) + ' ' + unit(+mt.travelers, 'person') + '</dd></div>' : '') + '</dl></div>' +
+      (mt.country_native ? stamp(mt.country_native, '') : '') + '</a>';
+  }
+  function stamp(s, cls) {
+    var ch = Array.from(String(s).trim());
+    var vertical = ch.length <= 4 && ch.every(function (c) { return hasCJK(c); });
+    return '<div class="stamp ' + cls + (vertical ? '' : ' wide') + '" aria-hidden="true">' + (vertical ? ch.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join('') : esc(s)) + '</div>';
+  }
+  function defaultCalMonth(list) {
+    var x = list.filter(function (x) { return x.s.status === 'ongoing' || x.s.status === 'upcoming'; })[0];
+    if (x && TP.isDate(x.t.meta.start)) return x.t.meta.start.slice(0, 7);
+    return nowIn().date.slice(0, 7);
+  }
+  function calLabel() { var a = S.cal.split('-').map(Number); return MF()[a[1] - 1] + ' ' + a[0]; }
+  function calHtml() {
+    var a = S.cal.split('-').map(Number), y = a[0], mo = a[1], first = S.cal + '-01';
+    var startWd = dp(first).wd, dim = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+    var weeks = Math.ceil((startWd + dim) / 7), gs = addDays(first, -startWd), today = nowIn().date, rows = '';
+    var order = sortedTrips().map(function (x) { return x; });
+    for (var w = 0; w < weeks; w++) {
+      var ws = addDays(gs, w * 7), we = addDays(ws, 6), cells = '';
+      for (var k = 0; k < 7; k++) {
+        var d = addDays(ws, k), p = dp(d);
+        cells += '<div class="cd' + (p.m !== mo ? ' out' : '') + (d === today ? ' today' : '') + '" style="grid-column:' + (k + 1) + '"><span>' + p.d + '</span></div>';
+      }
+      var segs = [];
+      order.forEach(function (x) {
+        var t = x.t, s0 = t.meta.start, e0 = t.meta.end;
+        if (!TP.isDate(s0) || !TP.isDate(e0) || e0 < ws || s0 > we) return;
+        var s = s0 < ws ? ws : s0, e = e0 > we ? we : e0;
+        segs.push({ x: x, c0: diffDays(ws, s), c1: diffDays(ws, e), cl: s0 < ws, cr: e0 > we });
+      });
+      segs.sort(function (p, q) { return p.c0 - q.c0; });
+      var lanes = [], bars = '';
+      segs.forEach(function (sg) {
+        var lane = -1; for (var j = 0; j < lanes.length; j++) if (lanes[j] < sg.c0) { lane = j; break; }
+        if (lane < 0) { lane = lanes.length; lanes.push(sg.c1); } else lanes[lane] = sg.c1;
+        bars += '<a class="cbar ' + tripCls(sg.x.i) + (sg.x.s.status === 'past' ? ' past' : '') + (sg.cl ? ' cl' : '') + (sg.cr ? ' cr' : '') + '" href="#' + esc(sg.x.t.id) + '" style="grid-column:' + (sg.c0 + 1) + ' / ' + (sg.c1 + 2) + ';grid-row:' + (lane + 2) + '" title="' + esc(L(sg.x.t.meta, 'title')) + '">' + esc(L(sg.x.t.meta, 'title')) + '</a>';
+      });
+      rows += '<div class="cw">' + cells + bars + '</div>';
+    }
+    return T('<div class="cal"><div class="cal-head"><button class="ibtn sm" data-act="cal" data-d="-1" aria-label="เดือนก่อน">') + icon('back') + '</button><b>' + calLabel() + T('</b><button class="ibtn sm" data-act="cal" data-d="1" aria-label="เดือนถัดไป"><span class="flip">') + icon('back') + '</span></button></div>' +
+      '<div class="cal-wd">' + WD_C[LANG].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' + rows +
+      T('<div class="cal-foot"><button class="btn sm ghost" data-act="cal" data-d="0">เดือนนี้</button></div></div>');
+  }
+
+  /* ---------------- trip shell ---------------- */
+  function tripHtml(t, tab) {
+    var st = tripState(t), tabs = '';
+    function tb(id, label, cls) { var a = tab === id; return '<a class="tab ' + (cls || '') + '" href="#' + esc(t.id) + '--' + id + '"' + (a ? ' aria-current="page"' : '') + '>' + label + '</a>'; }
+    tabs += tb('overview', T('ภาพรวม'));
+    t.days.forEach(function (d, i) {
+      var p = TP.isDate(d.date) ? dp(d.date) : null, a = tab === 'd' + (i + 1);
+      tabs += '<a class="tab day ' + dayCls(i) + '" href="#' + esc(t.id) + '--d' + (i + 1) + '"' + (a ? ' aria-current="page"' : '') + T(' aria-label="วันที่ ') + (i + 1) + (p ? ' ' + fmtDate(d.date) : '') + '"><b>D' + (i + 1) + '</b><small>' + (p ? p.d + ' ' + MS()[p.m - 1] : '') + '</small>' + (st.status === 'ongoing' && st.dayIdx === i ? T('<i class="tdot" title="วันนี้"></i>') : '') + '</a>';
+    });
+    tabs += tb('pack', T('เตรียมของ')) + tb('todo', 'To-do') + tb('ref', T('ข้อมูลอ้างอิง'));
+    if (S.settings.planning) tabs += tb('plan', T('วางแผน'), 'plan');
+    var body;
+    if (tab === 'overview') body = S.edit ? overviewEdit(t) : overviewView(t, st);
+    else if (tab === 'pack') body = S.edit ? packEdit(t) : packView(t);
+    else if (tab === 'todo') body = S.edit ? todoEdit(t) : todoView(t, st);
+    else if (tab === 'ref') body = S.edit ? refEdit(t) : refView(t);
+    else if (tab === 'plan') body = S.edit ? planEdit(t) : planView(t);
+    else { var di = +tab.slice(1) - 1; body = S.edit ? dayEdit(t, di) : dayView(t, di, st); }
+    var bar = S.edit ? '<div class="editbar">' + icon('edit') + T('<span>โหมดแก้ไข · บันทึกอัตโนมัติในเครื่องนี้ ส่งออก .md หรือ .json เพื่อเก็บสำรอง</span></div>') : '';
+    return T('<nav class="tabs" aria-label="ส่วนของแผน"><div class="tabs-in">') + tabs + '</div></nav><div class="wrap">' + bar + body + '</div>';
+  }
+
+  function statusBadge(s) { if (!S.settings.planning || !s) return ''; return '<span class="badge ' + (STATUS_CLS[s] || 'b-doc') + '">' + s + ' ' + esc(statusLabel(s)) + '</span>'; }
+
+  /* ---------------- overview ---------------- */
+  function overviewView(t, st) {
+    var mt = t.meta, n = st.total || 0;
+    var place = [L(mt, 'subtitle'), mt.country].filter(Boolean).join(', ');
+    var state = st.status === 'upcoming' ? icon('clock') + '<span>' + countdown(st.left) + '</span>'
+      : st.status === 'ongoing' ? icon('clock') + T('<span>กำลังเที่ยว วันที่ ') + st.k + T(' จาก ') + st.total + '</span>'
+        : st.status === 'past' ? T('<span>ทริปนี้จบแล้ว</span>') : '';
+    var h = '<section class="ov-hero o"><div>' + (place ? '<p class="ov-place">' + esc(place) + '</p>' : '') + '<h1>' + esc(L(mt, 'title')) + '</h1>' +
+      T('<dl class="facts"><div><dt>วันที่</dt><dd>') + esc(fmtRange(mt.start, mt.end)) + '</dd></div>' +
+      (n ? T('<div><dt>ระยะเวลา</dt><dd>') + durLabel(n) + '</dd></div>' : '') +
+      (mt.travelers ? T('<div><dt>ผู้เดินทาง</dt><dd>') + esc(mt.travelers) + ' ' + unit(+mt.travelers, 'person') + '</dd></div>' : '') +
+      (L(mt, 'style') ? T('<div><dt>การเดินทาง</dt><dd>') + inl(L(mt, 'style')) + '</dd></div>' : '') + '</dl>' +
+      (state ? '<p class="ov-state">' + state + '</p>' : '') + '</div>' +
+      (mt.country_native ? stamp(mt.country_native, 'lg') : '') + '</section>';
+    if (t.days.some(function (d) { return d.route; })) h += T('<section class="card metro-card"><h2>เส้นทางทั้งทริป</h2><div class="metro" data-metro="trip"></div></section>');
+    h += T('<div class="sec-h"><h2>แผนรายวัน</h2></div><div class="dlist">') + t.days.map(function (d, i) {
+      var today = st.status === 'ongoing' && st.dayIdx === i;
+      return '<a class="drow ' + dayCls(i) + '" href="#' + esc(t.id) + '--d' + (i + 1) + '"><span class="dn">' + (i + 1) + '</span><div><p class="dd">' + esc(fmtDate(d.date, true, false)) + (today ? T('<span class="today-chip">วันนี้</span>') : '') + '</p><h3>' + inl(L(d, 'theme') || 'Day ' + (i + 1)) + '</h3>' + (d.route ? '<p class="dr">' + inl(d.route) + '</p>' : '') + '</div><span class="dc-n">' + cnt(d.items.length, 'stop') + '</span></a>';
+    }).join('') + '</div>';
+    var fl = t.overview.flights, stays = t.overview.stays;
+    if (fl.length || stays.length) {
+      h += T('<div class="sec-h"><h2>เดินทางและที่พัก</h2></div><div class="two">');
+      if (fl.length) h += '<section class="card"><h2 class="ch">' + icon('flight') + T('เที่ยวบิน</h2><div class="fl">') + fl.map(function (f) {
+        return '<div class="flt"><span class="code">' + esc(f.flight) + '</span><span class="route">' + inl(f.route) + '</span><span class="time">' + esc(fmtDate(f.date, true, false)) + ' · ' + inl(f.dep) + ' → ' + inl(f.arr) + '</span>' + ((f.note || f.status) ? '<span class="meta">' + statusBadge(f.status) + ' ' + inl(f.note) + '</span>' : '') + '</div>';
+      }).join('') + '</div></section>';
+      if (stays.length) h += '<section class="card"><h2 class="ch">' + icon('hotel') + T('ที่พัก</h2><div class="fl">') + stays.map(function (s) {
+        var nights = TP.isDate(s.checkin) && TP.isDate(s.checkout) ? diffDays(s.checkin, s.checkout) : 0;
+        return '<div class="flt"><span class="stay-name" style="grid-column:1/-1">' + inl(s.name) + '</span><span class="time">' + esc(fmtRange(s.checkin, s.checkout)) + (nights ? ' · ' + cnt(nights, 'night') : '') + '</span>' + (s.address ? '<span class="meta">' + inl(s.address) + '</span>' : '') + ((s.note || s.status) ? '<span class="meta">' + statusBadge(s.status) + ' ' + inl(s.note) + '</span>' : '') + '</div>';
+      }).join('') + '</div></section>';
+      h += '</div>';
+    }
+    if ((t.overview.remember || '').trim()) h += '<div class="sec-h"></div><section class="bar"><h2>' + icon('star') + T('จำไว้ตลอดทริป</h2><div class="md">') + mdHtml(t.overview.remember) + '</div></section>';
+    t.overview.extra.forEach(function (s) { h += '<div class="sec-h">' + (s.title ? '<h2>' + inl(s.title) + '</h2>' : '') + '</div><section class="card"><div class="md">' + mdHtml(s.md) + '</div></section>'; });
+    if (S.settings.planning) h += '<div class="trip-tools"><p>' + (mt.version ? T('เวอร์ชัน ') + esc(mt.version) + ' · ' : '') + T('แก้ไขล่าสุดในเครื่องนี้ ') + (t.updatedAt ? new Date(t.updatedAt).toLocaleString(LANG === 'en' ? 'en-GB' : 'th-TH-u-ca-gregory') : '-') + '</p>' +
+      '<button class="btn" data-act="export-md">' + icon('download') + T('<span>ส่งออก .md</span></button><button class="btn" data-act="export-json">') + icon('download') + T('<span>ส่งออก .json</span></button><button class="btn danger" data-act="delete-trip">') + icon('trash') + T('<span>ลบแผนนี้</span></button></div>');
+    return h;
+  }
+
+  /* ---------------- day ---------------- */
+  function splitTime(s) { s = String(s || ''); var m = s.match(/^(.*?\S)\s*([–-]\s*.+)$/); return m ? [m[1], m[2].replace(/\s+/g, '')] : [s, '']; }
+  function mapUrl(it) {
+    var m = (it.map || '').trim();
+    if (m === '-') return '';
+    if (/^https?:\/\//i.test(m)) return m;
+    var q = m || it.zh || it.en;
+    return q ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q) : '';
+  }
+  function dayView(t, di, st) {
+    var d = t.days[di], cls = dayCls(di), last = d.date === t.meta.end;
+    var isToday = st.status === 'ongoing' && st.dayIdx === di;
+    var h = '<section class="day-head ' + cls + T('"><div class="dbadge"><span>วันที่</span><b>') + (di + 1) + '</b></div><div><p class="dh-date">' + esc(fmtDate(d.date, true)) + (isToday ? T('<span class="today-chip">วันนี้</span>') : '') + '</p><h1>' + inl(L(d, 'theme') || 'Day ' + (di + 1)) + '</h1>' + (L(d, 'summary') ? '<p class="dh-sum">' + inl(L(d, 'summary')) + '</p>' : '') + '</div>' +
+      (d.stay ? '<div class="stay">' + icon('hotel') + '<div><small>' + (last ? T('ปลายทางคืนนี้') : T('คืนนี้นอนที่')) + '</small><b>' + inl(d.stay) + '</b></div></div>' : '') + '</section>';
+    if (d.route) h += '<section class="band ' + cls + '" data-n="' + (di + 1) + '"><div class="metro" data-metro="day:' + di + '"></div></section>';
+    var openAll = d.items.length && d.items.every(function (it) { return S.open[it.id]; });
+    h += '<div class="tl-tools"><span class="muted">' + cnt(d.items.length, 'item') + (S.settings.planning ? '' : T(' · แตะเพื่อดูวิธีเดินทางและรายละเอียด')) + '</span>' + (d.items.length ? '<button class="btn sm" data-act="expand-all" data-v="' + (openAll ? '0' : '1') + '">' + (openAll ? T('ย่อทั้งหมด') : T('ขยายทั้งหมด')) + '</button>' : '') + '</div>';
+    var seenL = {}, usedL = [];
+    d.items.forEach(function (it) { lineList(it.line).concat(lineList(it.line_alt)).forEach(function (l) { var k = l.code.toLowerCase(); if (!seenL[k]) { seenL[k] = 1; usedL.push(l); } }); });
+    if (usedL.length) h += '<div class="llegend"><span class="muted">' + T('สายที่ใช้วันนี้') + '</span>' + usedL.map(function (l) { return chipHtml(l, false); }).join('') + '</div>';
+    h += '<ol class="tl ' + cls + '"' + (isToday ? ' data-today="' + d.date + '"' : '') + '>' + d.items.map(function (it) { return itemView(it, cls); }).join('') + '</ol>';
+    var must = d.must.map(function (x) { return '<li>' + inl(x) + '</li>'; }).join(''), cau = d.caution.map(function (x) { return '<li>' + inl(x) + '</li>'; }).join('');
+    if (must || cau) h += '<div class="sec-h"></div><div class="two">' + (must ? '<section class="bar"><h3>' + icon('star') + T('ห้ามพลาดวันนี้</h3><div class="md"><ul>') + must + '</ul></div></section>' : '') + (cau ? '<section class="bar or"><h3>' + icon('alert') + T('ข้อควรระวัง</h3><div class="md"><ul>') + cau + '</ul></div></section>' : '') + '</div>';
+    if ((d.extra || '').trim()) h += T('<details class="more"><summary><span>ข้อมูลเพิ่มเติม</span>') + icon('chev') + '</summary><div class="md">' + mdHtml(d.extra) + '</div></details>';
+    h += '<nav class="daynav">' + (di > 0 ? '<a class="btn" href="#' + esc(t.id) + '--d' + di + '">' + icon('back') + '<span>Day ' + di + '</span></a>' : '<a class="btn" href="#' + esc(t.id) + '">' + icon('back') + T('<span>ภาพรวม</span></a>')) +
+      (di < t.days.length - 1 ? '<a class="btn next" href="#' + esc(t.id) + '--d' + (di + 2) + '"><span>Day ' + (di + 2) + '</span><span class="flip">' + icon('back') + '</span></a>' : '<a class="btn next" href="#' + esc(t.id) + T('--pack"><span>เตรียมของ</span><span class="flip">') + icon('back') + '</span></a>') + '</nav>';
+    return h;
+  }
+  /* ---- transit line chips / blocks ---- */
+  function lineList(str) { return TP.parseLines(str); }
+  function lineHex(l) { return l.hex || '#8B95A3'; }
+  function rgbOf(hex) { var n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  function rgba(hex, a) { var c = rgbOf(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+  function relLum(hex) { var c = rgbOf(hex).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+  // chip text colour: whichever of the two inks has the higher WCAG contrast on the line colour
+  function inkFor(hex) { var l = relLum(hex), dark = relLum('#0E1116'), light = relLum('#FBFCFD'); return (l + 0.05) / (dark + 0.05) > (light + 0.05) / (l + 0.05) ? '#0E1116' : '#FBFCFD'; }
+  function lineName(l) { return LANG === 'en' ? l.en : l.th; }
+  function chipHtml(l, compact) {
+    var hx = lineHex(l);
+    return '<span class="lchip' + (compact ? ' sm' : '') + '" style="--lc:' + hx + ';--li:' + inkFor(hx) + '" title="' + esc(l.en + (l.zh ? ' · ' + l.zh : '')) + '"><b>' + esc(l.code) + '</b>' + (compact ? '' : '<span>' + esc(lineName(l)) + (l.zh ? ' <i lang="zh-Hant">' + esc(l.zh) + '</i>' : '') + '</span>') + '</span>';
+  }
+  function lineBlock(lines, inner) {
+    var cols = lines.map(lineHex), n = cols.length;
+    var stripe = n > 1 ? 'linear-gradient(to bottom,' + cols.map(function (c, i) { return c + ' ' + (i * 100 / n) + '% ' + ((i + 1) * 100 / n) + '%'; }).join(',') + ')' : cols[0];
+    var tint = n > 1 ? 'linear-gradient(90deg,' + cols.map(function (c) { return rgba(c, 0.14); }).join(',') + ')' : rgba(cols[0], 0.14);
+    return '<div class="lblk" style="--stripe:' + stripe + ';--tint:' + tint + '"><div class="lchips">' + lines.map(function (l) { return chipHtml(l, false); }).join('') + '</div>' + inner + '</div>';
+  }
+  function itemView(it, cls) {
+    var tm = splitTime(it.time), url = mapUrl(it);
+    var tp = L(it, 'transport'), ta = L(it, 'transport_alt'), cs = L(it, 'cost'), nt = L(it, 'notes');
+    var lm = lineList(it.line), la = lineList(it.line_alt);
+    var rows = [{ k: T('เดินทางหลัก'), v: tp, lines: lm }, { k: T('เดินทางรอง'), v: ta, lines: la }, { k: T('เวลา / ค่าใช้จ่าย'), v: cs, lines: [] }, { k: T('รอบๆ / หมายเหตุ'), v: nt, lines: [] }];
+    Object.keys(it.extra || {}).forEach(function (k) { rows.push({ k: k, v: it.extra[k], lines: [], raw: true }); });
+    rows = rows.filter(function (r) { return String(vis(r.v) || '').trim() || r.lines.length; });
+    var hasDetail = rows.length || url, open = hasDetail && S.open[it.id];
+    var line = vis(tp) || vis(nt) || vis(cs);
+    var chips = lm.map(function (l) { return chipHtml(l, true); }).join('');
+    var tags = chips + (it.highlight ? T('<span class="badge hl">สำคัญ</span>') : '') + statusBadge(it.status);
+    var primary = LANG === 'en' && it.en ? it.en : it.title;
+    var secondary = LANG === 'en' ? (it.en ? it.title : '') : it.en;
+    var inner = '<span class="it-icon" title="' + esc(typeLabel(it.type)) + '">' + icon(it.type) + '</span><span class="it-text"><span class="it-t">' + inl(primary) + (it.zh ? '<span class="zh" lang="zh-Hant">' + esc(it.zh) + '</span>' : '') + '</span>' +
+      (secondary ? '<span class="it-en">' + inl(secondary) + '</span>' : '') + (line ? '<span class="it-line">' + inl(line) + '</span>' : '') + '<span class="it-tags">' + tags + '</span></span>';
+    var main = hasDetail
+      ? '<button class="it-main" data-act="toggle" data-id="' + it.id + '" aria-expanded="' + !!open + '">' + inner + '<span class="chev">' + icon('chev') + '</span></button>'
+      : '<div class="it-main static">' + inner + '<span></span></div>';
+    var det = hasDetail ? '<div class="it-detail"><dl>' + rows.map(function (r) {
+      var txt = String(vis(r.v) || '').trim() ? '<div class="lbody">' + inl(r.v) + '</div>' : '';
+      return '<div><dt>' + (r.raw ? esc(r.k) : esc(T(r.k))) + '</dt><dd>' + (r.lines.length ? lineBlock(r.lines, txt) : inl(r.v)) + '</dd></div>';
+    }).join('') + '</dl>' + (url ? '<a class="btn sm maplink" href="' + esc(url) + '" target="_blank" rel="noopener">' + icon('pin') + T('<span>เปิดใน Google Maps</span></a>') : '') + '</div>' : '';
+    return '<li class="it' + (it.highlight ? ' hl' : '') + (open ? ' open' : '') + '" data-id="' + it.id + '" data-min="' + startMin(it.time) + '"><div class="it-time">' + esc(tm[0]) + (tm[1] ? '<small>' + esc(tm[1]) + '</small>' : '') + '</div><div class="it-node"></div><div class="it-body">' + main + det + '</div></li>';
+  }
+
+  /* ---------------- pack / todo / ref / plan views ---------------- */
+  function countPack(t) { var a = 0, b = 0; t.pack.forEach(function (g) { g.items.forEach(function (x) { b++; if (x.done) a++; }); }); return [a, b]; }
+  function packView(t) {
+    var c = countPack(t), pct = c[1] ? Math.round(c[0] * 100 / c[1]) : 0;
+    var h = T('<div class="ph"><h1>เตรียมของ</h1>') + (c[1] ? '<p class="prog" data-prog="pack">' + c[0] + '/' + c[1] + '</p>' : '') + '</div>' + (c[1] ? '<div class="pbar"><i data-pbar="pack" style="width:' + pct + '%"></i></div>' : '');
+    if (!t.pack.length) h += T('<p class="muted">ยังไม่มีรายการ</p>');
+    t.pack.forEach(function (g, gi) {
+      var gd = g.items.filter(function (x) { return x.done; }).length;
+      h += '<section class="card grp"><header>' + (g.title ? '<h2>' + inl(g.title) + '</h2>' : '<span></span>') + (g.items.length ? '<span class="muted" data-prog-g="' + gi + '">' + gd + '/' + g.items.length + '</span>' : '') + '</header>' +
+        (g.note ? '<div class="md">' + mdHtml(g.note) + '</div>' : '') +
+        (g.items.length ? '<ul class="checks">' + g.items.map(function (x, i) { return '<li><label class="ck' + (x.done ? ' done' : '') + '"><input type="checkbox" data-chk="pack.' + gi + '.items.' + i + '"' + (x.done ? ' checked' : '') + '><i class="cb" aria-hidden="true">' + CHECK_SVG + '</i><span>' + inl(x.text) + '</span></label></li>'; }).join('') + '</ul>' : '') + '</section>';
+    });
+    return h + T('<p class="note">การติ๊กเก็บในเครื่องนี้เท่านั้น</p>');
+  }
+  function lastDate(s) { var m = String(s || '').match(/\d{4}-\d{2}-\d{2}/g); return m ? m[m.length - 1] : ''; }
+  function todoView(t, st) {
+    var done = t.todo.filter(function (x) { return x.done; }).length, n = t.todo.length;
+    var h = T('<div class="ph"><h1>To-do ก่อนเดินทาง</h1>') + (n ? '<p class="prog" data-prog="todo">' + done + '/' + n + '</p>' : '') + '</div>' + (n ? '<div class="pbar"><i data-pbar="todo" style="width:' + Math.round(done * 100 / n) + '%"></i></div>' : '');
+    if (!n) return h + T('<p class="muted">ยังไม่มีรายการ</p>');
+    h += '<section class="card"><ul class="checks">' + t.todo.map(function (x, i) {
+      var ld = lastDate(x.due), over = !x.done && ld && ld < st.today;
+      return '<li class="todo' + (over ? ' over' : '') + '"><label class="ck' + (x.done ? ' done' : '') + '"><input type="checkbox" data-chk="todo.' + i + '"' + (x.done ? ' checked' : '') + '><i class="cb" aria-hidden="true">' + CHECK_SVG + '</i><span>' + inl(x.text) + '</span></label>' + (x.due ? '<span class="due">' + icon('cal') + inl(x.due) + (over ? T(' · เลยกำหนด') : '') + '</span>' : '') + '</li>';
+    }).join('') + '</ul></section>';
+    return h + T('<p class="note">การติ๊กเก็บในเครื่องนี้เท่านั้น · วันที่เทียบตามเวลาของปลายทาง</p>');
+  }
+  function refBody(sec, si) {
+    if (!window.marked) return { html: mdHtml(sec.md), table: false };
+    var toks = window.marked.lexer(prepMd(sec.md)), out = '', ti = 0;
+    toks.forEach(function (tk) {
+      if (tk.type === 'table') {
+        var idx = ti++;
+        out += '<p class="tap-hint">' + icon('expand') + T('แตะแถวเพื่อเปิดเต็มจอ</p><div class="tw"><table><thead><tr>') + tk.header.map(function (c) { return '<th>' + window.marked.parseInline(c.text) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+          tk.rows.map(function (r, ri) { return '<tr class="tap" tabindex="0" role="button" data-act="fs-row" data-sec="' + si + '" data-t="' + idx + '" data-r="' + ri + '">' + r.map(function (c) { return '<td' + (hasCJK(c.text) ? ' lang="zh-Hant" style="font-family:var(--zh)"' : '') + '>' + window.marked.parseInline(c.text) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>';
+      } else { var one = [tk]; one.links = toks.links; out += window.marked.parser(one); }
+    });
+    return { html: linkify(out), table: ti > 0 };
+  }
+  function refView(t) {
+    var h = T('<div class="ph"><h1>ข้อมูลอ้างอิง</h1></div>');
+    if (!t.ref.length) h += T('<p class="muted">ยังไม่มีข้อมูล</p>');
+    t.ref.forEach(function (s, si) {
+      var b = refBody(s, si);
+      h += '<section class="card ref-sec"><header>' + (s.title ? '<h2>' + inl(s.title) + '</h2>' : '<span></span>') + (!b.table ? '<button class="btn sm" data-act="fs-sec" data-sec="' + si + '">' + icon('expand') + T('<span>เต็มจอ</span></button>') : '') + '</header><div class="md">' + b.html + '</div></section>';
+    });
+    return h;
+  }
+  function planView(t) { return T('<div class="ph"><h1>วางแผน</h1><p class="muted">เห็นเฉพาะโหมดวางแผน</p></div><section class="card"><div class="md">') + (mdHtml(t.plan) || T('<p class="muted">ยังไม่มีข้อมูล</p>')) + '</div></section>'; }
+
+  /* ---------------- edit forms ---------------- */
+  function attr(o) { return Object.keys(o).filter(function (k) { return o[k] != null && o[k] !== false; }).map(function (k) { return o[k] === true ? k : k + '="' + esc(o[k]) + '"'; }).join(' '); }
+  function fIn(label, path, val, o) { o = o || {}; return '<label class="' + (o.cls || '') + '"><span>' + label + '</span><input ' + attr({ type: o.type, 'data-b': path, 'data-k': o.k, value: val == null ? '' : val, placeholder: o.ph, list: o.list, inputmode: o.im }) + '></label>'; }
+  function fTa(label, path, val, o) { o = o || {}; return '<label class="' + (o.cls || 'wf') + '"><span>' + label + '</span><textarea ' + attr({ 'data-b': path, 'data-k': o.k, rows: o.rows || 2, placeholder: o.ph }) + '>' + esc(val) + '</textarea></label>'; }
+  function fSel(label, path, val, opts, o) { o = o || {}; return '<label class="' + (o.cls || '') + '"><span>' + label + '</span><select data-b="' + path + '">' + opts.map(function (p) { return '<option value="' + esc(p[0]) + '"' + (p[0] === val ? ' selected' : '') + '>' + esc(p[1]) + '</option>'; }).join('') + '</select></label>'; }
+  function fChk(label, path, val) { return '<label class="chk"><input type="checkbox" data-b="' + path + '" data-k="bool"' + (val ? ' checked' : '') + '><span>' + label + '</span></label>'; }
+  function rowTools(list, i, len) {
+    return '<div class="rt"><button class="ibtn sm" data-act="mv" data-list="' + list + '" data-i="' + i + '" data-d="-1"' + (i === 0 ? ' disabled' : '') + T(' aria-label="ย้ายขึ้น">') + icon('up') + '</button><button class="ibtn sm" data-act="mv" data-list="' + list + '" data-i="' + i + '" data-d="1"' + (i === len - 1 ? ' disabled' : '') + T(' aria-label="ย้ายลง">') + icon('down') + '</button><button class="ibtn sm danger" data-act="del" data-list="' + list + '" data-i="' + i + T('" aria-label="ลบ">') + icon('trash') + '</button></div>';
+  }
+  function addBtn(list, kind, label) { return '<button class="btn add" data-act="add" data-list="' + list + '" data-new="' + kind + '">' + icon('plus') + '<span>' + label + '</span></button>'; }
+  function edBox(list, i, len, title, inner) { return '<div class="ed" data-dl="' + list + '" data-i="' + i + T('"><div class="ed-bar"><span class="grip" data-grip title="ลากเพื่อย้าย">') + icon('grip') + '</span><b>' + title + '</b>' + rowTools(list, i, len) + '</div>' + inner + '</div>'; }
+  
+  function overviewEdit(t) {
+    var m = t.meta, p = 'meta.';
+    var h = T('<div class="ph"><h1>แก้ไขภาพรวม</h1></div><section class="card"><div class="ed-grid">') +
+      fIn(T('ชื่อทริป'), p + 'title', m.title, { cls: 'w2' }) + fIn(T('เมืองหลัก'), p + 'subtitle', m.subtitle) + fIn(T('ประเทศ'), p + 'country', m.country) +
+      fIn(T('ชื่อประเทศภาษาท้องถิ่น'), p + 'country_native', m.country_native) + fIn(T('วันเริ่ม'), p + 'start', m.start, { type: 'date' }) + fIn(T('วันสิ้นสุด'), p + 'end', m.end, { type: 'date' }) +
+      fIn(T('เขตเวลา'), p + 'timezone', m.timezone, { list: 'tzlist', ph: 'Asia/Bangkok' }) + fIn(T('จำนวนคน'), p + 'travelers', m.travelers, { im: 'numeric' }) + fIn(T('เวอร์ชัน'), p + 'version', m.version) +
+      fIn(T('รูปแบบการเดินทาง'), p + 'style', m.style, { cls: 'w2' }) +
+      fIn('Title (EN)', p + 'title_en', m.title_en, { cls: 'w2' }) + fIn('Subtitle (EN)', p + 'subtitle_en', m.subtitle_en) + fIn('Travel style (EN)', p + 'style_en', m.style_en, { cls: 'w2' }) + '</div><datalist id="tzlist">' + TZ.map(function (z) { return '<option value="' + z + '">'; }).join('') + '</datalist></section>';
+    h += T('<div class="sec-h"><h2>วันในทริป</h2></div>') + t.days.map(function (d, i) {
+      return edBox('days', i, t.days.length, 'Day ' + (i + 1) + ' · ' + esc(d.date) + ' · ' + esc(d.theme), '<div class="ed-grid">' + fIn(T('วันที่'), 'days.' + i + '.date', d.date, { type: 'date' }) + fIn(T('ธีมของวัน'), 'days.' + i + '.theme', d.theme, { cls: 'w2' }) + '</div>');
+    }).join('') + addBtn('days', 'day', T('เพิ่มวัน'));
+    h += T('<div class="sec-h"><h2>เที่ยวบิน</h2></div>') + t.overview.flights.map(function (f, i) {
+      var b = 'overview.flights.' + i + '.';
+      return edBox('overview.flights', i, t.overview.flights.length, esc(f.flight || T('เที่ยวบิน')), '<div class="ed-grid">' + fIn(T('เที่ยวบิน'), b + 'flight', f.flight) + fIn(T('วันที่'), b + 'date', f.date, { type: 'date' }) + fIn(T('เส้นทาง'), b + 'route', f.route, { ph: 'DMK → TPE' }) + fSel(T('สถานะ'), b + 'status', f.status, statusOpts()) + fIn(T('ออก'), b + 'dep', f.dep) + fIn(T('ถึง'), b + 'arr', f.arr) + fIn(T('หมายเหตุ'), b + 'note', f.note, { cls: 'w2' }) + '</div>');
+    }).join('') + addBtn('overview.flights', 'flight', T('เพิ่มเที่ยวบิน'));
+    h += T('<div class="sec-h"><h2>ที่พัก</h2></div>') + t.overview.stays.map(function (s, i) {
+      var b = 'overview.stays.' + i + '.';
+      return edBox('overview.stays', i, t.overview.stays.length, esc(s.name || T('ที่พัก')), '<div class="ed-grid">' + fIn(T('ชื่อ'), b + 'name', s.name, { cls: 'w2' }) + fIn(T('เช็กอิน'), b + 'checkin', s.checkin, { type: 'date' }) + fIn(T('เช็กเอาต์'), b + 'checkout', s.checkout, { type: 'date' }) + fIn(T('ที่อยู่'), b + 'address', s.address, { cls: 'w2' }) + fSel(T('สถานะ'), b + 'status', s.status, statusOpts()) + fIn(T('หมายเหตุ'), b + 'note', s.note, { cls: 'wf' }) + '</div>');
+    }).join('') + addBtn('overview.stays', 'stay', T('เพิ่มที่พัก'));
+    h += T('<div class="sec-h"><h2>จำไว้ตลอดทริป</h2><span class="muted">markdown</span></div><section class="card"><div class="ed-grid">') + fTa(T('ข้อความ'), 'overview.remember', t.overview.remember, { rows: 6 }) + '</div></section>';
+    h += T('<div class="sec-h"><h2>หัวข้ออื่นในภาพรวม</h2></div>') + t.overview.extra.map(function (s, i) {
+      var b = 'overview.extra.' + i + '.';
+      return edBox('overview.extra', i, t.overview.extra.length, esc(s.title || T('หัวข้อ')), '<div class="ed-grid">' + fIn(T('หัวข้อ'), b + 'title', s.title, { cls: 'wf' }) + fTa(T('เนื้อหา (markdown)'), b + 'md', s.md, { rows: 5 }) + '</div>');
+    }).join('') + addBtn('overview.extra', 'sec', T('เพิ่มหัวข้อ'));
+    return h;
+  }
+  function dayEdit(t, di) {
+    var d = t.days[di], p = 'days.' + di + '.';
+    var h = T('<div class="ph"><h1>แก้ไข Day ') + (di + 1) + '</h1></div><section class="card"><div class="ed-grid">' +
+      fIn(T('วันที่'), p + 'date', d.date, { type: 'date' }) + fIn(T('ธีมของวัน'), p + 'theme', d.theme, { cls: 'w2' }) + fIn(T('คืนนี้นอนที่'), p + 'stay', d.stay) +
+      fIn(T('เส้นทาง (คั่นด้วย →)'), p + 'route', d.route, { cls: 'w2', ph: 'Ximen → Jiufen → Raohe' }) + fIn(T('สรุปวัน'), p + 'summary', d.summary, { cls: 'w2' }) +
+      fIn('Theme (EN)', p + 'theme_en', d.theme_en, { cls: 'w2' }) + fIn('Summary (EN)', p + 'summary_en', d.summary_en, { cls: 'w2' }) + '</div></section>';
+    h += T('<div class="sec-h"><h2>รายการ</h2><span class="muted">') + cnt(d.items.length, 'item') + '</span></div>';
+    h += d.items.map(function (it, i) {
+      var b = p + 'items.' + i + '.';
+      return edBox(p + 'items', i, d.items.length, esc((it.time ? it.time + ' · ' : '') + it.title), '<div class="ed-grid">' +
+        fIn(T('เวลา'), b + 'time', it.time, { ph: T('09:00 หรือ 09:00–10:30') }) + fIn(T('ชื่อ (ไทย)'), b + 'title', it.title, { cls: 'w2' }) + fSel(T('ประเภท'), b + 'type', it.type, TP.TYPES.map(function (x) { return [x, typeLabel(x)]; })) +
+        fIn('English', b + 'en', it.en) + fIn(T('中文 / ชื่อท้องถิ่น'), b + 'zh', it.zh) + fSel(T('สถานะ'), b + 'status', it.status, statusOpts()) + fChk(T('รายการสำคัญ'), b + 'highlight', it.highlight) +
+        fTa(T('เดินทางหลัก'), b + 'transport', it.transport) + fIn(T('สายรถไฟ / MRT (เดินทางหลัก)'), b + 'line', it.line, { cls: 'w2', ph: T('BL, G, AIRPORT หรือ ชื่อ#RRGGBB') }) + fTa(T('เดินทางรอง'), b + 'transport_alt', it.transport_alt) + fIn(T('สายรถไฟ / MRT (เดินทางรอง)'), b + 'line_alt', it.line_alt, { cls: 'w2', ph: T('BL, G, AIRPORT หรือ ชื่อ#RRGGBB') }) + fIn(T('เวลา / ค่าใช้จ่าย'), b + 'cost', it.cost, { cls: 'wf' }) +
+        fTa(T('รอบๆ / หมายเหตุ'), b + 'notes', it.notes, { rows: 3 }) + fIn(T('ลิงก์ Google Maps'), b + 'map', it.map, { cls: 'wf', ph: T('เว้นว่าง = ค้นจากชื่อจีน · ใส่ - = ไม่มีลิงก์') }) +
+        '<details class="wf en-fields"><summary>English (EN)</summary><div class="ed-grid">' + fTa('Main transport', b + 'transport_en', it.transport_en) + fTa('Alternative transport', b + 'transport_alt_en', it.transport_alt_en) + fIn('Time / cost', b + 'cost_en', it.cost_en, { cls: 'wf' }) + fTa('Nearby / notes', b + 'notes_en', it.notes_en, { rows: 3 }) + '</div></details></div>');
+    }).join('') + addBtn(p + 'items', 'item', T('เพิ่มรายการ'));
+    h += T('<div class="sec-h"><h2>กล่องท้ายวัน</h2><span class="muted">หนึ่งบรรทัดต่อหนึ่งข้อ</span></div><div class="two"><section class="card"><div class="ed-grid">') + fTa(T('ห้ามพลาดวันนี้'), p + 'must', d.must.join('\n'), { k: 'lines', rows: 5 }) + '</div></section><section class="card"><div class="ed-grid">' + fTa(T('ข้อควรระวัง'), p + 'caution', d.caution.join('\n'), { k: 'lines', rows: 5 }) + '</div></section></div>';
+    h += T('<div class="sec-h"><h2>ข้อมูลเพิ่มเติม</h2><span class="muted">markdown</span></div><section class="card"><div class="ed-grid">') + fTa(T('เนื้อหา'), p + 'extra', d.extra, { rows: 8 }) + '</div></section>';
+    return h;
+  }
+  function packEdit(t) {
+    return T('<div class="ph"><h1>แก้ไขเตรียมของ</h1></div>') + t.pack.map(function (g, gi) {
+      var b = 'pack.' + gi;
+      return edBox('pack', gi, t.pack.length, esc(g.title || T('หมวด')), '<div class="ed-grid">' + fIn(T('ชื่อหมวด'), b + '.title', g.title, { cls: 'wf' }) + fTa(T('หมายเหตุของหมวด (markdown)'), b + '.note', g.note, { rows: 3 }) + T('</div><div class="sec-h" style="margin:14px 0 8px"><h2 style="font-size:15px">รายการ</h2></div>') +
+        g.items.map(function (x, i) { return '<div class="ed-row"><input data-b="' + b + '.items.' + i + '.text" value="' + esc(x.text) + T('" aria-label="รายการ">') + rowTools(b + '.items', i, g.items.length) + '</div>'; }).join('') + addBtn(b + '.items', 'check', T('เพิ่มรายการ')));
+    }).join('') + addBtn('pack', 'group', T('เพิ่มหมวด'));
+  }
+  function todoEdit(t) {
+    return T('<div class="ph"><h1>แก้ไข To-do</h1></div><section class="card"><p class="muted" style="margin-bottom:10px">กำหนด เช่น "ก่อน 2026-11-12" — ใส่วันที่แบบ YYYY-MM-DD เพื่อให้เว็บเตือนเมื่อเลยกำหนด</p>') +
+      t.todo.map(function (x, i) { return '<div class="ed-row todo-e"><input data-b="todo.' + i + '.due" value="' + esc(x.due) + T('" placeholder="กำหนด" aria-label="กำหนด"><input data-b="todo.') + i + '.text" value="' + esc(x.text) + T('" placeholder="งาน" aria-label="งาน">') + rowTools('todo', i, t.todo.length) + '</div>'; }).join('') + addBtn('todo', 'todo', T('เพิ่มงาน')) + '</section>';
+  }
+  function refEdit(t) {
+    return T('<div class="ph"><h1>แก้ไขข้อมูลอ้างอิง</h1></div>') + t.ref.map(function (s, i) {
+      return edBox('ref', i, t.ref.length, esc(s.title || T('หัวข้อ')), '<div class="ed-grid">' + fIn(T('หัวข้อ'), 'ref.' + i + '.title', s.title, { cls: 'wf' }) + fTa(T('เนื้อหา (markdown)'), 'ref.' + i + '.md', s.md, { rows: 8 }) + '</div>');
+    }).join('') + addBtn('ref', 'sec', T('เพิ่มหัวข้อ'));
+  }
+  function planEdit(t) { return T('<div class="ph"><h1>แก้ไขวางแผน</h1></div><section class="card"><div class="ed-grid">') + fTa(T('เนื้อหา (markdown)'), 'plan', t.plan, { rows: 18 }) + '</div></section>'; }
+
+  var NEW = {
+    item: function () { return { id: TP.uid(), time: '', title: T('รายการใหม่'), en: '', zh: '', type: 'other', status: '', highlight: false, transport: '', transport_alt: '', cost: '', notes: '', map: '', extra: {} }; },
+    flight: function () { return { id: TP.uid(), flight: '', date: '', route: '', dep: '', arr: '', status: '', note: '' }; },
+    stay: function () { return { id: TP.uid(), checkin: '', checkout: '', name: '', address: '', note: '', status: '' }; },
+    sec: function () { return { id: TP.uid(), title: T('หัวข้อใหม่'), md: '' }; },
+    day: function (t) { var last = t.days[t.days.length - 1]; return { id: TP.uid(), n: t.days.length + 1, date: last && TP.isDate(last.date) ? addDays(last.date, 1) : (t.meta.start || ''), theme: '', route: '', stay: last ? last.stay : '', summary: '', items: [], must: [], caution: [], extra: '' }; },
+    group: function () { return { id: TP.uid(), title: T('หมวดใหม่'), items: [], note: '' }; },
+    check: function () { return { id: TP.uid(), text: '', done: false }; },
+    todo: function () { return { id: TP.uid(), due: '', text: '', done: false }; }
+  };
+  function getPath(o, p) { return p.split('.').reduce(function (a, k) { return a == null ? a : a[k]; }, o); }
+  function setPath(o, p, v) { var ks = p.split('.'), last = ks.pop(), tg = ks.reduce(function (a, k) { return a[k]; }, o); tg[last] = v; }
+
+  /* ---------------- after render ---------------- */
+  var RO = window.ResizeObserver ? new ResizeObserver(function (es) { es.forEach(function (e) { var el = e.target; if (el._w !== Math.round(el.clientWidth)) drawMetro(el, false); }); }) : null;
+  function afterRender() {
+    var t = S.cur;
+    $$('.metro').forEach(function (el) {
+      var k = el.getAttribute('data-metro');
+      if (!t) return;
+      if (k === 'trip') { el._stops = tripStops(t); el._key = t.id + ':trip'; }
+      else { var di = +k.split(':')[1]; el._stops = routeStops(t.days[di].route).map(function (s) { return { label: s, c: dayCls(di) }; }); el._key = t.id + ':' + di; }
+      drawMetro(el, !S.drawn[el._key]);
+      S.drawn[el._key] = 1;
+      if (RO) RO.observe(el);
+    });
+    var tabs = $('.tabs-in'), a = $('.tab[aria-current]');
+    if (tabs && a) tabs.scrollLeft = a.offsetLeft - tabs.clientWidth / 2 + a.clientWidth / 2;
+    placeNow();
+    if (S.focus) {
+      var f = $('[data-b="' + S.focus + '.title"]') || $('[data-b="' + S.focus + '.text"]') || $('[data-b="' + S.focus + '.flight"]') || $('[data-b="' + S.focus + '.name"]') || $('[data-b="' + S.focus + '.theme"]') || $('[data-b="' + S.focus + '.due"]');
+      if (f) { f.focus(); if (f.select) f.select(); f.scrollIntoView({ block: 'center' }); }
+      S.focus = null;
+    }
+  }
+  function placeNow() {
+    $$('li.now').forEach(function (n) { n.remove(); });
+    var tl = $('.tl[data-today]'); if (!tl || !S.cur) return;
+    var n = nowIn(S.cur.meta.timezone);
+    if (n.date !== tl.getAttribute('data-today')) return;
+    var before = null, items = $$('li.it', tl);
+    for (var i = 0; i < items.length; i++) { var m = +items[i].getAttribute('data-min'); if (m >= 0 && m > n.min) { before = items[i]; break; } }
+    var el = D.createElement('li'); el.className = 'now';
+    el.innerHTML = '<span class="now-t">' + n.hm + T('</span><span class="now-dot"></span><span class="now-l">ตอนนี้ (เวลาท้องถิ่น)</span>');
+    tl.insertBefore(el, before);
+  }
+
+  /* ---------------- metro map ---------------- */
+  function routeStops(r) { return String(r || '').split(/\s*(?:→|->)\s*/).map(function (s) { return stripE(s); }).filter(Boolean); }
+  function tripStops(t) {
+    var out = [];
+    t.days.forEach(function (d, i) {
+      var tagged = false;
+      routeStops(d.route).forEach(function (s, k) {
+        var last = out[out.length - 1];
+        if (k === 0 && last && last.label.toLowerCase() === s.toLowerCase()) return;
+        out.push({ label: s, c: dayCls(i), tag: tagged ? '' : 'D' + (i + 1) });
+        tagged = true;
+      });
+    });
+    return out;
+  }
+  function wrapLabel(s, maxPx) {
+    var maxC = Math.max(4, Math.floor(maxPx / 7.4)), words = s.split(' '), lines = [''];
+    words.forEach(function (w) {
+      var cur = lines[lines.length - 1];
+      if (!cur) lines[lines.length - 1] = w;
+      else if ((cur + ' ' + w).length <= maxC) lines[lines.length - 1] = cur + ' ' + w;
+      else lines.push(w);
+    });
+    lines = lines.map(function (l) { return l.length > maxC ? l.slice(0, maxC - 1) + '…' : l; });
+    if (lines.length > 2) { lines = lines.slice(0, 2); lines[1] = lines[1].slice(0, Math.max(1, maxC - 1)) + '…'; }
+    return lines;
+  }
+  function drawMetro(el, anim) {
+    var stops = el._stops || []; el._w = Math.round(el.clientWidth);
+    if (!stops.length) { el.innerHTML = ''; return; }
+    var W = Math.max(280, el._w), pad = 44, rowH = 92, top = 30, minSp = 92;
+    var per = Math.max(2, Math.floor((W - 2 * pad) / minSp) + 1);
+    if (stops.length <= per) per = stops.length;
+    var sp = per > 1 ? (W - 2 * pad) / (per - 1) : 0;
+    var rows = Math.ceil(stops.length / per);
+    var pts = stops.map(function (s, i) {
+      var r = Math.floor(i / per), k = i % per;
+      var x = per === 1 ? W / 2 : (r % 2 === 0 ? pad + k * sp : W - pad - k * sp);
+      return { x: x, y: top + r * rowH, r: r, s: s };
+    });
+    var segs = '', nodes = '', texts = '', bul = Math.min(pad - 8, rowH / 2);
+    for (var i = 1; i < pts.length; i++) {
+      var a = pts[i - 1], b = pts[i], d;
+      if (a.r === b.r) d = 'M' + a.x + ' ' + a.y + 'L' + b.x + ' ' + b.y;
+      else { var bx = a.x + (a.r % 2 === 0 ? bul : -bul); d = 'M' + a.x + ' ' + a.y + 'C' + bx + ' ' + a.y + ' ' + bx + ' ' + b.y + ' ' + b.x + ' ' + b.y; }
+      segs += '<path class="m-seg ' + b.s.c + '" d="' + d + '" style="animation-delay:' + (i * 70) + 'ms"/>';
+    }
+    pts.forEach(function (p, i) {
+      var end = i === 0 || i === pts.length - 1;
+      nodes += '<circle class="m-node ' + p.s.c + (end ? ' end' : '') + '" cx="' + p.x + '" cy="' + p.y + '" r="' + (end ? 8 : 7) + '" style="animation-delay:' + (i * 70) + 'ms"/>';
+      var avail = Math.min(per > 1 ? sp - 8 : W - 20, 2 * Math.min(p.x, W - p.x) - 6);
+      var ls = wrapLabel(p.s.label, avail);
+      texts += '<text class="m-label" text-anchor="middle" x="' + p.x + '" y="' + (p.y + 26) + '" style="animation-delay:' + (i * 70) + 'ms">' + ls.map(function (l, k) { return '<tspan x="' + p.x + '" dy="' + (k ? 16 : 0) + '">' + esc(l) + '</tspan>'; }).join('') + '<title>' + esc(p.s.label) + '</title></text>';
+      if (p.s.tag) texts += '<text class="m-tag ' + p.s.c + '" text-anchor="middle" x="' + p.x + '" y="' + (p.y - 15) + '" style="animation-delay:' + (i * 70) + 'ms">' + esc(p.s.tag) + '</text>';
+    });
+    var H = top + (rows - 1) * rowH + 52;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.innerHTML = T('<svg role="img" aria-label="เส้นทาง: ') + esc(stops.map(function (s) { return s.label; }).join(' → ')) + '" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '"' + (anim && !reduce ? ' class="anim"' : '') + '>' + segs + nodes + texts + '</svg>';
+    if (anim && !reduce) $$('.m-seg', el).forEach(function (p) { try { p.style.setProperty('--l', Math.ceil(p.getTotalLength()) + 1); } catch (e) { } });
+  }
+
+  /* ---------------- modal / toast / fullscreen ---------------- */
+  function modal(html, o) {
+    o = o || {};
+    return new Promise(function (res) {
+      var back = D.createElement('div'); back.className = 'modal-back';
+      back.innerHTML = '<div class="modal" role="dialog" aria-modal="true">' + html + '</div>';
+      D.body.appendChild(back); D.body.classList.add('lock');
+      var m = back.firstChild, prev = D.activeElement;
+      function close(v) { back.remove(); if (!$('.modal-back') && !$('.fs')) D.body.classList.remove('lock'); D.removeEventListener('keydown', onKey); if (prev && prev.focus) try { prev.focus(); } catch (e) { } res(v); }
+      function onKey(e) { if (e.key === 'Escape') close(null); }
+      D.addEventListener('keydown', onKey);
+      back.addEventListener('click', function (e) { if (e.target === back && !o.sticky) return close(null); var b = e.target.closest('[data-res]'); if (b) close(b.getAttribute('data-res')); });
+      if (o.onOpen) o.onOpen(m, close);
+      var f = $('[autofocus]', m) || $('button, input, a', m); if (f) f.focus();
+    });
+  }
+  function toast(msg, o) {
+    o = o || {};
+    var el = D.createElement('div'); el.className = 'toast';
+    el.innerHTML = '<span>' + esc(msg) + '</span>' + (o.undo ? T('<button class="btn sm">เลิกทำ</button>') : '');
+    $('#toasts').appendChild(el);
+    var tm = setTimeout(function () { el.remove(); }, o.undo ? 7000 : 2600);
+    if (o.undo) $('button', el).onclick = function () { clearTimeout(tm); el.remove(); o.undo(); };
+  }
+  function openFs(html) {
+    var el = D.createElement('div'); el.className = 'fs'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    el.innerHTML = T('<button class="ibtn fs-x" aria-label="ปิด">') + icon('x') + '</button><div class="fs-in">' + html + T('</div><p class="fs-hint">แตะที่ใดก็ได้เพื่อปิด</p>');
+    D.body.appendChild(el); D.body.classList.add('lock');
+    function close() { el.remove(); if (!$('.modal-back')) D.body.classList.remove('lock'); D.removeEventListener('keydown', k); }
+    function k(e) { if (e.key === 'Escape') close(); }
+    D.addEventListener('keydown', k); el.addEventListener('click', close); $('.fs-x', el).focus();
+  }
+
+  /* ---------------- files ---------------- */
+  var dlPromise = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('downloads').catch(function () { return null; }) : Promise.resolve(null);
+  function saveFile(name, text) {
+    return dlPromise.then(function (dl) {
+      if (dl) return dl.save({ filename: name, data: text }).then(function () { toast(T('บันทึกไฟล์แล้ว')); }, function (e) { if (e && e.code === 'declined') return; showCopy(name, text); });
+      if (!window.claude) {
+        try { var a = D.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' })); a.download = name; D.body.appendChild(a); a.click(); a.remove(); return; } catch (e) { }
+      }
+      showCopy(name, text);
+    });
+  }
+  function showCopy(name, text) {
+    modal('<h2>' + esc(name) + T('</h2><p>ดาวน์โหลดจากหน้านี้ไม่ได้ คัดลอกข้อความด้านล่างไปบันทึกเป็นไฟล์แทน</p><textarea class="copybox" readonly>') + esc(text) + T('</textarea><div class="mbtns"><button class="btn" data-res="x">ปิด</button><button class="btn pri" data-copy>คัดลอก</button></div>'), {
+      onOpen: function (m) {
+        var ta = $('textarea', m);
+        $('[data-copy]', m).onclick = function () {
+          ta.focus(); ta.select();
+          var ok = false; try { ok = D.execCommand('copy'); } catch (e) { }
+          if (navigator.clipboard && !ok) navigator.clipboard.writeText(text).then(function () { toast(T('คัดลอกแล้ว')); }, function () { toast(T('เลือกข้อความแล้ว กดคัดลอกเอง')); });
+          else toast(ok ? T('คัดลอกแล้ว') : T('เลือกข้อความแล้ว กดคัดลอกเอง'));
+        };
+      }
+    });
+  }
+  function fileSlug(t) { return (t.id || 'trip').replace(/[^a-z0-9-]+/g, '-'); }
+  function exportBundle(trips) { return JSON.stringify({ app: 'travel-plan', schema: 1, exportedAt: new Date().toISOString(), trips: trips }, null, 2); }
+
+  /* ---------------- import ---------------- */
+  function impSummary(r) {
+    var t = r.trip, items = t.days.reduce(function (a, d) { return a + d.items.length; }, 0);
+    var pi = countPack(t)[1];
+    return '<div class="impsum"><h3>' + esc(t.meta.title || T('(ไม่มีชื่อ)')) + '</h3><p class="muted">' + esc(fmtRange(t.meta.start, t.meta.end)) + (t.meta.timezone ? ' · ' + esc(t.meta.timezone) : '') + '</p><ul>' +
+      t.days.map(function (d, i) { return '<li>Day ' + (i + 1) + ' · ' + esc(fmtDate(d.date, false, false)) + ' · ' + cnt(d.items.length, 'item') + '</li>'; }).join('') +
+      T('<li>รวม ') + items + T(' รายการ · เตรียมของ ') + pi + T(' ชิ้น · To-do ') + t.todo.length + T(' · ข้อมูลอ้างอิง ') + t.ref.length + T(' หัวข้อ</li></ul>') +
+      (r.warnings.length ? T('<div class="warns"><b>ต้องตรวจ ') + r.warnings.length + T(' จุด</b><ul>') + r.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : T('<p class="ok">อ่านได้ครบ ไม่พบปัญหา</p>')) + '</div>';
+  }
+  function openImport() {
+    var parsed = null, jsonTrips = null;
+    return modal(T('<h2>นำเข้าแผน</h2><p>ไฟล์ .md ตาม template หรือไฟล์สำรอง .json จากเว็บนี้</p>') +
+      '<label class="file">' + icon('upload') + T('<span>เลือกไฟล์</span><input type="file" accept=".md,.markdown,.txt,.json,text/markdown,text/plain,application/json" data-imp="file"></label>') +
+      T('<details class="paste"><summary>วางหรือแก้ข้อความ markdown ก่อนบันทึก</summary><textarea data-imp="text" rows="9" placeholder="วางเนื้อหาไฟล์ .md ที่นี่"></textarea><button class="btn" data-imp="check">ตรวจข้อความ</button></details>') +
+      T('<div data-imp="out" aria-live="polite"></div><div class="mbtns"><button class="btn" data-res="cancel">ยกเลิก</button><button class="btn pri" data-imp="save" disabled>บันทึกแผน</button></div>'), {
+      sticky: true,
+      onOpen: function (m, close) {
+        var out = $('[data-imp="out"]', m), save = $('[data-imp="save"]', m), ta = $('[data-imp="text"]', m);
+        function handle(text, name) {
+          parsed = null; jsonTrips = null;
+          if (/\.json$/i.test(name || '') || /^\s*\{/.test(text)) {
+            try {
+              var j = JSON.parse(text), arr = Array.isArray(j.trips) ? j.trips : (j.meta ? [j] : null);
+              if (!arr) throw new Error('x');
+              jsonTrips = arr.filter(function (x) { return x && x.meta && Array.isArray(x.days); });
+              out.innerHTML = T('<div class="impsum"><h3>ไฟล์สำรอง ') + jsonTrips.length + T(' แผน</h3><ul>') + jsonTrips.map(function (x) { return '<li>' + esc(x.meta.title) + ' · ' + esc(fmtRange(x.meta.start, x.meta.end)) + '</li>'; }).join('') + '</ul></div>';
+              save.disabled = !jsonTrips.length;
+            } catch (e) { out.innerHTML = T('<p class="err">อ่านไฟล์ JSON ไม่ได้ ตรวจว่าเป็นไฟล์สำรองจากเว็บนี้</p>'); save.disabled = true; }
+            return;
+          }
+          var r = TP.parse(text); parsed = r; out.innerHTML = impSummary(r);
+          var ok = r.trip.meta.title && TP.isDate(r.trip.meta.start) && TP.isDate(r.trip.meta.end) && r.trip.days.length;
+          if (!ok) out.innerHTML += T('<p class="err">บันทึกไม่ได้: ต้องมี title, start, end และอย่างน้อย 1 Day</p>');
+          save.disabled = !ok;
+        }
+        $('[data-imp="file"]', m).addEventListener('change', function (e) {
+          var f = e.target.files && e.target.files[0]; if (!f) return;
+          var rd = new FileReader();
+          rd.onload = function () { var tx = String(rd.result); if (!/\.json$/i.test(f.name)) { ta.value = tx; } handle(tx, f.name); };
+          rd.onerror = function () { out.innerHTML = T('<p class="err">อ่านไฟล์ไม่ได้</p>'); };
+          rd.readAsText(f);
+        });
+        $('[data-imp="check"]', m).addEventListener('click', function () { handle(ta.value, ''); });
+        save.addEventListener('click', function () { if (parsed && ta.value.trim()) { var r = TP.parse(ta.value); if (r.trip.days.length) parsed = r; } close('save'); });
+      }
+    }).then(function (res) {
+      if (res !== 'save') return;
+      if (jsonTrips) return jsonTrips.reduce(function (p, x) { return p.then(function () { return addTrip(normalizeTrip(x)); }); }, Promise.resolve());
+      if (parsed) return addTrip(parsed.trip);
+    });
+  }
+  function addTrip(trip) {
+    var dup = S.trips.filter(function (t) { return sameTrip(t, trip); })[0];
+    var step = dup ? modal(T('<h2>มีแผนนี้อยู่แล้ว</h2><p>“') + esc(trip.meta.title) + '” ' + esc(fmtRange(trip.meta.start, trip.meta.end)) + T(' มีอยู่ในเครื่องนี้แล้ว</p><div class="mbtns col"><button class="btn pri" data-res="over">เขียนทับแผนเดิม</button><button class="btn" data-res="both">เก็บเป็นอีกแผน</button><button class="btn" data-res="cancel">ยกเลิก</button></div>')) : Promise.resolve('new');
+    return step.then(function (c) {
+      if (c === 'over') { replaceTrip(dup, trip, true); saveNow(); toast(T('เขียนทับแผนแล้ว')); go(trip.id); return; }
+      if (c !== 'both' && c !== 'new') return;
+      trip.id = makeId(trip.meta); trip.origin = 'import'; trip.localEdited = true; trip.updatedAt = Date.now();
+      S.trips.push(trip); saveNow(); toast(T('นำเข้าแผนแล้ว')); go(trip.id);
+    });
+  }
+
+  /* ---------------- settings ---------------- */
+  function langSeg() { return '<div class="seg"><button data-set="lang" data-v="th" aria-pressed="' + (LANG === 'th') + '">ไทย</button><button data-set="lang" data-v="en" aria-pressed="' + (LANG === 'en') + '">English</button></div>'; } /*noT*/
+  function settingsHtml() {
+    var dark = S.settings.theme !== 'light', p = S.settings.planning, own = S.settings.owner;
+    return T('<h2>ตั้งค่า</h2>') +
+      T('<div class="set"><div><b>ธีม</b><p class="muted">เริ่มต้นเป็นธีมมืด</p></div><div class="seg"><button data-set="theme" data-v="dark" aria-pressed="') + dark + T('">มืด</button><button data-set="theme" data-v="light" aria-pressed="') + !dark + T('">สว่าง</button></div></div>') +
+      T('<div class="set"><div><b>ภาษา / Language</b></div>') + langSeg() + '</div>' +
+      (own ? T('<div class="set"><div><b>โหมดเจ้าของ</b><p class="muted">เปิดโหมดวางแผน การแก้ไข นำเข้า ส่งออก การแก้ไขอยู่ในเครื่องนี้เท่านั้น คนอื่นไม่เห็น</p></div><button class="btn sm" data-set="owner-off">ออกจากโหมดเจ้าของ</button></div>') : '') +
+      (own ? T('<div class="set"><div><b>โหมดวางแผน</b><p class="muted">แสดงสถานะข้อมูล หน้าวางแผน และเครื่องมือแก้ไข นำเข้า ส่งออก</p></div><button class="sw" role="switch" aria-checked="') + p + T('" aria-label="โหมดวางแผน" data-set="planning"><span></span></button></div>') : '') +
+      (p && SEEDS.length ? T('<div class="set"><div><b>ใช้แผนที่มากับลิงก์</b><p class="muted">ล้างการแก้ไขในเครื่องนี้ของแผนที่มากับลิงก์ แล้วโหลดใหม่ (การติ๊กยังอยู่)</p></div><button class="btn danger sm" data-set="reset">รีเซ็ต</button></div>') : '') +
+      '<p class="note">' + (!storageOK ? T('เบราว์เซอร์นี้ไม่ให้บันทึกข้อมูล การแก้ไขจะหายเมื่อปิดหน้า') : own ? T('แผน การแก้ไข และการติ๊ก เก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น') : T('การติ๊กเก็บในเครื่องนี้เท่านั้น')) + '</p>' +
+      '<p class="note ver" data-ver>' + T('แผนเที่ยว') + ' ' + APP_VERSION + '</p>' +
+      T('<div class="mbtns"><button class="btn pri" data-res="ok">เสร็จ</button></div>');
+  }
+  function openSettings() {
+    modal(settingsHtml(), {
+      onOpen: function (m, close) {
+        var verTaps = 0, verT = 0;
+        m.addEventListener('click', function (e) {
+          if (e.target.closest('[data-ver]')) {   // 7 quick taps on the version line unlock owner mode (a UI guard, not security)
+            var now = Date.now(); verTaps = now - verT < 1500 ? verTaps + 1 : 1; verT = now;
+            if (verTaps >= 7 && !S.settings.owner) { S.settings.owner = true; lsSet(K.set, S.settings); render(true); m.innerHTML = settingsHtml(); toast(T('เปิดโหมดเจ้าของแล้ว')); }
+            return;
+          }
+          var b = e.target.closest('[data-set]'); if (!b) return;
+          var k = b.getAttribute('data-set');
+          if (k === 'theme') S.settings.theme = b.getAttribute('data-v');
+          else if (k === 'lang') S.settings.lang = b.getAttribute('data-v');
+          else if (k === 'planning') { S.settings.planning = !S.settings.planning; if (!S.settings.planning) S.edit = false; }
+          else if (k === 'owner-off') { S.settings.owner = false; S.settings.planning = false; S.edit = false; toast(T('ออกจากโหมดเจ้าของแล้ว')); }
+          else if (k === 'reset') { close('x'); resetSeed(); return; }
+          lsSet(K.set, S.settings); render(true); m.innerHTML = settingsHtml();
+          var again = $('[data-set="' + k + '"]', m); if (again) again.focus();
+        });
+      }
+    });
+  }
+  function resetSeed() {
+    modal(T('<h2>รีเซ็ตแผนจากลิงก์</h2><p>การแก้ไขในเครื่องนี้ของแผนที่มากับลิงก์จะหายไป ส่งออก .md หรือ .json เก็บไว้ก่อนถ้ายังต้องใช้</p><div class="mbtns"><button class="btn" data-res="no">ยกเลิก</button><button class="btn danger" data-res="yes">รีเซ็ต</button></div>')).then(function (c) {
+      if (c !== 'yes') return;
+      seedTrips().forEach(function (t) {
+        var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0];
+        if (ex) replaceTrip(ex, t, false); else { t.id = makeId(t.meta); t.origin = 'seed'; t.localEdited = false; t.updatedAt = Date.now(); S.trips.push(t); }
+      });
+      saveNow(); render(true); toast(T('รีเซ็ตแล้ว'));
+    });
+  }
+
+  /* ---------------- events ---------------- */
+  D.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+    var a = b.getAttribute('data-act'), t = S.cur;
+    switch (a) {
+      case 'toggle': {
+        var id = b.getAttribute('data-id'), li = b.closest('.it');
+        S.open[id] = !S.open[id]; li.classList.toggle('open', !!S.open[id]); b.setAttribute('aria-expanded', !!S.open[id]);
+        syncExpandBtn(); return;
+      }
+      case 'expand-all': {
+        var v = b.getAttribute('data-v') === '1';
+        $$('.tl .it').forEach(function (li) { var id = li.getAttribute('data-id'); if (!$('.it-detail', li)) return; S.open[id] = v; li.classList.toggle('open', v); var bt = $('.it-main', li); if (bt) bt.setAttribute('aria-expanded', v); });
+        syncExpandBtn(); return;
+      }
+      case 'lang': S.settings.lang = LANG === 'en' ? 'th' : 'en'; lsSet(K.set, S.settings); render(true); return;
+      case 'theme': S.settings.theme = S.settings.theme === 'light' ? 'dark' : 'light'; lsSet(K.set, S.settings); render(true); return;
+      case 'settings': openSettings(); return;
+      case 'edit-toggle': S.edit = !S.edit; if (!S.edit) saveNow(); render(false); window.scrollTo(0, 0); return;
+      case 'import': openImport(); return;
+      case 'template': saveFile('travel-plan-template.md', window.TP_TEMPLATE || ''); return;
+      case 'export-all': saveFile('travel-plans-backup.json', exportBundle(S.trips)); return;
+      case 'export-md': if (t) saveFile(fileSlug(t) + '.md', TP.toMarkdown(t)); return;
+      case 'export-json': if (t) saveFile(fileSlug(t) + '.json', exportBundle([t])); return;
+      case 'delete-trip':
+        if (!t) return;
+        modal(T('<h2>ลบแผนนี้?</h2><p>“') + esc(t.meta.title) + T('” จะถูกลบจากเครื่องนี้ ส่งออก .md เก็บไว้ก่อนถ้ายังต้องใช้</p><div class="mbtns"><button class="btn" data-res="no">ยกเลิก</button><button class="btn danger" data-res="yes">ลบแผน</button></div>')).then(function (c) {
+          if (c !== 'yes') return;
+          var snap = JSON.stringify(t), idx = S.trips.indexOf(t);
+          S.trips.splice(idx, 1); saveNow(); go('home');
+          toast(T('ลบแผนแล้ว'), { undo: function () { S.trips.splice(idx, 0, JSON.parse(snap)); saveNow(); render(true); } });
+        });
+        return;
+      case 'cal': {
+        var d = +b.getAttribute('data-d');
+        if (!d) S.cal = nowIn().date.slice(0, 7);
+        else { var p = S.cal.split('-').map(Number), mo = p[1] - 1 + d, y = p[0] + Math.floor(mo / 12); mo = ((mo % 12) + 12) % 12; S.cal = y + '-' + String(mo + 1).padStart(2, '0'); }
+        render(true); return;
+      }
+      case 'fs-row': {
+        var sec = t.ref[+b.getAttribute('data-sec')]; if (!sec || !window.marked) return;
+        var tabs = window.marked.lexer(prepMd(sec.md)).filter(function (x) { return x.type === 'table'; });
+        var tk = tabs[+b.getAttribute('data-t')]; if (!tk) return;
+        var row = tk.rows[+b.getAttribute('data-r')];
+        openFs(row.map(function (c, i) { var cjk = hasCJK(c.text); return '<div class="fs-cell' + (cjk ? ' cjk' : '') + '"' + (cjk ? ' lang="zh-Hant"' : '') + '><small>' + window.marked.parseInline(tk.header[i] ? tk.header[i].text : '') + '</small><div>' + (window.marked.parseInline(c.text) || '—') + '</div></div>'; }).join(''));
+        return;
+      }
+      case 'fs-sec': { var s2 = t.ref[+b.getAttribute('data-sec')]; if (s2) openFs((s2.title ? '<p class="muted">' + inl(s2.title) + '</p>' : '') + '<div class="fs-sec"><div class="md">' + mdHtml(s2.md) + '</div></div>'); return; }
+      case 'add': {
+        var list = getPath(t, b.getAttribute('data-list')); list.push(NEW[b.getAttribute('data-new')](t));
+        edited(); S.focus = b.getAttribute('data-list') + '.' + (list.length - 1); render(true); return;
+      }
+      case 'del': {
+        var snap2 = JSON.stringify(t), l2 = getPath(t, b.getAttribute('data-list'));
+        l2.splice(+b.getAttribute('data-i'), 1); edited(); render(true);
+        toast(T('ลบแล้ว'), { undo: function () { restoreTrip(snap2); } });
+        return;
+      }
+      case 'mv': {
+        var l3 = getPath(t, b.getAttribute('data-list')), i = +b.getAttribute('data-i'), j = i + (+b.getAttribute('data-d'));
+        if (j < 0 || j >= l3.length) return;
+        var tmp = l3[i]; l3[i] = l3[j]; l3[j] = tmp; edited(); render(true);
+        var nb = $('[data-act="mv"][data-list="' + b.getAttribute('data-list') + '"][data-i="' + j + '"][data-d="' + b.getAttribute('data-d') + '"]'); if (nb && !nb.disabled) nb.focus();
+        return;
+      }
+    }
+  });
+  function syncExpandBtn() {
+    var b = $('[data-act="expand-all"]'); if (!b) return;
+    var lis = $$('.tl .it').filter(function (li) { return $('.it-detail', li); });
+    var all = lis.length && lis.every(function (li) { return li.classList.contains('open'); });
+    b.setAttribute('data-v', all ? '0' : '1'); b.textContent = all ? T('ย่อทั้งหมด') : T('ขยายทั้งหมด');
+  }
+  function restoreTrip(snap) { var t = JSON.parse(snap), idx = -1; S.trips.forEach(function (x, i) { if (x.id === t.id) idx = i; }); if (idx >= 0) S.trips[idx] = t; else S.trips.push(t); saveNow(); render(true); }
+  D.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('tr[data-act]')) { e.preventDefault(); e.target.click(); }
+  });
+  function onBind(e) {
+    var el = e.target;
+    if (el.hasAttribute && el.hasAttribute('data-chk')) { if (e.type === 'change') toggleCheck(el); return; }
+    var p = el.getAttribute && el.getAttribute('data-b'); if (!p || !S.cur) return;
+    var k = el.getAttribute('data-k'), v;
+    if (k === 'bool') v = el.checked;
+    else if (k === 'lines') v = el.value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+    else v = el.value;
+    setPath(S.cur, p, v); edited();
+  }
+  D.addEventListener('input', onBind);
+  D.addEventListener('change', onBind);
+  function toggleCheck(el) {
+    var t = S.cur; if (!t) return;
+    setPath(t, el.getAttribute('data-chk') + '.done', el.checked);
+    saveSoon();
+    var lab = el.closest('.ck'); if (lab) lab.classList.toggle('done', el.checked);
+    if (S.tab === 'pack') {
+      var c = countPack(t), pe = $('[data-prog="pack"]'), pb = $('[data-pbar="pack"]');
+      if (pe) pe.textContent = c[0] + '/' + c[1]; if (pb) pb.style.width = (c[1] ? Math.round(c[0] * 100 / c[1]) : 0) + '%';
+      t.pack.forEach(function (g, gi) { var ge = $('[data-prog-g="' + gi + '"]'); if (ge) ge.textContent = g.items.filter(function (x) { return x.done; }).length + '/' + g.items.length; });
+    } else if (S.tab === 'todo') {
+      var d = t.todo.filter(function (x) { return x.done; }).length, te = $('[data-prog="todo"]'), tb = $('[data-pbar="todo"]');
+      if (te) te.textContent = d + '/' + t.todo.length; if (tb) tb.style.width = Math.round(d * 100 / t.todo.length) + '%';
+      var li = el.closest('.todo'); if (li && el.checked) li.classList.remove('over');
+    }
+  }
+  D.addEventListener('toggle', function (e) { if (e.target.classList && e.target.classList.contains('cal-det')) S.calOpen = e.target.open; }, true);
+
+  /* drag to reorder (desktop) */
+  var drag = null;
+  D.addEventListener('mousedown', function (e) { var g = e.target.closest('[data-grip]'); if (!g) return; var box = g.closest('.ed'); if (box) box.setAttribute('draggable', 'true'); });
+  D.addEventListener('dragstart', function (e) { var box = e.target.closest && e.target.closest('.ed[draggable="true"]'); if (!box) return; drag = { list: box.getAttribute('data-dl'), i: +box.getAttribute('data-i') }; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', 'x'); } catch (er) { } });
+  D.addEventListener('dragover', function (e) { if (!drag) return; var box = e.target.closest && e.target.closest('.ed'); if (!box || box.getAttribute('data-dl') !== drag.list) return; e.preventDefault(); $$('.ed.drag-over').forEach(function (x) { if (x !== box) x.classList.remove('drag-over'); }); box.classList.add('drag-over'); });
+  D.addEventListener('drop', function (e) {
+    if (!drag) return; var box = e.target.closest && e.target.closest('.ed'); if (!box || box.getAttribute('data-dl') !== drag.list) return;
+    e.preventDefault(); var j = +box.getAttribute('data-i'), l = getPath(S.cur, drag.list);
+    if (j !== drag.i) { var it = l.splice(drag.i, 1)[0]; l.splice(j, 0, it); edited(); }
+    drag = null; render(true);
+  });
+  D.addEventListener('dragend', function () { drag = null; $$('.ed[draggable]').forEach(function (x) { x.removeAttribute('draggable'); x.classList.remove('drag-over'); }); });
+
+  window.addEventListener('hashchange', function () { render(false); window.scrollTo(0, 0); });
+  window.addEventListener('pagehide', saveNow);
+  setInterval(function () { if (S.cur && !S.edit) placeNow(); }, 60000);
+
+  /* ---------------- boot ---------------- */
+  var conflicts = initData();
+  if (!location.hash || location.hash === '#' || location.hash === '#home') {
+    var on = sortedTrips().filter(function (x) { return x.s.status === 'ongoing' && x.s.dayIdx >= 0; })[0];
+    if (on) history.replaceState(null, '', '#' + on.t.id + '--d' + (on.s.dayIdx + 1));
+  }
+  render(false);
+  conflicts.reduce(function (p, c) {
+    return p.then(function () {
+      return modal(T('<h2>แผนนี้มีเวอร์ชันใหม่จากลิงก์</h2><p>“') + esc(c[1].meta.title) + '” ' + (c[1].meta.version ? '(' + esc(c[1].meta.version) + ') ' : '') + T('มากับลิงก์นี้ แต่ในเครื่องนี้มีการแก้ไขไว้</p><div class="mbtns col"><button class="btn pri" data-res="new">ใช้เวอร์ชันใหม่</button><button class="btn" data-res="keep">เก็บของในเครื่อง</button></div>'), { sticky: true }).then(function (r) {
+        if (r === 'new') { replaceTrip(c[0], c[1], false); saveNow(); render(true); }
+      });
+    });
+  }, Promise.resolve());
+})();
+
+</script>
+</body>
+</html>

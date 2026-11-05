@@ -1,0 +1,194 @@
+# CLAUDE.md — Travel Plan (แผนเที่ยว)
+
+อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (Phase 2a/2b เสร็จแล้ว) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
+
+## 1. Project Overview
+
+เว็บแผนเที่ยวแบบ interactive ไฟล์ HTML ไฟล์เดียว (`dist/travel-plan.html`) ไม่มี backend
+
+- **เป้าหมาย:** import แผนเที่ยวจากไฟล์ markdown ที่ Claude สร้างตาม template แล้วแสดงเป็นเว็บที่ใช้ได้จริงบนมือถือระหว่างเที่ยว: ภาพรวมทริป, timeline รายวัน, เช็กลิสต์เตรียมของ, To-do, ข้อมูลอ้างอิง (เบอร์ฉุกเฉิน ประโยคภาษาท้องถิ่น การ์ดแท็กซี่)
+- **ผู้ใช้และโมเดลการแชร์ (Kody ตัดสินแล้ว):** ทุกคนที่มี URL **ดูอย่างเดียว** (ติ๊ก checklist ของตัวเองได้) **Kody แก้ได้คนเดียว** แจกเป็น URL ของเว็บ HTML ตอนนี้แผนเดียวคือ Taiwan Trip 2026 (12–17 พ.ย. 2026, 8 คน)
+  - **ที่ทำแล้ว (v2.1):** "โหมดเจ้าของ" ซ่อนเครื่องมือแก้ไข/นำเข้า/ส่งออก/หน้าวางแผนจากผู้ชม ปลดล็อกโดยแตะบรรทัดเวอร์ชันในหน้าตั้งค่า 7 ครั้งติด การแก้ไขของเจ้าของอยู่ใน browser เครื่องนั้นเท่านั้น ผู้ชมคนอื่นจะเห็นต่อเมื่อ Kody ส่งออก .md → ส่งให้ Claude → publish ทับลิงก์เดิม
+  - **ที่ยังไม่ได้ทำ:** ให้การแก้ของ Kody ไปถึงทุกคนโดยไม่ต้องส่งไฟล์ ต้องมีที่เก็บกลางที่ "อ่านได้ทุกคน เขียนได้เฉพาะเจ้าของ" และบังคับฝั่ง server (Phase 2c) ปุ่มซ่อนในหน้าไม่ใช่การป้องกัน
+- **หน้าตา:** ต้นแบบคือ `Original_template.pdf` (ทริปไถจง 4 วัน) แต่ใช้ design system "Dark Tech Workshop" (dark เป็นค่าเริ่มต้น มี light เป็นตัวเลือก)
+- **Deploy ปัจจุบัน:** publish เป็น claude.ai Artifact `https://claude.ai/artifact/DtvUoYKnyT15PwAmGY2omk` (ทำจากแชท claude.ai ด้วยเครื่องมือ Artifact, capability `downloads`) การ publish ทับลิงก์เดิมทำให้ทุกคนได้เวอร์ชันใหม่ Claude Code ไม่จำเป็นต้องมีเครื่องมือนี้ ส่งไฟล์ `dist/travel-plan.html` ให้ Kody แล้วให้เขา publish จากแชท หรือ host ที่อื่น (ปุ่มดาวน์โหลดมี fallback ไว้แล้ว)
+
+## 2. Tech Stack
+
+| ส่วน | ที่ใช้ |
+|---|---|
+| ภาษา | JavaScript **ES5 style** (`var`, `function`, IIFE, ไม่มี module/transpile), CSS, HTML หนึ่งไฟล์ |
+| Framework | **ไม่มี** (vanilla DOM + string templates + `innerHTML`) |
+| Library (runtime) | `marked@12.0.2` UMD จาก `https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js` (ล็อกเวอร์ชัน) ใช้เฉพาะ render markdown |
+| ฟอนต์ | IBM Plex Sans Thai (400/500/600/700) + JetBrains Mono (400/500/700) จาก Google Fonts, fallback `Tahoma, sans-serif` / `'Courier New', monospace` |
+| ที่เก็บข้อมูล | `localStorage` (ต่อ browser ต่อเครื่อง) ไม่มี database |
+| Build | `tools/build.py` (Python 3 stdlib) ประกอบ `src/*` + `data/*` เป็นไฟล์เดียว |
+| Test | Node (parser, i18n) + Python Playwright/Chromium (e2e) |
+
+**ห้ามใช้ (กฎของหน้าที่ publish เป็น Artifact และกฎของโปรเจกต์):**
+
+- React/Vue/Svelte/Tailwind/jQuery หรือ build step ที่ต้อง `npm install` ถ้าจะเพิ่ม library ต้องคุยกับ Kody ก่อน
+- script จากโฮสต์อื่นนอกรายการที่ CSP อนุญาต: `cdnjs.cloudflare.com`, `cdn.jsdelivr.net/npm/`, `cdn.tailwindcss.com`, `code.jquery.com` (ล็อกเวอร์ชันเสมอ ห้าม `@latest` ห้ามใช้ release ที่ออกไม่ถึง 2 สัปดาห์) stylesheet ได้เฉพาะ Google Fonts
+- `unpkg`, `esm.sh`, รูปจากเว็บนอก, `fetch` ไปเว็บอื่น (ถูก CSP บล็อกแบบเงียบ)
+- `window.storage`, `fetch("https://api.anthropic.com/...")`, `window.fs`, `window.claude.complete` (ใช้ได้เฉพาะ preview ในแชท ไม่ใช่หน้าที่ publish) ฟีเจอร์ที่ต้องใช้ Claude/ข้อมูลร่วมให้ใช้ capability `sample` / `db` / `artifact` ผ่าน `claude.use(...)` และเรียก `capabilities` ก่อนเขียนโค้ด
+- `<form>` tag ใน UI ใช้ event handler (`data-act` + delegated click)
+- สีขาวล้วน `#FFFFFF` / ดำล้วน `#000000` (กฎ design system) และสี accent ตัวที่ 3 (ดูข้อ 4 เรื่องข้อยกเว้นสีสายรถไฟ)
+- ขนาดตัวอักษรเล็กกว่า 12px
+
+## 3. Architecture / โครงสร้างโฟลเดอร์
+
+```
+travel-plan/
+├─ CLAUDE.md
+├─ Makefile                  build / test / e2e / serve
+├─ src/
+│  ├─ parser.js              markdown <-> model (window.TP หรือ module.exports) ไม่แตะ DOM
+│  ├─ app.js                 แอปทั้งหมด (IIFE ~1,000 บรรทัด) ดูตารางด้านล่าง
+│  └─ styles.css             tokens dark/light + components
+├─ data/
+│  ├─ seed/*.md              แผนที่ฝังมากับหน้า (window.TP_SEED) ตอนนี้: taiwan-2026.md
+│  └─ travel-plan-template.md  template เปล่า + กฎ (ฝังเป็น window.TP_TEMPLATE ปุ่ม "Template (.md)")
+├─ tools/build.py            -> dist/travel-plan.html
+├─ tests/
+│  ├─ parser.test.js         round-trip ของทุก md ใน data/ + line registry
+│  ├─ i18n-coverage.js       ทุกข้อความไทยใน T('...') ต้องมีคำแปล EN
+│  └─ e2e/ ftest.py ftest2.py shot.py run_all.sh
+├─ vendor/marked.min.js      ใช้ใน e2e แทน CDN (offline) ตัวหน้าเว็บยังโหลดจาก CDN
+└─ dist/travel-plan.html     ผลลัพธ์ (ไฟล์ที่ publish)
+```
+
+**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → `afterRender` + `placeNow` (Today mode) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
+
+**Data model** (ดู `TP.emptyTrip()` ใน parser.js): `trip = { id, meta{title,title_en,subtitle,...,timezone}, overview{flights[],stays[],remember,extra[]}, days[{n,date,theme,theme_en,route,stay,summary,summary_en,items[],must[],caution[],extra}], pack[{title,items[{text,done}],note}], todo[{due,text,done}], ref[{title,md}], plan, metaExtra, origin, localEdited, updatedAt }`
+item = `{ id, time, title, en, zh, type, status, highlight, line, transport, transport_en, line_alt, transport_alt, transport_alt_en, cost, cost_en, notes, notes_en, map, extra{} }`
+
+**Router:** hash `#home` หรือ `#<tripId>--<tab>` โดย tab = `overview | d1..dN | pack | todo | ref | plan` (`plan` เห็นเฉพาะโหมดวางแผน)
+
+**localStorage keys:** `tp1.trips`, `tp1.settings` (`theme`, `planning`, `lang`, `owner`), `tp1.seed` (hash ของ seed ล่าสุด) ถ้าเปลี่ยนรูปแบบข้อมูลแบบที่ของเก่าอ่านไม่ได้ ให้เพิ่มเลขเวอร์ชันของ key (`tp2.*`) พร้อมเขียน migration ห้ามทับเงียบๆ
+
+**Owner mode:** `S.settings.owner` (false เป็นค่าเริ่มต้น) ถ้าเป็น false `render()` บังคับ `planning=false` ทำให้ไม่มีปุ่มแก้ไข แท็บวางแผน badge สถานะ หรือเครื่องมือ import/export (ทุกอย่างผูกกับ `S.settings.planning`) ผู้ใช้เดิมที่เคยเปิดโหมดวางแผนก่อนมีฟีเจอร์นี้ถูก migrate ให้เป็นเจ้าของ (`owner = planning` ตอน `initData`) ปลดล็อก/ออก: ตั้งค่า → แตะบรรทัด `แผนเที่ยว v…` 7 ครั้งใน 1.5 วินาทีต่อครั้ง / ปุ่ม "ออกจากโหมดเจ้าของ" `APP_VERSION` อยู่ต้นไฟล์ `app.js` ให้เพิ่มเลขทุกครั้งที่ release
+
+**Seed:** ตอนโหลด ถ้า hash ของ seed เปลี่ยน → แผนที่ผู้ใช้ไม่เคยแก้ (`localEdited=false`) ถูกแทนด้วยเวอร์ชันใหม่ ส่วนแผนที่แก้แล้วจะขึ้น dialog ให้เลือก "ใช้เวอร์ชันใหม่ / เก็บของในเครื่อง" (ติ๊ก checklist ถูกคัดลอกข้ามเวอร์ชันโดยจับคู่จากข้อความ)
+
+**รูปแบบ markdown** (กฎละเอียดอยู่ในคอมเมนต์หัวไฟล์ `data/travel-plan-template.md` ซึ่งเป็นแหล่งความจริงของ schema): front matter `---` → `# ภาพรวม` (`## เที่ยวบิน` ตาราง, `## ที่พัก` ตาราง, `## จำไว้ตลอดทริป`) → `# Day N — YYYY-MM-DD · ธีม` (บรรทัด `route/stay/summary` แล้ว `### เวลา · ชื่อ` ตามด้วย `- key: value` หนึ่งบรรทัดต่อ field, `## ห้ามพลาดวันนี้`, `## ข้อควรระวัง`, `## ข้อมูลเพิ่มเติม`) → `# เตรียมของ` → `# To-do` → `# ข้อมูลอ้างอิง` → `# วางแผน` (เห็นเฉพาะโหมดวางแผน)
+
+## 4. Coding Standards & Rules
+
+**สไตล์โค้ด**
+- syntax เป็น ES5 เท่านั้น: `var`, `function () {}`, ห้าม arrow function / `let` / `const` / template literal / `class` / `import` (ทั้ง `src/app.js` และ `src/parser.js` ตรวจแล้วไม่มี) แต่ใช้ API ระดับ ES2015+ ของ browser ปัจจุบันได้ที่ใช้อยู่แล้ว เช่น `Object.assign`, `Array.from`, `String.prototype.padStart`/`normalize`, `Intl.DateTimeFormat`, `ResizeObserver`
+- indent 2 space, single quote, semicolon ทุกบรรทัด, ไฟล์ UTF-8
+- `parser.js` ห้ามแตะ DOM และต้องรันใน Node ได้ (ใช้ใน test) · `app.js` ห้าม `require`
+- UI หลักใช้ event delegation ที่ `document` ผ่าน `data-act` / `data-b` / `data-chk` (ดู handler `click` / `input` / `change` ท้ายไฟล์) ส่วน modal, import และ settings ผูก handler เฉพาะตัวใน `onOpen` ของ `modal()` ห้ามผูก handler ทีละ element ในหน้าปกติ
+- ฟังก์ชัน `*View` / `*Edit` คืน HTML string แล้ว `render()` ใส่ `innerHTML` ครั้งเดียว ไม่มี state ใน DOM ยกเว้นสถานะชั่วคราวที่เก็บใน `S` (เช่น `S.open`)
+- ไม่มีเพดานจำนวนบรรทัดต่อฟังก์ชันที่บังคับ แต่ฟังก์ชันใหม่ควรทำหน้าที่เดียว ถ้าเกิน ~60 บรรทัดให้แยก
+
+**ความปลอดภัย (ห้ามพลาด)**
+- ข้อความที่มาจาก md / ผู้ใช้ทุกชิ้นต้องผ่าน `esc()` หรือ `inl()` (escape แล้วค่อยใส่ **bold** / `code`) ก่อนเข้า `innerHTML` markdown ผ่าน `mdHtml()` ซึ่ง escape `<` ก่อน (`prepMd`) ห้ามเปิดให้ md ใส่ HTML ดิบ
+- URL ใน `map:` ต้องขึ้นต้น `http(s)://` (เช็กใน `mapUrl`) ลิงก์ภายนอกใช้ `target="_blank" rel="noopener"`
+- ค่า style ที่มาจากข้อมูล (สีสาย) ต้องผ่านรูปแบบ `#RRGGBB` เท่านั้น (`parseLines` บังคับ regex)
+
+**Design system (Dark Tech Workshop)**
+- ยึดจาก README ของ artifact `https://claude.ai/code/artifact/74f59b44-935f-45a6-8413-7facdf562393` ซึ่งมีไฟล์เดียวคือ `project/README.md` **ไม่มี** `tokens.json` / `slide-patterns.md` ค่าสีใน `styles.css` เป็นค่าที่เราเสนอเอง (Dark: surface `#0E1116`, card `#1C222B`, ส้ม `#F05032`, cyan `#22D3EE` · Light: surface `#F3F5F8`, ส้ม `#C2410C`, cyan `#0E7490`) contrast ที่วัดแล้ว: Dark ส้ม/surface 5.31, cyan/surface 10.46 (README 5.3 / 10.5) · Light ส้ม 4.74, cyan 4.91 ถ้าได้ `tokens.json` จริง ให้แทนค่าใน `:root` ของ `styles.css` ที่เดียว
+- accent มี 2 สี: **ส้ม = ปัญหา/จุดสำคัญ/ตัวเลขใหญ่, cyan = ข้อมูลเสริม/ความรู้** สีที่ 3 ห้าม **ข้อยกเว้นเดียว: สีสายรถไฟ (`.lchip`, `.lblk`) เป็น "ข้อมูล" ไม่ใช่ accent ของ UI** และต้องมีข้อความรหัส/ชื่อสายกำกับเสมอ ไม่ใช้สีอย่างเดียว
+- สถานะสำคัญต้องมีข้อความกำกับ (badge มีทั้ง emoji และคำ)
+- ตัวอักษรบน chip สีสายเลือกขาว/ดำตาม contrast สูงสุด (`inkFor`) ห้ามแก้เป็นค่าคงที่
+- checkbox วาดด้วย `<i class="cb">` + SVG ข้างๆ `<input>` ที่ซ่อนไว้ (`.ck input:checked + .cb`) **ห้ามใช้ `::after` บน `<input>`** เคยทำให้เครื่องหมายถูกเลื่อนไปติดขอบล่างบน browser ของ Kody (`ftest3.py` เช็กว่าเครื่องหมายอยู่กลางกรอบ ±1px)
+- ธีม: ทุกสีใช้ตัวแปรใน `:root` (`--s1 --card --text --or --cy ...`) ห้าม hard-code hex ใน component ยกเว้นสีสายและ `#0E1116`/`#FBFCFD` ใน `inkFor`
+- มือถือ: `viewport-fit=cover` + safe-area ที่ `:root`, `body::before`, `.topbar`, `.tabs` **อย่าลบ** sticky offset (`--tb` = 56px) ผูกกับ `.tabs` และ `scroll-padding-top`
+- `prefers-reduced-motion` ต้องปิด animation (มีกฎรวมท้าย `styles.css`) motion ที่ใช้: เส้น metro วาดครั้งแรกต่อทริป, เปิด/ปิดการ์ด
+
+**i18n (TH/EN)**
+- ข้อความ UI ภาษาไทยทุกชิ้นใน `app.js` ต้องอยู่ในรูป `T('...')` หรือบรรทัดที่ลงท้าย `/*noT*/` (ตารางสองภาษาที่เขียนครบทั้งสองฝั่งแล้ว) `tests/i18n-coverage.js` จะล้มถ้ามีข้อความไทยที่ไม่ผ่านทั้งสองทาง
+- `T()` ทำงานแบบ: ตรงทั้งสตริงใน `EXACT` ก่อน ไม่งั้นแทนที่วลีใน `PHR` เรียงจากยาวไปสั้น **ระวัง:** คีย์ใน `PHR` สั้นๆ อาจไปชนกลางคำอื่น (เช่น `ปิด` อยู่ใน `เปิด`) ให้ใส่คีย์ที่มี context (`data-res="x">ปิด</button>`) แล้วอ่านผลแปลจริงทุกครั้ง ไม่ใช่แค่ดูว่าผ่านเทสต์
+- เนื้อหาจาก md ใช้ `L(obj, 'field')` (คืน `field_en` เมื่ออยู่โหมด EN และมีค่า ไม่งั้นคืน `field` เดิม) ชื่อสถานที่: โหมด EN ใช้ `en` เป็นชื่อหลัก มี `title` ไทยเป็นบรรทัดรอง
+- จำนวนที่มีหน่วยใช้ `cnt(n, 'item'|'night'|'day'|'person'|'stop'|'plan')` (จัดเอกพจน์/พหูพจน์อังกฤษให้)
+- ข้อความเตือนจาก `parser.js` ยังเป็นภาษาไทยอย่างเดียว (ดูข้อ 6)
+
+**เมื่อเพิ่ม field ใหม่ให้ item** ต้องแก้ครบ: (1) `ITEM_KEYS` ใน parser.js (ลำดับที่นี่คือลำดับตอน export) (2) กฎในคอมเมนต์ของ `data/travel-plan-template.md` + ตัวอย่าง (3) `itemView` (4) ฟอร์มใน `dayEdit` (5) เพิ่มข้อมูลตัวอย่างใน seed ถ้าจำเป็น (6) รัน test ทั้งชุด — round-trip test จะจับกรณีลืม serialize
+
+**เมื่อเพิ่มสายรถไฟใหม่** ใส่ใน `LINES` ที่ parser.js (hex, en, th, zh) แล้วตรวจ contrast ของข้อความบน chip ≥ 4.5:1 หรือให้ผู้ใช้ใช้ `ชื่อ#RRGGBB` ใน md โดยไม่ต้องแก้โค้ด
+
+**การทำงานกับ Kody**
+- ตอบภาษาไทย ตรงไปตรงมา ไม่ใช้ภาษาทางการเกินจำเป็น ศัพท์เทคนิคทับศัพท์อังกฤษ
+- ห้ามเดา: ถ้าข้อมูลไม่รู้ให้ใส่ `❓` ใน md / บอกตรงๆ ว่ายังไม่ได้ตรวจ ถ้าเจอข้อมูลขัดกันให้ชี้ให้เห็นชัดๆ อย่าแก้เงียบๆ
+- ส่งมอบงานที่ใช้ได้ทันที (build ผ่าน, test ผ่าน) และบอกขอบเขตที่ทำ/ไม่ได้ทำ
+
+## 5. Commands
+
+```bash
+make build            # python3 tools/build.py -> dist/travel-plan.html
+make test             # node: parser round-trip + i18n coverage (ไม่ต้องมี browser)
+make e2e              # build + test + Playwright ทั้งชุด (bash tests/e2e/run_all.sh)
+make serve            # http://localhost:8000/travel-plan.html (python http.server, dir dist/)
+
+node tests/parser.test.js
+node tests/i18n-coverage.js
+node --check src/app.js && node --check src/parser.js     # syntax
+
+# e2e ต้องติดตั้งครั้งแรก
+pip install playwright && playwright install chromium
+python3 tests/e2e/ftest.py      # import/ซ้ำ/แก้/ย้าย/ลบ+undo/checklist/export/seed conflict (12 checks)
+python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถไฟ, field _en (14 checks)
+python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
+
+# screenshot ตรวจหน้าตา (ผลที่ /tmp/tp-shots/)
+python3 tests/e2e/shot.py "run(p,'d5-m',390,844,'#taiwan-trip-2026-2026-11-12--d5')" \
+                          "run(p,'ov-en',1280,900,'#taiwan-trip-2026-2026-11-12',lang='en',theme='light')"
+# พารามิเตอร์ run(): name,w,h,hash,theme,planning,clock,actions,full,lang   (clock='2026-11-13T10:40:00Z' ทดสอบ Today mode)
+```
+
+**ขั้นตอน release:** แก้ `src/` หรือ `data/` → `make e2e` ต้องผ่านทั้งหมด → `dist/travel-plan.html` → ส่งให้ Kody publish ทับลิงก์เดิม (เก็บ URL เดิมไว้ เพื่อให้ลิงก์ที่แชร์ไปแล้วอัปเดตตาม)
+
+**ทดสอบ Today mode:** เทสต์ e2e ใช้เวลาจริงของเครื่อง ถ้าอยากเห็นเส้น "ตอนนี้" ให้ใช้ `clock=` ใน `shot.py` (Playwright `page.clock.install`)
+
+## 6. Known Issues / ข้อควรระวัง
+
+1. **เส้น "ตอนนี้" ใช้ timezone เดียวทั้งทริป** (`meta.timezone`) รายการที่เขียนเป็นเวลาไทย (FD230 07:45 ออกดอนเมือง) จะเลื่อนผิด 1 ชม. เฉพาะช่วงรายการนั้น แก้จริงต้องมี timezone ต่อรายการ (Phase 3)
+2. **ข้อมูลอยู่ใน browser เครื่องเดียว** ไม่ sync ข้ามเครื่อง ล้าง browser = หาย (เหลือแค่ export .md/.json) เพื่อนเห็นแผนที่ฝังมากับลิงก์เท่านั้น ไม่เห็นการแก้ไขในเครื่องคุณ (Phase 2c)
+3. **EN mode แปลแค่ UI + field `_en` ที่ใส่ไว้** ใน seed ไต้หวันมีเฉพาะ `summary_en` ทุกวัน + `style_en` ที่เหลือ (transport/notes/cost, ห้ามพลาด/ข้อควรระวัง, เที่ยวบิน/ที่พัก, ข้อมูลอ้างอิง, เตรียมของ) ยังเป็นภาษาไทย ไม่มีการแปลอัตโนมัติ และ `summary_en` ที่มีอยู่เป็น "ร่างที่ Claude เขียน" ยังไม่ได้ให้ Kody ตรวจ
+4. **สีสายรถไฟมาจากความจำ ไม่ใช่ค่า official** (`LINES` ใน parser.js) ชื่อจีนของสาย R/BL/G/O/BR ตรงกับตารางศัพท์ใน md; ชื่อและสีของ Airport MRT / HSR / TRA / Circular ไม่ได้มาจากข้อมูลของ Kody ต้องตรวจก่อนใช้ในทริปอื่น สี G (`#008357`) และ TRA (`#52708F`) ถูกขยับเล็กน้อยให้ข้อความบน chip ผ่าน 4.5:1
+5. **Seed `line:`/`line_alt:` ใน taiwan-2026.md** ใส่เฉพาะสายที่ข้อความ transport ระบุไว้ตรงๆ (23 รายการ + 6 รายการ alt) เช่น Day 3 15:00 ช่วง "MRT Beitou → Xinbeitou" ไม่ได้ติดสาย เพราะ md ไม่ได้ระบุสี และ Day 1 19:30 "MRT ย้อนเส้นทางเดิม" ไม่ได้ติดสาย
+6. **ข้อความเตือนของ parser เป็นภาษาไทยอย่างเดียว** (หน้าตรวจก่อน import ในโหมด EN จะมีข้อความไทยปน)
+7. **เทสต์ไม่ได้ครอบคลุม:** มือถือจริง (ทดสอบที่ viewport 390px และ 1280px ใน Chromium เท่านั้น), Safari/iOS, การลากสลับลำดับ (drag-and-drop บน desktop ยังไม่มี e2e), ฟอนต์จริงจาก Google Fonts (เทสต์บล็อกไว้ ใช้ fallback), การดาวน์โหลดผ่าน capability `downloads` ในหน้าที่ publish จริง (เทสต์ใช้ปุ่มดาวน์โหลดแบบ anchor)
+8. **ไม่มีเน็ต:** ฟอนต์ตกไป fallback, markdown (ข้อมูลอ้างอิง/ข้อมูลเพิ่มเติม/จำไว้ตลอดทริป) แสดงเป็นข้อความธรรมดาเพราะ `marked` ไม่โหลด (`mdHtml` มี fallback) ออฟไลน์เต็มรูปแบบไม่รับประกัน
+9. **parser:** (ก) ค่าของ field ต้องอยู่บรรทัดเดียว (ข) `<!-- ... -->` ถูกลบทั้งไฟล์ก่อน parse รวมถึงที่อยู่ในเนื้อหา (ค) head ที่ไม่รู้จักใน front matter เก็บไว้ใน `metaExtra` พร้อมเตือน (ง) `##` ที่ไม่รู้จักใน Day ถูกย้ายไป "ข้อมูลเพิ่มเติม" พร้อมเตือน (จ) `id` ของ item/วัน สุ่มใหม่ทุกครั้งที่ parse เทสต์จึงตัด `id` ก่อนเทียบ
+10. **Router:** `tripId` ห้ามมี `--` (ใช้เป็นตัวคั่น tab) `makeId` สร้างจาก title ภาษาอังกฤษ + วันเริ่ม ชื่อทริปที่ไม่มีตัวอักษรละตินจะได้ `trip-<date>`
+11. **สถานะ emoji ผูกกับโค้ดหลายจุด:** `TP.STATUS` (parser), `STATUS_CLS`/`statusLabel` และ `EMO_RE` (ลบ emoji ตอนปิดโหมดวางแผน) ถ้าเพิ่ม/เปลี่ยน emoji สถานะ ต้องแก้ทั้งสามที่
+12. **การย้ายรายการบนมือถือ** ใช้ปุ่ม ↑↓ (ลากใช้ได้เฉพาะ pointer แบบ fine บน desktop)
+13. **ห้ามเรียก `window.claude.use(...)` แล้วอ่านผลทันที** namespace มาทีหลังเสมอ ออกแบบให้หน้าทำงานได้เมื่อเป็น `null` (ตอนนี้ใช้แค่ `downloads`)
+14. **โหมดเจ้าของเป็นแค่ตัวกั้นหน้าจอ ไม่ใช่ความปลอดภัย:** ข้อมูลทุกอย่างฝังอยู่ในไฟล์ HTML ใครมีลิงก์กด view source ก็อ่านได้ รวมถึงหัวข้อ `# วางแผน` (จุดขัดแย้ง ❓⚠️ ที่ Claude ร่างไว้) ถ้าไม่อยากให้เพื่อนเห็น ต้องตัดส่วนนั้นออกจากเวอร์ชันที่ publish (ยังไม่มีตัวเลือกนี้ใน `tools/build.py`) การแก้ไขของผู้ชมแต่ละคนอยู่ในเครื่องเขาเท่านั้น ไม่ไปถึงใคร แต่ผู้ชมที่ปลดล็อกโหมดเจ้าของเองบนเครื่องตัวเองก็แก้ของตัวเองได้
+15. **เนื้อหาทริปไม่ได้ตรวจซ้ำ** เวลา ราคา เส้นทางใน `data/seed/taiwan-2026.md` ยกมาจากไฟล์ของ Kody ตามเดิม รายการที่ติด `❓`/`⚠️` คือยังไม่ยืนยัน ห้ามลบเครื่องหมายเอง และกล่อง "ห้ามพลาด / ข้อควรระวัง" ทุกวันเป็นร่างที่ Claude สรุปจากข้อมูลในไฟล์ (ติด `❓` ทุกบรรทัด รอ Kody ตรวจ)
+
+## 7. ไฟล์ที่เกี่ยวข้อง
+
+| ไฟล์ | หน้าที่ |
+|---|---|
+| `src/parser.js` | `TP.parse(md)` → `{trip, warnings}` · `TP.toMarkdown(trip)` · `TP.parseLines()` · `TP.LINES` · ค่าคงที่ (`STATUS`, `TYPES`, `ITEM_KEYS`, `META_KEYS`) |
+| `src/app.js` | แอปทั้งหมด (ตารางลำดับในข้อ 3) |
+| `src/styles.css` | tokens + components (ส่วนท้ายไฟล์: chip/block สายรถไฟ, reduced-motion) |
+| `data/travel-plan-template.md` | schema + กฎ + ตัวอย่างเปล่า ใช้ให้ Claude สร้างแผนใหม่: แนบไฟล์นี้ + ข้อมูลดิบ แล้วสั่ง "สร้างตาม template ห้ามเปลี่ยนชื่อหัวข้อ/field อะไรไม่รู้ใส่ ❓ ห้ามเดา" |
+| `data/seed/taiwan-2026.md` | แผนไต้หวัน v4.1 (6 วัน 5 คืน, 8 คน) แปลงจาก v3 เป็น schema ใหม่ |
+| `Original_template.pdf` (อยู่นอก repo, Kody ถือ) | ต้นแบบหน้าตา ถ้าต้องการให้ Claude Code เห็นให้ Kody ใส่ไว้ที่ `docs/` |
+| Artifact "Dark Tech Workshop" (URL ข้อ 4) | design system (README อย่างเดียว) |
+
+## 8. Phases
+
+**Phase 1 ✅ (v1) — ดูแผน + แก้ไข + import/export พื้นฐาน**
+dashboard + ปฏิทินรายเดือน · เมนูตาม section · timeline แบบย่อ/ขยาย · Today mode · metro map ต่อวัน/ทั้งทริป · เต็มจอสำหรับประโยค/การ์ดแท็กซี่ · checklist + To-do · dark/light · โหมดวางแผน (badge สถานะ, แก้ทุก field, เพิ่ม/ลบ/ย้าย, undo ตอนลบ) · import .md/.json พร้อม preview · export .md/.json · template md
+
+**Phase 2 — ปรับให้ใช้งานคนเดียวจริงจัง**
+- 2a ✅ บล็อกสีตามสายรถไฟ/MRT (`line`, `line_alt`, chip + บล็อกใน detail + legend "สายที่ใช้วันนี้")
+- 2b ✅ สลับ EN/TH (UI ทั้งหมด + `*_en` แบบไม่บังคับ)
+- 2d ✅ โหมดเจ้าของ (ทุกคนดูอย่างเดียว) + แก้เครื่องหมายถูกของ checkbox (v2.1)
+- 2c ⏳ **ที่เก็บกลางแบบ "ทุกคนอ่าน เจ้าของเขียนคนเดียว"** เพื่อให้การแก้ของ Kody ไปถึงทุกคนโดยไม่ต้องส่งไฟล์ และ sync มือถือ↔โน้ตบุ๊ก ทางเลือกที่คุยกันไว้: (ก) capability ของ Artifact (`db`, `user`) เขียนได้เฉพาะ user id ของเจ้าของ (ข) Apps Script เป็นที่เก็บ + รหัสแก้ไขฝั่ง server (ยังไม่ได้เลือก) การเขียนต้องบังคับฝั่ง server ห้ามพึ่งแค่ `S.settings.owner` · เก็บสำเนาใน localStorage ไว้ด้วย · ประวัติเวอร์ชัน · ตัดกลไก seed/republish ออก **ยังไม่ได้ทำ และยังไม่ได้ทดสอบ capability จริง** (`db` / `artifact` ต้อง sign-in claude.ai) ต้องเรียก `Artifact action "capabilities"` ก่อนเขียนโค้ด และออกแบบให้ทำงานได้เมื่อ `claude.use()` คืน `null`
+
+**Phase 3 ⏳ — สร้าง/แก้แผนในเว็บได้ครบ**
+ปุ่ม "แผนใหม่" (เปล่า / คัดลอกโครง) · preview markdown ข้างช่องแก้ · ตรวจข้อมูลแล้วเตือน (เวลาซ้อน/ไม่เรียง, วันที่นอกช่วงทริป, วันไม่มี route) · ปุ่มเรียงตามเวลา · undo/redo หลายขั้น · field timezone ต่อรายการ (แก้ปัญหาข้อ 6.1) · เพิ่มคำแปล `_en` ให้ field ที่ยังไม่มี (must/caution/flights/stays)
+
+**Phase 4 ⏳ — ใช้ระหว่างเที่ยว** (ถ้าต้องการให้ทันทริป 12 พ.ย. ให้ดึงขึ้นมาก่อน)
+การ์ด "ถัดไป" บนสุดของวันนี้ (รายการถัดไป วิธีเดินทาง เวลาที่เหลือ) · ติ๊กรายการ "ไปแล้ว / ข้าม" · แนบไฟล์ต่อแผน/รายการ (QR TWAC, ตั๋ว, ใบจอง) ผ่าน capability `assets` · ลดการพึ่ง CDN (ออฟไลน์เต็มรูปแบบอาจทำไม่ได้ เพราะหน้าอยู่บน claude.ai)
+
+**Phase 5 ⏳ (เลือกได้) — ให้ Claude ช่วยในเว็บ**
+ช่อง "วางโน้ตดิบ" แปลงเป็นแผนตาม template · ปุ่มให้ Claude ตรวจจุดขัดแย้งแล้วเติม ⚠️❓ · ใช้ capability `sample` (ทุกครั้งนับโควตาบัญชีผู้ใช้ ขอ consent ตอนเรียกครั้งแรก)
+
+อัปเดตสถานะของ Phase ในไฟล์นี้ทุกครั้งที่ทำเสร็จ และถ้าโค้ดกับไฟล์นี้ไม่ตรงกัน ให้แก้ไฟล์นี้ในคอมมิตเดียวกัน
