@@ -67,6 +67,21 @@ check('lockout expires after the window', gs.checkKey(KEY).ok === true);
 const st2 = emptyState({ activeUser: 'owner@example.com' }); const g2 = load(st2); g2.setup(); st2.activeUser = '';
 check('no EDIT_KEY set -> nobody can save, empty key never matches', g2.checkKey('').ok === false && throws(() => g2.saveTrip(SEED, 'anything', '', true), 'BAD_KEY'));
 
+// ---- empty plan file (what happened on the first real deployment) ----
+const st3 = emptyState({ props: { EDIT_KEY: KEY }, activeUser: 'owner@example.com' }); const g3 = load(st3); g3.setup(); st3.activeUser = '';
+check('getTrip reports the raw size', g3.getTrip('').size === SEED.length);
+st3.files[st3.props.TRIP_FILE_ID].content = '';
+const e3 = g3.getTrip('');
+check('empty Drive file: getTrip says size 0 (page can show an error)', e3.ok && e3.md === '' && e3.size === 0);
+const s4 = g3.saveTrip(SEED, KEY, e3.version, false);
+check('owner can save a plan over an empty file', s4.ok === true && st3.files[st3.props.TRIP_FILE_ID].content === SEED);
+check('saving over an empty file makes no (empty) backup', Object.values(st3.files).filter(f => f.parent === st3.props.BACKUP_FOLDER_ID).length === 0);
+g3.saveTrip(SEED + '\n', KEY, s4.version, false);
+check('the next save backs up the real previous plan', Object.values(st3.files).filter(f => f.parent === st3.props.BACKUP_FOLDER_ID).map(f => f.content).join() === SEED);
+st3.files[st3.props.TRIP_FILE_ID].content = ''; st3.activeUser = st3.owner;
+const out3 = g3.setup(); st3.activeUser = '';
+check('setup refills an empty plan file from the seed', /was empty/.test(out3) && st3.files[st3.props.TRIP_FILE_ID].content === SEED && Object.keys(st3.files).filter(k => st3.files[k].parent === 'root').length === 1);
+
 // ---- code fences keep "# " lines that are not headings ----
 const fenced = SEED + '\n# ข้อมูลอ้างอิง\n\n```\n# วางแผน\n```\n';
 check('viewerMd_: "# วางแผน" inside a code block is not treated as a heading', gs.viewerMd_(fenced).indexOf('```\n# วางแผน\n```') >= 0);

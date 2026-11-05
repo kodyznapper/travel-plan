@@ -141,6 +141,18 @@ with sync_playwright() as p:
     ow.click('[data-act=discard-local]'); settle(ow, 300); ow.click('[data-res=yes]'); settle(ow, 1500)
     check('discard: local edit gone, back in sync', 'จะทิ้ง' not in ow.inner_text('#app') and ow.locator('[data-syncbar].dirty').count() == 0)
 
+    # ---------------- import a .md over the Drive plan, then save (README "เปลี่ยนทั้งแผนด้วยไฟล์ .md ใหม่") ----------------
+    imp = pathlib.Path(tempfile.mkdtemp()) / 'taiwan-trip-2026-2026-11-12.md'
+    imp.write_text(gas('getTrip', KEY)['md'].replace('style: ', 'style: นำเข้าใหม่ ', 1), encoding='utf8')
+    ow.goto(PAGE + '#home'); settle(ow, 400)
+    ow.click('[data-act=import] >> nth=0'); ow.set_input_files('[data-imp=file]', str(imp)); settle(ow, 400)
+    ow.click('[data-imp=save]'); settle(ow, 300)
+    ow.click('[data-res=over]'); settle(ow, 500)
+    check('import over Drive plan: still one server trip, bar dirty', ow.evaluate("JSON.parse(localStorage.getItem('tp1.trips')).filter(function(t){return t.origin==='server'}).length") == 1 and ow.locator('[data-syncbar].dirty').count() == 1)
+    nb = len(backups())
+    ow.click('[data-act=save-remote]'); settle(ow, 1500)
+    check('import over Drive plan: saves on first click (no conflict / key dialogs)', ow.locator('.modal').count() == 0 and 'style: นำเข้าใหม่' in drive_md() and len(backups()) == nb + 1)
+
     # ---------------- export on GAS always offers copy ----------------
     ow.goto(PAGE + '#' + tid); settle(ow, 400)
     ow.click('[data-act=export-md]'); settle(ow, 300)
@@ -160,6 +172,26 @@ with sync_playwright() as p:
     pg.route('https://fonts.googleapis.com/**', lambda r: r.fulfill(body='', content_type='text/css'))
     pg.goto(PAGE); settle(pg, 800)
     check('no google.script: error card with retry, no crash', pg.locator('[data-act=reload-remote]').count() == 1)
+
+    # ---------------- empty plan file on Drive (first real deployment) + plan imported before it worked ----------------
+    s = json.loads(state.read_text()); s['files'][s['props']['TRIP_FILE_ID']]['content'] = ''; state.write_text(json.dumps(s))
+    ev = device(b, 'empty-viewer')
+    ev.goto(PAGE); settle(ev, 1500)
+    check('empty Drive file: viewer gets an error card, not endless "loading"', ev.locator('[data-act=reload-remote]').count() == 1 and 'ว่างเปล่า' in ev.inner_text('#app') and ev.locator('[aria-busy=true]').count() == 0)
+    o2 = device(b, 'owner2')
+    o2.goto(PAGE); o2.evaluate("localStorage.setItem('tp1.settings', JSON.stringify({theme:'dark',planning:true,owner:true,lang:'th'}))"); o2.reload(); settle(o2, 1200)
+    o2.click('[data-act=import] >> nth=0'); o2.set_input_files('[data-imp=file]', str(imp)); settle(o2, 400)
+    o2.click('[data-imp=save]'); settle(o2, 800)
+    o2.reload(); settle(o2, 1500)
+    bar = o2.inner_text('[data-syncbar]') if o2.locator('[data-syncbar]').count() else ''
+    check('local-only plan + Drive error: bar shows the error and "use this plan on Drive"', 'ว่างเปล่า' in bar and o2.locator('[data-act=promote]').count() == 1 and o2.locator('[data-act=reload-remote]').count() == 1)
+    o2.click('[data-act=promote]'); settle(o2, 300); o2.click('[data-res=yes]'); settle(o2, 300)
+    check('promote without a key asks for it', o2.locator('[data-key]').count() == 1)
+    o2.fill('[data-key]', KEY); o2.click('[data-key-ok]'); settle(o2, 2000)
+    tr = o2.evaluate("JSON.parse(localStorage.getItem('tp1.trips')).map(function(t){return t.origin})")
+    check('promote: plan written to Drive, now the one server plan, bar in sync, no extra dialogs', 'style: นำเข้าใหม่' in drive_md() and tr == ['server'] and o2.locator('.modal').count() == 0 and o2.locator('[data-syncbar].dirty').count() == 0)
+    ev.reload(); settle(ev, 1500)
+    check('viewer after promote: sees the plan', ls_trip(ev) is not None and 'นำเข้าใหม่' in (ls_trip(ev)['meta'].get('style') or ''))
 
     # ---------------- English ----------------
     vw.evaluate("var s=JSON.parse(localStorage.getItem('tp1.settings')||'{}'); s.lang='en'; localStorage.setItem('tp1.settings', JSON.stringify(s))")

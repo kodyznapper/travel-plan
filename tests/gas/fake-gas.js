@@ -12,6 +12,8 @@ function emptyState(o) {
 function services(st) {
   const nextId = p => p + (++st.seq);
   const tick = () => (st.clock += 1000);
+  // createFile(name, content, mime) or createFile(blob)
+  const blobArgs = (name, content) => (name && name.__blob ? { name: name.name, content: name.content } : { name, content: String(content) });
   function File(id) {
     const f = st.files[id];
     return {
@@ -26,13 +28,13 @@ function services(st) {
     return {
       getId: () => id,
       getName: () => st.folders[id].name,
-      createFile: (name, content) => { const fid = nextId('f'); st.files[fid] = { name, content: String(content), updated: tick(), parent: id }; return File(fid); }
+      createFile: (name, content) => { const b = blobArgs(name, content); const fid = nextId('f'); st.files[fid] = { name: b.name, content: b.content, updated: tick(), parent: id }; return File(fid); }
     };
   }
   const DriveApp = {
     getFileById: id => { if (!st.files[id]) throw new Error('No item with the given ID could be found'); return File(id); },
     getFolderById: id => { if (!st.folders[id]) throw new Error('No item with the given ID could be found'); return Folder(id); },
-    createFile: (name, content) => { const fid = nextId('f'); st.files[fid] = { name, content: String(content), updated: tick(), parent: 'root' }; return File(fid); },
+    createFile: (name, content) => { const b = blobArgs(name, content); const fid = nextId('f'); st.files[fid] = { name: b.name, content: b.content, updated: tick(), parent: 'root' }; return File(fid); },
     createFolder: name => { const id = nextId('d'); st.folders[id] = { name }; return Folder(id); }
   };
   const props = {
@@ -50,7 +52,7 @@ function services(st) {
     LockService: { getScriptLock: () => ({ tryLock: () => true, waitLock: () => { }, releaseLock: () => { } }) },
     CacheService: { getScriptCache: () => cache },
     Session: { getActiveUser: () => ({ getEmail: () => st.activeUser }), getEffectiveUser: () => ({ getEmail: () => st.owner }) },
-    Utilities: { formatDate: d => new Date(d).toISOString().replace(/[:.]/g, '-') },
+    Utilities: { formatDate: d => new Date(d).toISOString().replace(/[:.]/g, '-'), newBlob: (content, mime, name) => ({ __blob: true, content: String(content), name }) },
     HtmlService: { createHtmlOutputFromFile: () => html, XFrameOptionsMode: { DEFAULT: 'DEFAULT', ALLOWALL: 'ALLOWALL' } },
     Logger: { log: () => { } }
   };

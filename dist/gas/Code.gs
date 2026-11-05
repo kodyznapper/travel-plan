@@ -30,10 +30,11 @@ function doGet() {
 /* Read the plan. Without a valid key the owner-only parts are removed. */
 function getTrip(editKey) {
   var file = tripFile_();
-  var md = file.getBlob().getDataAsString('UTF-8');
+  var md = readMd_(file);
   var owner = false;
   if (editKey) { try { owner = keyOk_(editKey); } catch (e) { owner = false; } }   // a locked-out key never blocks reading
-  return { ok: true, md: owner ? md : viewerMd_(md), version: versionOf_(file), owner: owner, name: file.getName() };
+  // size = raw characters in the Drive file (0 = the file is empty: the page says so instead of loading forever)
+  return { ok: true, md: owner ? md : viewerMd_(md), version: versionOf_(file), owner: owner, name: file.getName(), size: md.length };
 }
 
 /* Lets the page confirm a key before storing it. */
@@ -56,7 +57,9 @@ function saveTrip(md, editKey, baseVersion, force) {
     if (!force && String(baseVersion) !== cur) return { ok: false, conflict: true, version: cur };
     backup_(file);
     file.setContent(md);
-    return { ok: true, version: versionOf_(DriveApp.getFileById(file.getId())) };
+    var back = DriveApp.getFileById(file.getId());
+    if (!readMd_(back).length) throw new Error('WRITE_FAILED');   // never report success when Drive kept nothing
+    return { ok: true, version: versionOf_(back) };
   } finally {
     lock.releaseLock();
   }
@@ -69,12 +72,16 @@ function setup() {
   var props = PropertiesService.getScriptProperties();
   var out = [];
   var id = props.getProperty('TRIP_FILE_ID');
-  if (id && fileExists_(id)) out.push('Plan file already set: ' + DriveApp.getFileById(id).getName() + ' (' + id + ')');
-  else {
+  if (id && fileExists_(id)) {
+    var cur = DriveApp.getFileById(id);
+    var n = readMd_(cur).length;
+    if (n === 0 && SEED_MD) { cur.setContent(SEED_MD); n = readMd_(DriveApp.getFileById(id)).length; out.push('Plan file was empty: filled it from the seed'); }
+    out.push('Plan file already set: ' + cur.getName() + ' (' + id + ') · ' + n + ' characters');
+  } else {
     if (!SEED_MD) throw new Error('No seed plan in this build. Create a .md file in Drive and put its id in TRIP_FILE_ID.');
-    var f = DriveApp.createFile('travel-plan.md', SEED_MD, 'text/plain');
+    var f = DriveApp.createFile(Utilities.newBlob(SEED_MD, 'text/plain', 'travel-plan.md'));
     props.setProperty('TRIP_FILE_ID', f.getId());
-    out.push('Created plan file: ' + f.getName() + ' (' + f.getId() + ')');
+    out.push('Created plan file: ' + f.getName() + ' (' + f.getId() + ') · ' + readMd_(DriveApp.getFileById(f.getId())).length + ' characters');
   }
   var bid = props.getProperty('BACKUP_FOLDER_ID');
   if (bid && folderExists_(bid)) out.push('Backup folder already set (' + bid + ')');
@@ -95,18 +102,21 @@ function tripFile_() {
   if (!id) throw new Error('NOT_SET_UP');
   return DriveApp.getFileById(id);
 }
+function readMd_(file) { return file.getBlob().getDataAsString('UTF-8') || ''; }
 function versionOf_(file) { return String(file.getLastUpdated().getTime()); }
 function fileExists_(id) { try { DriveApp.getFileById(id).getName(); return true; } catch (e) { return false; } }
 function folderExists_(id) { try { DriveApp.getFolderById(id).getName(); return true; } catch (e) { return false; } }
 
 function backup_(file) {
+  var old = readMd_(file);
+  if (!old.trim()) return;   // nothing worth keeping (e.g. first save over an empty plan file)
   var props = PropertiesService.getScriptProperties();
   var bid = props.getProperty('BACKUP_FOLDER_ID');
   var folder = null;
   if (bid) { try { folder = DriveApp.getFolderById(bid); } catch (e) { folder = null; } }
   if (!folder) { folder = DriveApp.createFolder('travel-plan backups'); props.setProperty('BACKUP_FOLDER_ID', folder.getId()); }
   var stamp = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd_HHmmss');
-  folder.createFile('travel-plan_' + stamp + '.md', file.getBlob().getDataAsString('UTF-8'), 'text/plain');
+  folder.createFile(Utilities.newBlob(old, 'text/plain', 'travel-plan_' + stamp + '.md'));
 }
 
 /* Constant-time compare + a global limit on wrong guesses (the web app is anonymous, so there is no per-user limit). */
