@@ -1,6 +1,6 @@
 # CLAUDE.md — Travel Plan (แผนเที่ยว)
 
-อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (v2.5.0: Phase 2a/2b/2c/2d เสร็จ, Phase 4 ทำการ์ด "ตอนนี้ + ถัดไป" แล้ว, เพิ่ม target GitHub Pages เพราะ iPhone ลืมติ๊กบน GAS (Known Issue 23, 24)) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
+อ่านไฟล์นี้ก่อนแก้โค้ดทุกครั้ง ข้อมูลในนี้ตรวจกับโค้ดจริงตอนเขียน (v2.6.0: Phase 2a/2b/2c/2d เสร็จ, Phase 4 ทำการ์ด "ตอนนี้ + ถัดไป" และลิงก์คลิปต่อสถานที่แล้ว, เพิ่ม target GitHub Pages เพราะ iPhone ลืมติ๊กบน GAS (Known Issue 23, 24)) ถ้าไม่แน่ใจเรื่องไหน ให้เปิดโค้ดดู อย่าเดา
 
 > **กฎเอกสาร (บังคับทุกครั้ง):** ทุกครั้งที่เพิ่ม/เปลี่ยน/ลบ feature ต้องอัปเดต **ทั้ง `CLAUDE.md` และ `README.md`** ในคอมมิตเดียวกับโค้ด ดูรายการที่ต้องแก้ในข้อ 4 "Definition of Done" งานที่เอกสารยังไม่อัปเดตถือว่ายังไม่เสร็จ
 >
@@ -63,20 +63,20 @@ travel-plan/
 ├─ .github/workflows/pages.yml  deploy dist/pages/ ขึ้น GitHub Pages เมื่อ push เข้า main
 ├─ tools/build.py            -> dist/travel-plan.html + dist/gas/{index.html, Code.gs, appsscript.json} + dist/pages/index.html
 ├─ tests/
-│  ├─ parser.test.js         round-trip ของทุก md ใน data/ + line registry
+│  ├─ parser.test.js         round-trip ของทุก md ใน data/ + line registry + `videoLinks`
 │  ├─ i18n-coverage.js       ทุกข้อความไทยใน T('...') ต้องมีคำแปล EN
 │  ├─ gas.test.js            logic ของ Code.gs: setup, ตัด # วางแผน, รหัส, conflict, backup, lockout, ไฟล์ว่าง (36 checks)
 │  ├─ gas/fake-gas.js        DriveApp/PropertiesService/LockService/CacheService/Session จำลอง (เท่าที่ Code.gs ใช้)
 │  ├─ gas/call.js            เรียกฟังก์ชัน public ของ Code.gs หนึ่งครั้ง state เก็บในไฟล์ (ใช้ใน ftest4, ftest6 · คำตอบ ContentService ส่งกลับเป็น `{raw}`)
-│  └─ e2e/ ftest.py ftest2.py ftest3.py ftest4.py ftest5.py ftest6.py shot.py run_all.sh
+│  └─ e2e/ ftest.py ftest2.py ftest3.py ftest4.py ftest5.py ftest6.py ftest7.py shot.py run_all.sh
 ├─ vendor/marked.min.js      ใช้ใน e2e แทน CDN (offline) ตัวหน้าเว็บยังโหลดจาก CDN
 └─ dist/                     ผลลัพธ์ (commit ไว้ใน repo ให้ copy ได้จาก GitHub): travel-plan.html (Artifact), gas/ (Apps Script), pages/ (GitHub Pages)
 ```
 
-**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → server GAS (`rpc`, `loadRemote`, `saveRemote`, `askKey`, `syncBarHtml`) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → `afterRender` + `placeNow` (Today mode) + การ์ด "ตอนนี้ + ถัดไป" (`nowNext`, `nowCardHtml`, `refreshNowCard`, `scrollToItem`) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
+**src/app.js แบ่งตามลำดับในไฟล์:** icons (`IC`, `icon()`) → i18n (`LANG`, `EXACT`, `PHR`, `T()`, `L()`, `cnt()`) → dates → storage/state (`S`, `K`, `initData`, seed) → server GAS (`rpc`, `loadRemote`, `saveRemote`, `askKey`, `syncBarHtml`) → router (`parseHash`, `go`) → `render()` → dashboard + ปฏิทิน → `tripHtml` + views (`overviewView`, `dayView`, `itemView`, `packView`, `todoView`, `refView`, `planView`) → edit forms (`*Edit`) → ปุ่มคลิป (`VID`, `videoBtns`) อยู่ก่อน `dayView` → `afterRender` + `placeNow` (Today mode) + การ์ด "ตอนนี้ + ถัดไป" (`nowNext`, `nowCardHtml`, `refreshNowCard`, `scrollToItem`) → metro SVG (`drawMetro`) → modal/toast/fullscreen → import/export/settings → event handlers → boot
 
 **Data model** (ดู `TP.emptyTrip()` ใน parser.js): `trip = { id, meta{title,title_en,subtitle,...,timezone}, overview{flights[],stays[],remember,extra[]}, days[{n,date,theme,theme_en,route,stay,summary,summary_en,items[],must[],caution[],extra}], pack[{title,items[{text,done}],note}], todo[{due,text,done}], ref[{title,md}], plan, metaExtra, origin, localEdited, updatedAt, remoteVersion, remoteFull }` · `origin` = `seed | import | server` (`server` = แผนจาก Drive บน GAS มีได้แผนเดียว) · `remoteVersion` = เวลาแก้ล่าสุดของไฟล์ใน Drive ตอนโหลด (ใช้กันเขียนทับ) · `remoteFull` = โหลดมาพร้อม `# วางแผน` แล้ว (มีรหัส) ห้ามบันทึกถ้าเป็น false ไม่งั้นหัวข้อวางแผนใน Drive จะหาย
-item = `{ id, time, title, en, zh, type, status, highlight, line, transport, transport_en, line_alt, transport_alt, transport_alt_en, cost, cost_en, notes, notes_en, map, extra{} }`
+item = `{ id, time, title, en, zh, type, status, highlight, line, transport, transport_en, line_alt, transport_alt, transport_alt_en, cost, cost_en, notes, notes_en, map, video, extra{} }` · `video` = ลิงก์คลิป (TikTok/YouTube/…) หลายลิงก์คั่นด้วย `|` แยกด้วย `TP.videoLinks()` (รับเฉพาะ `http(s)://` ตั้งชนิดจาก host: `tiktok youtube instagram facebook link`) ไม่มี `video_en`
 
 **Router:** hash `#home` หรือ `#<tripId>--<tab>` โดย tab = `overview | d1..dN | pack | todo | ref | plan` (`plan` เห็นเฉพาะโหมดวางแผน)
 
@@ -102,7 +102,7 @@ item = `{ id, time, title, en, zh, type, status, highlight, line, transport, tra
 
 **ความปลอดภัย (ห้ามพลาด)**
 - ข้อความที่มาจาก md / ผู้ใช้ทุกชิ้นต้องผ่าน `esc()` หรือ `inl()` (escape แล้วค่อยใส่ **bold** / `code`) ก่อนเข้า `innerHTML` markdown ผ่าน `mdHtml()` ซึ่ง escape `<` ก่อน (`prepMd`) ห้ามเปิดให้ md ใส่ HTML ดิบ
-- URL ใน `map:` ต้องขึ้นต้น `http(s)://` (เช็กใน `mapUrl`) ลิงก์ภายนอกใช้ `target="_blank" rel="noopener"`
+- URL ใน `map:` ต้องขึ้นต้น `http(s)://` (เช็กใน `mapUrl`) · URL ใน `video:` ก็เหมือนกัน (เช็กใน `TP.videoLinks` ลิงก์อื่นถูกทิ้ง ชนิดดูจาก host แบบลงท้ายโดเมน `tiktok.com.evil.x` ไม่นับเป็น TikTok) ลิงก์ภายนอกใช้ `target="_blank" rel="noopener"`
 - ค่า style ที่มาจากข้อมูล (สีสาย) ต้องผ่านรูปแบบ `#RRGGBB` เท่านั้น (`parseLines` บังคับ regex)
 
 **Design system (Dark Tech Workshop)**
@@ -177,6 +177,7 @@ python3 tests/e2e/ftest2.py     # สลับ TH/EN, chip+block สายรถ
 python3 tests/e2e/ftest3.py     # โหมดเจ้าของ/ผู้ชม (ซ่อนเครื่องมือ, 7 taps, migration) + เครื่องหมายถูกของ checkbox อยู่กลางกรอบ (14 checks)
 python3 tests/e2e/ftest5.py     # การ์ด "ตอนนี้ + ถัดไป" (นาฬิกาจำลองเวลาไทเป: ระหว่างวัน, รีเฟรชทุกนาที, แตะไปรายการ, หลังรายการสุดท้าย, ก่อน/หลังทริป, EN, โหมดแก้ไข) + id ทริปจาก title ละติน + ลิงก์เก่าหลังเปลี่ยนชื่อ + seed ที่เปลี่ยนชื่อแทนของเดิม (22 checks)
 python3 tests/e2e/ftest4.py     # หน้า GAS + Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, deep link, เจ้าของใส่รหัส/บันทึก, conflict, ทิ้งการแก้, นำเข้า .md ทับแผนบน Drive แล้วบันทึก, ไฟล์ใน Drive ว่าง + ปุ่มใช้แผนนี้เป็นแผนบน Drive, ปุ่ม X ปิดแถบ sync, ลิงก์ที่ id ไม่ตรงเปิดแผนบน Drive, EN (44 checks)
+python3 tests/e2e/ftest7.py     # ลิงก์คลิป (v2.6.0): ป้ายบนแถว, ปุ่มตามแพลตฟอร์ม + เลขเมื่อซ้ำ, เปิดแท็บใหม่ noopener, ลิงก์ javascript:/ftp ถูกทิ้ง, ปุ่มในการ์ดถัดไป, EN, ช่องในฟอร์มแก้ไข, ส่งออก .md (14 checks)
 python3 tests/e2e/ftest6.py     # หน้า Pages (http://127.0.0.1) + fetch ไป doPost/doGet ของ Code.gs จริงบน GAS จำลอง: ผู้ชมอ่าน, ติ๊ก/รหัสอยู่รอดหลัง "ปิดแอป" (ปิด context ไม่มี pagehide แล้วเปิดใหม่ด้วย storage เดิม), deep link, เจ้าของใส่รหัส/บันทึก, รหัสไม่อยู่ใน URL, conflict, ดาวน์โหลดตรง, server ล่ม/กลับมา (23 checks)
 node tests/gas.test.js          # logic ของ dist/gas/Code.gs (ต้อง build ก่อน; make test ทำให้)
 
@@ -254,6 +255,7 @@ dashboard + ปฏิทินรายเดือน · เมนูตาม 
   5. ✅ (v2.3.0) แถบ "ตรงกับแผนบน Drive" มีปุ่ม X ปิดได้ (จำในเครื่อง `tp1.settings.syncHide`) แถบสีส้ม (ยังไม่บันทึก / error / แผนยังไม่อยู่บน Drive) ปิดไม่ได้ และเมื่อเกิดสถานะสีส้ม `syncHide` ถูกล้าง แถบสีฟ้าจึงกลับมาหลังบันทึกครั้งถัดไป (logic อยู่ใน `syncBarHtml` / `syncHide`)
   - ✅ (2026-11-06) ทดสอบตาม checklist ใน README แล้ว: บันทึกติดกัน, ดาวน์โหลด, ฟอนต์, deep link + ลิงก์เก่าบนมือถือ ผ่าน · เจอ Known Issue 23 (หน้าขาวบน iOS หลังปัดปิดแอป มีทางเลี่ยง) · ❓ ที่เหลือ: `marked` จาก CDN, ติ๊กอยู่รอดบน iPhone · ทางเลือกเดิม (capability `db`/`user` ของ Artifact) พักไว้
 
+- v2.6.0 ✅ โค้ด (2026-11-07, Kody ขอ) **ลิงก์คลิปต่อสถานที่** field `video` (หลายลิงก์คั่นด้วย `|`, Kody เลือกตัวคั่นเอง) · ปุ่ม ▶ TikTok / YouTube / Instagram / Facebook / ลิงก์ ใน `.it-links` ข้างปุ่มแผนที่ + ในการ์ด "ถัดไป" (`.nc-links`) + ป้าย `.badge.vid` "คลิป" บนแถว · ปุ่มลิงก์เท่านั้น ไม่ฝังวิดีโอ (Kody เลือก: เบา ไม่ติด CSP/iframe) · ช่องในฟอร์มแก้ไข · template มีกฎห้าม Claude แต่งลิงก์ · `Code.gs` ไม่เปลี่ยน ไม่ต้อง deploy GAS (หน้า `/exec` v2.5 เก็บ `video` ไว้ใน `extra` แล้วเขียนกลับครบ แต่แสดงเป็นแถวข้อความดิบ "video" แทนปุ่ม และขึ้นคำเตือน "ไม่รู้จัก field" ตอนนำเข้า) · e2e `ftest7.py` · ❓ ยังไม่ได้ทดสอบบน iPhone ว่าแตะแล้วเปิดแอป TikTok/YouTube
 - v2.5.0 ✅ โค้ด / ✅ ทดสอบ iPhone (2026-11-06) **target GitHub Pages = ลิงก์หลัก** แก้ Known Issue 23, 24: `Code.gs` มี JSON API (`doPost`, `doGet?api=getTrip`) · `app.js` แยก `IN_GAS` / `IS_PAGES` / `HAS_SERVER` และ `rpc()` ใช้ `fetch` บน Pages · `build.py` สร้าง `dist/pages/` · workflow deploy · e2e `ftest6.py` · CORS ทดสอบกับ deployment จริงแล้ว (อ่านอย่างเดียว)
 - v2.4.0 ✅ (2026-11-05) template v2 (กฎสำหรับ Claude + ตัวอย่างครบ ทดสอบด้วย Claude ตัวใหม่ทั้งก่อน/หลัง ผลอยู่ใน README) · seed = สำเนาไฟล์บน Drive · id ทริปจาก title ละติน + ลิงก์เก่ายังเปิดได้ · การ์ด "ตอนนี้ + ถัดไป" (ดู Phase 4)
 - v2.3.0 ✅ ปรับ UI ตามที่ Kody ขอ (2026-11-05): ช่องเขตเวลาแนะนำเขตเวลาทั้งโลกจาก `Intl.supportedValuesOf('timeZone')` (browser ที่ไม่มีใช้ `TZ` 14 เมืองเดิม) พร้อม label UTC ณ วันเริ่มทริป (`tzOptions`, cache ต่อวันที่) ยังเป็นช่องพิมพ์ + `<datalist>` · ป้าย field `notes` = "สถานที่น่าสนใจรอบๆ / หมายเหตุ" (EN "Nearby places / notes") คีย์ `notes:` ใน md ไม่เปลี่ยน · ชื่อแท็บ `Trip Plans - วางแผนเที่ยว` คงที่ทุกภาษา (Artifact: `<title>` ใน `build.py` + `D.title` ใน `render()` · GAS: `setTitle()` ใน `Code.gs`) · ปุ่ม X ปิดแถบ sync (ดู 2c ข้อ 5)
@@ -262,6 +264,7 @@ dashboard + ปฏิทินรายเดือน · เมนูตาม 
 ปุ่ม "แผนใหม่" (เปล่า / คัดลอกโครง) · preview markdown ข้างช่องแก้ · ตรวจข้อมูลแล้วเตือน (เวลาซ้อน/ไม่เรียง, วันที่นอกช่วงทริป, วันไม่มี route) · ปุ่มเรียงตามเวลา · undo/redo หลายขั้น · field timezone ต่อรายการ (แก้ปัญหาข้อ 6.1) · เพิ่มคำแปล `_en` ให้ field ที่ยังไม่มี (must/caution/flights/stays)
 
 **Phase 4 🟡 — ใช้ระหว่างเที่ยว** (Kody ตัดสิน 2026-11-05: ทำแบบย่อก่อนทริป = การ์ด "ถัดไป" + template v2 ส่วนอื่นหลังทริป)
+- ✅ (v2.6.0) ลิงก์คลิปต่อสถานที่ (ดู v2.6.0 ใต้ Phase 2)
 - ✅ (v2.4.0) การ์ด "ตอนนี้ + ถัดไป" บนสุดของแท็บภาพรวมและแท็บของวันนี้ ผู้ชมทุกคนเห็น: เวลาท้องถิ่น + รายการที่เริ่มไปแล้วล่าสุด · รายการถัดไป (เวลา ชื่อ อีกกี่นาที transport หลัก + chip สาย cost ปุ่มแผนที่) แตะแล้วไปแท็บวันนั้น เปิดรายการ เลื่อนไปกลางจอ · หลังรายการสุดท้าย "วันนี้ครบทุกรายการแล้ว · พรุ่งนี้ (Day N) เริ่ม …" · วันสุดท้ายหลังรายการสุดท้าย / ก่อนทริป / หลังทริป / โหมดแก้ไข ไม่แสดง · รีเฟรชทุก 60 วินาทีและตอนกลับมาที่แท็บ (ในเครื่อง ไม่เรียก server) · ข้อความสองภาษาอยู่ใน `NC` (`/*noT*/`)
 - ⏳ ติ๊กรายการ "ไปแล้ว / ข้าม" · แนบไฟล์ต่อแผน/รายการ (QR TWAC, ตั๋ว, ใบจอง): **บน GAS เก็บในโฟลเดอร์ Drive ของ Kody** อัปโหลดได้เฉพาะเจ้าของ (ตรวจรหัสแก้ไขฝั่ง server) ❓ ยังไม่ได้เลือกว่าผู้ชมเปิดไฟล์ผ่าน server หรือผ่านลิงก์แชร์ของ Drive · บน Artifact ใช้ capability `assets` หรือซ่อนฟีเจอร์ · ลดการพึ่ง CDN (ฝัง `marked` ลงในหน้าตอน build ได้ ฟอนต์ยังต้องโหลดจาก Google Fonts)
 
