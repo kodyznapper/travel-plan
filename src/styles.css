@@ -246,7 +246,10 @@ button{font:inherit}
 .it-detail dl{margin:0;display:grid;gap:10px}
 .it-detail dt{font-size:12.5px;color:var(--dim);font-weight:500}
 .it-detail dd{margin:0;font-size:15px;color:var(--text);line-height:1.55}
-.it-detail .maplink{margin-top:12px}
+.it-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.vidlink .ic{width:16px;height:16px;color:var(--cy)}
+.badge.vid{color:var(--cy)}
+.badge.vid .ic{width:13px;height:13px}
 .now{display:grid;grid-template-columns:var(--tc) var(--nc) minmax(0,1fr);column-gap:8px;align-items:center;margin:-2px 0 10px}
 .now-t{font:700 13px var(--m);color:var(--or);text-align:right}
 .now-dot{justify-self:center;width:12px;height:12px;border-radius:50%;background:var(--or);box-shadow:0 0 0 4px var(--or-soft)}
@@ -438,5 +441,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cy);box-
 .nc-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14px;color:var(--body)}
 .nc-cost{font-size:13.5px;color:var(--dim)}
 .nc-done{font-size:14px;color:var(--body)}
+.nc-links{display:flex;flex-wrap:wrap;gap:8px}
 .nc-map{justify-self:start}
 .nc-map .ic{width:16px;height:16px}

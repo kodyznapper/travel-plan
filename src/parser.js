@@ -12,7 +12,7 @@
   var STATUS_WORDS = { confirmed: '✅', doc: '📄', web: '🔎', warn: '⚠️', unknown: '❓' };
   var TYPES = ['flight', 'train', 'bus', 'taxi', 'walk', 'hotel', 'food', 'cafe', 'market',
     'temple', 'museum', 'shopping', 'onsen', 'nature', 'nightlife', 'free', 'other'];
-  var ITEM_KEYS = ['en', 'zh', 'type', 'status', 'highlight', 'line', 'transport', 'transport_en', 'line_alt', 'transport_alt', 'transport_alt_en', 'cost', 'cost_en', 'notes', 'notes_en', 'map'];
+  var ITEM_KEYS = ['en', 'zh', 'type', 'status', 'highlight', 'line', 'transport', 'transport_en', 'line_alt', 'transport_alt', 'transport_alt_en', 'cost', 'cost_en', 'notes', 'notes_en', 'map', 'video'];
   var META_KEYS = ['title', 'title_en', 'subtitle', 'subtitle_en', 'country', 'country_native', 'start', 'end', 'timezone', 'travelers', 'style', 'style_en', 'version'];
   var DAY_KEYS = ['route', 'stay', 'summary', 'summary_en', 'theme_en'];
 
@@ -347,6 +347,15 @@
     if ((t.plan || '').trim()) o.push('# ' + SEC.plan, '', t.plan.trim(), '');
     return o.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
   }
+  /* video: clip links (TikTok / YouTube / ...) separated by | (also accepts " · " or spaces). Only http(s) URLs survive. */
+  var VIDEO_HOSTS = [['tiktok', /(^|\.)tiktok\.com$/], ['youtube', /(^|\.)(youtube\.com|youtu\.be)$/], ['instagram', /(^|\.)instagram\.com$/], ['facebook', /(^|\.)(facebook\.com|fb\.watch)$/]];
+  function videoLinks(str) {
+    return String(str || '').split(/\s*\|\s*|\s+·\s+|\s+/).filter(function (u) { return /^https?:\/\/[^\s<>"'`]+$/i.test(u); }).map(function (u) {
+      var host = u.replace(/^https?:\/\//i, '').split(/[\/?#:]/)[0].toLowerCase(), kind = 'link';
+      VIDEO_HOSTS.forEach(function (h) { if (kind === 'link' && h[1].test(host)) kind = h[0]; });
+      return { url: u, kind: kind };
+    });
+  }
   function tableMd(cols, rows) {
     var h = '| ' + cols.map(function (c) { return c[0]; }).join(' | ') + ' |';
     var s = '|' + cols.map(function () { return '---'; }).join('|') + '|';
@@ -357,7 +366,7 @@
   var api = {
     parse: parse, toMarkdown: toMarkdown, normStatus: normStatus, isDate: isDate, uid: uid, oneLine: oneLine,
     STATUS: STATUS, TYPES: TYPES, ITEM_KEYS: ITEM_KEYS, META_KEYS: META_KEYS, FLIGHT_COLS: FLIGHT_COLS, STAY_COLS: STAY_COLS,
-    emptyTrip: emptyTrip, LINES: LINES, parseLines: parseLines
+    emptyTrip: emptyTrip, LINES: LINES, parseLines: parseLines, videoLinks: videoLinks
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.TP = api;
 })(this);

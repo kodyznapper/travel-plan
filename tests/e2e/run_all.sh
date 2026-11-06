@@ -13,4 +13,5 @@ python3 tests/e2e/ftest3.py
 python3 tests/e2e/ftest4.py
 python3 tests/e2e/ftest5.py
 python3 tests/e2e/ftest6.py
+python3 tests/e2e/ftest7.py
 echo "ALL TESTS PASSED"
