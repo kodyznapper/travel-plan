@@ -6,6 +6,8 @@ Outputs
   dist/gas/index.html        same page for Google Apps Script. No embedded seed: the plan is read from Drive via google.script.run.
   dist/gas/Code.gs           server (gas/Code.gs) with the seed embedded for setup()
   dist/gas/appsscript.json   manifest (optional to paste; the deploy dialog sets the same options)
+  dist/pages/index.html      same page for GitHub Pages. No embedded seed: the plan is read from Drive through the
+                             Apps Script /exec JSON API (URL in pages/config.json). Deployed by .github/workflows/pages.yml
 """
 import json, pathlib, shutil
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -13,14 +15,14 @@ def js(s): return json.dumps(s, ensure_ascii=False).replace('<', '\\u003c')   # 
 rd = lambda p: (ROOT / p).read_text(encoding='utf8')
 seeds = [p.read_text(encoding='utf8') for p in sorted((ROOT / 'data/seed').glob('*.md'))]
 
-def page(seed_list, target):
+def page(seed_list, target, api=''):
     return f'''<!doctype html>
 <html lang="th" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0E1116">
-<title>Trip Plans - วางแผนเที่ยว</title>
+{'<meta name="robots" content="noindex, nofollow">' + chr(10) if target == 'pages' else ''}<title>Trip Plans - วางแผนเที่ยว</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -32,7 +34,7 @@ def page(seed_list, target):
 <header class="topbar" id="topbar"></header>
 <main id="app"></main>
 <div id="toasts" class="toasts" aria-live="polite"></div>
-<script>window.TP_TARGET={js(target)};window.TP_SEED={js(seed_list)};window.TP_TEMPLATE={js(rd('data/travel-plan-template.md'))};</script>
+<script>window.TP_TARGET={js(target)};window.TP_API={js(api)};window.TP_SEED={js(seed_list)};window.TP_TEMPLATE={js(rd('data/travel-plan-template.md'))};</script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script>
 {rd('src/parser.js')}
@@ -62,3 +64,9 @@ write('dist/gas/index.html', gas_html)
 write('dist/gas/Code.gs', code)
 shutil.copyfile(ROOT / 'gas/appsscript.json', ROOT / 'dist/gas/appsscript.json')
 print(f'built dist/gas/  index.html {len(gas_html)//1024} KB · Code.gs {len(code)//1024} KB')
+
+api = json.loads(rd('pages/config.json'))['api']
+assert api.startswith('https://script.google.com/macros/s/') and api.endswith('/exec'), 'pages/config.json: api must be the /exec URL'
+pages_html = page([], 'pages', api)
+write('dist/pages/index.html', pages_html)
+print(f'built dist/pages/index.html  {len(pages_html)//1024} KB')
