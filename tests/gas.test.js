@@ -11,7 +11,7 @@ function throws(fn, code) { try { fn(); return false; } catch (e) { return Strin
 // ---- setup() ----
 let st = emptyState({ props: { EDIT_KEY: KEY } });
 let gs = load(st);
-check('public functions are only doGet/getTrip/checkKey/saveTrip/setup', publicNames(gs).sort().join() === 'checkKey,doGet,getTrip,saveTrip,setup');
+check('public functions are only doGet/doPost/getTrip/checkKey/saveTrip/setup', publicNames(gs).sort().join() === 'checkKey,doGet,doPost,getTrip,saveTrip,setup');
 check('build embedded the seed in Code.gs', gs.SEED_MD === SEED);
 check('getTrip before setup -> NOT_SET_UP', throws(() => gs.getTrip(''), 'NOT_SET_UP'));
 check('setup refuses anonymous callers (web app visitors)', throws(() => gs.setup(), 'Run setup()'));
@@ -81,6 +81,33 @@ check('the next save backs up the real previous plan', Object.values(st3.files).
 st3.files[st3.props.TRIP_FILE_ID].content = ''; st3.activeUser = st3.owner;
 const out3 = g3.setup(); st3.activeUser = '';
 check('setup refills an empty plan file from the seed', /was empty/.test(out3) && st3.files[st3.props.TRIP_FILE_ID].content === SEED && Object.keys(st3.files).filter(k => st3.files[k].parent === 'root').length === 1);
+
+// ---- JSON API for the GitHub Pages front end (doGet ?api= / doPost) ----
+const st5 = emptyState({ props: { EDIT_KEY: KEY }, activeUser: 'owner@example.com' }); const g5 = load(st5); g5.setup(); st5.activeUser = '';
+const post = (body) => { const o = g5.doPost({ postData: { contents: typeof body === 'string' ? body : JSON.stringify(body) } }); return { mime: o.mime, body: JSON.parse(o.getContent()) }; };
+const gget = (q) => { const o = g5.doGet({ parameter: q }); return o.__text ? JSON.parse(o.getContent()) : 'html'; };
+check('doGet without ?api still serves the page', gget({}) === 'html' && g5.doGet() !== undefined);
+const ag = gget({ api: 'getTrip' });
+check('GET ?api=getTrip: viewer copy as JSON (no planning section)', ag.ok && ag.ok.owner === false && ag.ok.md.indexOf('# วางแผน') < 0 && ag.ok.md.indexOf('# Day 1') >= 0);
+check('GET ?api=getTrip ignores a key in the URL (keys only go in a POST body)', gget({ api: 'getTrip', key: KEY }).ok.owner === false);
+check('GET ?api=<anything else> -> BAD_REQUEST', gget({ api: 'saveTrip' }).error === 'BAD_REQUEST');
+const pv5 = post({ fn: 'getTrip', args: [''] });
+check('POST getTrip: JSON mime + viewer copy', pv5.mime === 'JSON' && pv5.body.ok.owner === false);
+const po5 = post({ fn: 'getTrip', args: [KEY] });
+check('POST getTrip with key: full file', po5.body.ok.owner === true && po5.body.ok.md === SEED);
+check('POST checkKey right/wrong', post({ fn: 'checkKey', args: [KEY] }).body.ok.ok === true && post({ fn: 'checkKey', args: ['x'] }).body.ok.ok === false);
+st5.cache = {};
+const md5 = SEED.replace(/(# Day 1[^\n]*· )([^\n]+)/, '$1API THEME');
+check('POST saveTrip wrong key -> {error: BAD_KEY}, file unchanged', post({ fn: 'saveTrip', args: [md5, 'nope', po5.body.ok.version, false] }).body.error === 'BAD_KEY' && st5.files[st5.props.TRIP_FILE_ID].content === SEED);
+st5.cache = {};
+const ps5 = post({ fn: 'saveTrip', args: [md5, KEY, po5.body.ok.version, false] });
+check('POST saveTrip right key -> saved + new version', ps5.body.ok.ok === true && st5.files[st5.props.TRIP_FILE_ID].content === md5 && ps5.body.ok.version !== po5.body.ok.version);
+check('POST saveTrip stale version -> conflict', post({ fn: 'saveTrip', args: [SEED, KEY, po5.body.ok.version, false] }).body.ok.conflict === true);
+check('POST private helper (name_) -> BAD_REQUEST', post({ fn: 'viewerMd_', args: [SEED] }).body.error === 'BAD_REQUEST' && post({ fn: 'setup', args: [] }).body.error === 'BAD_REQUEST');
+check('POST prototype names -> BAD_REQUEST', post({ fn: 'constructor', args: [] }).body.error === 'BAD_REQUEST' && post({ fn: 'hasOwnProperty', args: ['x'] }).body.error === 'BAD_REQUEST');
+check('POST junk body / too many args -> BAD_REQUEST', post('not json').body.error === 'BAD_REQUEST' && post({ fn: 'getTrip', args: [1, 2, 3, 4, 5] }).body.error === 'BAD_REQUEST' && post({ fn: 'getTrip', args: 'x' }).body.error === 'BAD_REQUEST');
+for (let i = 0; i < 10; i++) post({ fn: 'checkKey', args: ['g' + i] });
+check('POST lockout: LOCKED as an error, reading still works', post({ fn: 'checkKey', args: [KEY] }).body.error === 'LOCKED' && gget({ api: 'getTrip' }).ok.md.length > 0);
 
 // ---- code fences keep "# " lines that are not headings ----
 const fenced = SEED + '\n# ข้อมูลอ้างอิง\n\n```\n# วางแผน\n```\n';

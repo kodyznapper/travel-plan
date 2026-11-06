@@ -50,8 +50,10 @@
   function icon(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.other) + '</svg>'; }
 
   var LANG = 'th';
-  var APP_VERSION = 'v2.4.0';
-  var IS_GAS = window.TP_TARGET === 'gas';   // Google Apps Script build: plan lives in Drive, read/written through google.script.run
+  var APP_VERSION = 'v2.5.0';
+  var IN_GAS = window.TP_TARGET === 'gas';       // Google Apps Script page: runs inside Google's iframe, talks to Code.gs through google.script.run
+  var IS_PAGES = window.TP_TARGET === 'pages';   // GitHub Pages page: a normal top-level page (iPhone keeps its storage), talks to the same Code.gs with fetch(window.TP_API)
+  var HAS_SERVER = IN_GAS || IS_PAGES;           // plan lives in Drive (one plan per deployment), owner saves with the edit key
   var CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
 
   var EXACT = {"เสร็จ": "Done", "แก้ไข": "Edit", "ภาพรวม": "Overview", "เตรียมของ": "Packing", "ข้อมูลอ้างอิง": "Reference", "วางแผน": "Planning", "วันที่": "Date", "เที่ยวบิน": "Flight", "เส้นทาง": "Route", "สถานะ": "Status", "ออก": "Departs", "ถึง": "Arrives", "หมายเหตุ": "Notes", "ชื่อ": "Name", "เช็กอิน": "Check-in", "เช็กเอาต์": "Check-out", "ที่อยู่": "Address", "ข้อความ": "Text", "หัวข้อ": "Section", "เนื้อหา": "Content", "สรุปวัน": "Day summary", "เวลา": "Time", "ประเภท": "Type", "หมวด": "Group", "ชื่อทริป": "Trip name", "เมืองหลัก": "Main city", "ประเทศ": "Country", "เวอร์ชัน": "Version", "จำนวนคน": "Travelers", "เขตเวลา": "Time zone", "วันเริ่ม": "Start date", "วันสิ้นสุด": "End date", "ธีมของวัน": "Day theme", "ห้ามพลาดวันนี้": "Must-do today", "ข้อควรระวัง": "Watch out", "คืนนี้นอนที่": "Tonight’s stay", "ปลายทางคืนนี้": "Tonight’s destination", "เดินทางหลัก": "Main transport", "เดินทางรอง": "Alternative transport", "เวลา / ค่าใช้จ่าย": "Time / cost", "สถานที่น่าสนใจรอบๆ / หมายเหตุ": "Nearby places / notes", "ย่อทั้งหมด": "Collapse all", "ขยายทั้งหมด": "Expand all", "ไม่ระบุ": "Not set", "รายการใหม่": "New item", "หัวข้อใหม่": "New section", "หมวดใหม่": "New group", "บันทึกไฟล์แล้ว": "File saved", "คัดลอกแล้ว": "Copied", "เลือกข้อความแล้ว กดคัดลอกเอง": "Text selected — press copy yourself", "เขียนทับแผนแล้ว": "Plan overwritten", "นำเข้าแผนแล้ว": "Plan imported", "รีเซ็ตแล้ว": "Reset done", "ลบแผนแล้ว": "Plan deleted", "ลบแล้ว": "Deleted", "เปลี่ยนเป็นธีมสว่าง": "Switch to light theme", "เปลี่ยนเป็นธีมมืด": "Switch to dark theme", "ชื่อประเทศภาษาท้องถิ่น": "Country name (local language)", "รูปแบบการเดินทาง": "Travel style", "ลิงก์ Google Maps": "Google Maps link", "รายการสำคัญ": "Mark as important", "ชื่อ (ไทย)": "Name (Thai)", "เนื้อหา (markdown)": "Content (markdown)", "ชื่อหมวด": "Group name", "หมายเหตุของหมวด (markdown)": "Group notes (markdown)", "เส้นทาง (คั่นด้วย →)": "Route (separate with →)", "เพิ่มวัน": "Add day", "เพิ่มเที่ยวบิน": "Add flight", "เพิ่มที่พัก": "Add stay", "เพิ่มหัวข้อ": "Add section", "เพิ่มรายการ": "Add item", "เพิ่มหมวด": "Add group", "เพิ่มงาน": "Add task", "เว้นว่าง = ค้นจากชื่อจีน · ใส่ - = ไม่มีลิงก์": "Leave blank = search by Chinese name · enter - = no link", "09:00 หรือ 09:00–10:30": "09:00 or 09:00–10:30", "中文 / ชื่อท้องถิ่น": "中文 / local name", "สายที่ใช้วันนี้": "Lines used today", "สายรถไฟ / MRT (เดินทางหลัก)": "Transit line (main)", "สายรถไฟ / MRT (เดินทางรอง)": "Transit line (alternative)", "BL, G, AIRPORT หรือ ชื่อ#RRGGBB": "BL, G, AIRPORT or Name#RRGGBB", "ภาษา / Language": "Language", "แผนเที่ยว": "Trip Plans", "ที่พัก": "Stay", "(ไม่มีชื่อ)": "(untitled)", "จบแล้ว": "Finished", "ธีม": "Theme", "ตั้งค่า": "Settings", "เปิดโหมดเจ้าของแล้ว": "Owner mode on", "ออกจากโหมดเจ้าของแล้ว": "Left owner mode", "</h2><p>กดดาวน์โหลด ถ้าไม่มีไฟล์ออกมา ให้คัดลอกข้อความด้านล่างไปบันทึกเป็นไฟล์แทน</p><textarea class=\"copybox\" readonly>": "</h2><p>Press Download. If no file appears, copy the text below and save it as a file instead.</p><textarea class=\"copybox\" readonly>", "</p><div class=\"tools\"><button class=\"btn pri\" data-act=\"reload-remote\">ลองใหม่</button></div></div>": "</p><div class=\"tools\"><button class=\"btn pri\" data-act=\"reload-remote\">Try again</button></div></div>", "<div class=\"card empty\" aria-busy=\"true\"><h2>กำลังโหลดแผน…</h2><p>ดึงแผนล่าสุดจาก Drive</p></div>": "<div class=\"card empty\" aria-busy=\"true\"><h2>Loading the plan…</h2><p>Fetching the latest plan from Drive</p></div>", "<div class=\"card empty\"><h2>โหลดแผนไม่ได้</h2><p>": "<div class=\"card empty\"><h2>Couldn’t load the plan</h2><p>", "<div class=\"mbtns\"><button class=\"btn\" data-res=\"cancel\">ยกเลิก</button><button class=\"btn pri\" data-key-ok>ยืนยัน</button></div>": "<div class=\"mbtns\"><button class=\"btn\" data-res=\"cancel\">Cancel</button><button class=\"btn pri\" data-key-ok>Confirm</button></div>", "<div class=\"set\"><div><b>รหัสแก้ไข</b><p class=\"muted\">ต้องใส่ก่อนบันทึกขึ้น Drive</p></div><button class=\"btn sm pri\" data-set=\"key\">ใส่รหัส</button></div>": "<div class=\"set\"><div><b>Edit key</b><p class=\"muted\">Required before saving to Drive</p></div><button class=\"btn sm pri\" data-set=\"key\">Enter key</button></div>", "<div class=\"set\"><div><b>รหัสแก้ไข</b><p class=\"muted\">ยืนยันแล้ว จำไว้ในเครื่องนี้</p></div><button class=\"btn sm\" data-set=\"key-forget\">ลืมรหัสในเครื่องนี้</button></div>": "<div class=\"set\"><div><b>Edit key</b><p class=\"muted\">Confirmed and remembered on this device</p></div><button class=\"btn sm\" data-set=\"key-forget\">Forget key on this device</button></div>", "<div class=\"set\"><div><b>โหมดเจ้าของ</b><p class=\"muted\">เปิดโหมดวางแผนและการแก้ไข แก้แล้วกด “บันทึกขึ้น Drive” คนอื่นจึงจะเห็น</p></div><button class=\"btn sm\" data-set=\"owner-off\">ออกจากโหมดเจ้าของ</button></div>": "<div class=\"set\"><div><b>Owner mode</b><p class=\"muted\">Unlocks planning mode and editing. Others see your edits after you press “Save to Drive”</p></div><button class=\"btn sm\" data-set=\"owner-off\">Leave owner mode</button></div>", "<h2>ทิ้งการแก้ไขในเครื่องนี้?</h2><p>การแก้ไขที่ยังไม่บันทึกขึ้น Drive จะหายไป แล้วโหลดแผนจาก Drive มาแทน</p><div class=\"mbtns\"><button class=\"btn\" data-res=\"no\">ยกเลิก</button><button class=\"btn danger\" data-res=\"yes\">ทิ้งการแก้ไข</button></div>": "<h2>Discard edits on this device?</h2><p>Edits not saved to Drive will be lost, and the plan will be reloaded from Drive</p><div class=\"mbtns\"><button class=\"btn\" data-res=\"no\">Cancel</button><button class=\"btn danger\" data-res=\"yes\">Discard edits</button></div>", "<h2>รหัสแก้ไข</h2><p>ใส่รหัสที่ตั้งไว้ใน Script Properties (EDIT_KEY) ของ Apps Script รหัสจะจำไว้ในเบราว์เซอร์เครื่องนี้</p>": "<h2>Edit key</h2><p>Enter the key set in the Apps Script Script Properties (EDIT_KEY). It is remembered in this browser.</p>", "<h2>แผนบน Drive ถูกแก้หลังจากที่คุณโหลดมา</h2><p>ถ้าบันทึกทับ ของที่แก้บน Drive จะหายจากไฟล์หลัก (ยังมีสำเนาในโฟลเดอร์ backup)</p><div class=\"mbtns col\"><button class=\"btn pri\" data-res=\"force\">บันทึกทับด้วยของในเครื่อง</button><button class=\"btn\" data-res=\"load\">โหลดของบน Drive (ทิ้งของในเครื่อง)</button><button class=\"btn\" data-res=\"cancel\">ยกเลิก</button></div>": "<h2>The plan on Drive changed after you loaded it</h2><p>If you overwrite it, the changes on Drive leave the main file (a copy stays in the backup folder)</p><div class=\"mbtns col\"><button class=\"btn pri\" data-res=\"force\">Overwrite with my version</button><button class=\"btn\" data-res=\"load\">Load the Drive version (discard mine)</button><button class=\"btn\" data-res=\"cancel\">Cancel</button></div>", "<h2>แผนบน Drive มีเวอร์ชันใหม่</h2><p>ในเครื่องนี้มีการแก้ไขที่ยังไม่ได้บันทึกขึ้น Drive จะใช้อันไหน</p><div class=\"mbtns col\"><button class=\"btn pri\" data-res=\"new\">ใช้เวอร์ชันบน Drive</button><button class=\"btn\" data-res=\"keep\">เก็บของในเครื่อง</button></div>": "<h2>Drive has a newer version of this plan</h2><p>This device has edits that aren’t saved to Drive yet. Which one do you want to use?</p><div class=\"mbtns col\"><button class=\"btn pri\" data-res=\"new\">Use the Drive version</button><button class=\"btn\" data-res=\"keep\">Keep local version</button></div>", "<span>โหมดแก้ไข · เก็บในเครื่องนี้ก่อน กด “บันทึกขึ้น Drive” เมื่อพร้อมให้คนอื่นเห็น</span></div>": "<span>Edit mode · changes stay on this device until you press “Save to Drive”</span></div>", "กำลังติดต่อ Drive…": "Talking to Drive…", "ดาวน์โหลด": "Download", "ดาวน์โหลดไม่ได้ ใช้ปุ่มคัดลอกแทน": "Download failed. Use Copy instead", "ตรงกับแผนบน Drive": "In sync with the plan on Drive", "ติดต่อเซิร์ฟเวอร์ไม่ได้": "Can’t reach the server", "ทิ้งการแก้ไข": "Discard edits", "บันทึกขึ้น Drive": "Save to Drive", "บันทึกขึ้น Drive แล้ว": "Saved to Drive", "มีการบันทึกอื่นอยู่ ลองใหม่อีกครั้ง": "Another save is in progress. Try again", "มีการแก้ไขที่ยังไม่บันทึกขึ้น Drive (คนอื่นยังเห็นเวอร์ชันเดิม)": "Edits not saved to Drive yet (others still see the old version)", "ยืนยันรหัสแล้ว": "Key confirmed", "รหัสแก้ไข": "Edit key", "รหัสแก้ไขไม่ถูกต้อง": "Wrong edit key", "ลบรหัสออกจากเครื่องนี้แล้ว": "Key removed from this device", "เซิร์ฟเวอร์ยังไม่ได้ตั้งค่า (ยังไม่ได้รัน setup)": "The server isn’t set up yet (setup has not been run)", "แผนหลักอยู่บน Drive ของเจ้าของ การแก้ไขที่ยังไม่บันทึกและการติ๊กเก็บในเครื่องนี้": "The main plan lives in the owner’s Drive. Unsaved edits and checkmarks are kept on this device", "แผนโหลดจาก Drive ของเจ้าของ การติ๊กเก็บในเครื่องนี้เท่านั้น": "The plan is loaded from the owner’s Drive. Checkmarks are stored on this device only", "โหลดแผนฉบับเต็มไม่ได้ ยังไม่ได้บันทึก": "Couldn’t load the full plan. Nothing was saved", "โหลดแผนล่าสุดจาก Drive ไม่ได้ แสดงสำเนาในเครื่อง": "Couldn’t load the latest plan from Drive. Showing the copy on this device", "ใส่รหัสผิดหลายครั้ง ระบบล็อกไว้ 10 นาที": "Too many wrong keys. Locked for 10 minutes", "ไฟล์แผนไม่ถูกต้อง": "The plan file isn’t valid", "ไฟล์แผนบน Drive ว่างเปล่า": "The plan file on Drive is empty", "Drive ไม่ได้เก็บไฟล์ที่บันทึก ลองใหม่อีกครั้ง": "Drive didn’t keep the saved file. Try again", "ใช้แผนนี้เป็นแผนบน Drive": "Use this plan on Drive", "โหลดแผนจาก Drive ไม่ได้: ": "Couldn’t load the plan from Drive: ", "ลองใหม่": "Try again", " aria-label=\"ปิดแถบนี้\" title=\"ปิดแถบนี้\">": " aria-label=\"Close this bar\" title=\"Close this bar\">", "แผนนี้อยู่ในเครื่องนี้เท่านั้น ยังไม่ได้อยู่บน Drive (คนอื่นไม่เห็น)": "This plan is only on this device, not on Drive (others can’t see it)", "ใช้แผนนี้บน Drive แล้ว ทุกคนที่เปิดลิงก์จะเห็นแผนนี้": "This plan is now on Drive. Everyone with the link will see it", "<h2>ใช้แผนนี้เป็นแผนบน Drive?</h2><p>แผนบน Drive ตอนนี้จะถูกแทนที่ด้วยแผนนี้ (ของเดิมมีสำเนาในโฟลเดอร์ backup) แล้วทุกคนที่เปิดลิงก์จะเห็นแผนนี้</p><div class=\"mbtns\"><button class=\"btn\" data-res=\"no\">ยกเลิก</button><button class=\"btn pri\" data-res=\"yes\">ใช้แผนนี้</button></div>": "<h2>Use this plan on Drive?</h2><p>The plan on Drive now will be replaced by this one (the old one is copied to the backup folder), and everyone with the link will see this plan</p><div class=\"mbtns\"><button class=\"btn\" data-res=\"no\">Cancel</button><button class=\"btn pri\" data-res=\"yes\">Use this plan</button></div>"};
@@ -183,7 +185,7 @@
   function lsGet(k) { try { var v = localStorage.getItem(k); return v == null ? null : JSON.parse(v); } catch (e) { storageOK = false; return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { storageOK = false; return false; } }
   var S = { trips: [], settings: { theme: 'dark', planning: false, lang: 'th', owner: false }, edit: false, open: {}, cal: null, calOpen: null, cur: null, tab: 'overview', focus: null, drawn: {},
-    remote: { state: IS_GAS ? 'loading' : 'off', busy: false, at: 0, err: '', first: true } };
+    remote: { state: HAS_SERVER ? 'loading' : 'off', busy: false, at: 0, err: '', first: true } };
   var saveT = null;
   function saveSoon() { clearTimeout(saveT); saveT = setTimeout(saveNow, 300); }
   function saveNow() { clearTimeout(saveT); lsSet(K.trips, S.trips); }
@@ -232,7 +234,7 @@
     if (savedSet.owner === undefined) savedSet.owner = !!savedSet.planning;   // anyone who already used planning mode before owner mode existed is the owner
     S.settings = Object.assign({ theme: 'dark', planning: false, lang: 'th', owner: false }, savedSet);
     var conflicts = [];
-    if (!IS_GAS && lsGet(K.seed) !== SEED_HASH) {   // GAS has no seed: the plan comes from Drive (loadRemote)
+    if (!HAS_SERVER && lsGet(K.seed) !== SEED_HASH) {   // GAS has no seed: the plan comes from Drive (loadRemote)
       seedTrips().forEach(function (t) {
         // a renamed seed (same start date) still replaces its old copy, keeping its id (links) and the viewer's ticks
         var ex = S.trips.filter(function (x) { return sameTrip(x, t); })[0] || S.trips.filter(function (x) { return x.origin === 'seed' && x.meta.start === t.meta.start; })[0];
@@ -254,10 +256,18 @@
 
   /* ---------------- server (Google Apps Script) ----------------
      One plan per deployment, stored as .md in the owner's Drive (gas/Code.gs).
-     Reading is open to everyone; saving needs the edit key, which the server checks. */
-  function hasRpc() { return !!(window.google && window.google.script && window.google.script.run); }
+     Reading is open to everyone; saving needs the edit key, which the server checks.
+     GAS page: google.script.run. Pages page: POST {fn, args} to the /exec URL (text/plain = no CORS preflight), answer {ok} or {error}. */
+  var API_URL = String(window.TP_API || '');
+  function hasRpc() { return IS_PAGES ? /^https:\/\//.test(API_URL) && typeof fetch === 'function' : !!(window.google && window.google.script && window.google.script.run); }
   function rpc(name) {
     var args = Array.prototype.slice.call(arguments, 1);
+    if (IS_PAGES) {
+      if (!hasRpc()) return Promise.reject(new Error('NO_SERVER'));
+      return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: name, args: args }), cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP_' + r.status); return r.json(); })
+        .then(function (o) { if (!o || o.error) throw new Error(String((o && o.error) || 'NO_ANSWER')); return o.ok; });
+    }
     return new Promise(function (res, rej) {
       if (!hasRpc()) { rej(new Error('NO_SERVER')); return; }
       var r = window.google.script.run.withSuccessHandler(res).withFailureHandler(function (e) { rej(e instanceof Error ? e : new Error(String((e && e.message) || e))); });
@@ -280,7 +290,7 @@
   function serverTrip() { return S.trips.filter(function (t) { return t.origin === 'server'; })[0] || null; }
   function asServer(t, r) { t.origin = 'server'; t.remoteVersion = r.version; t.remoteFull = !!r.owner; return t; }
   function loadRemote() {
-    if (!IS_GAS) return Promise.resolve();
+    if (!HAS_SERVER) return Promise.resolve();
     S.remote.busy = true; refreshSyncBar();
     return rpc('getTrip', editKey()).then(function (r) {
       try { return applyRemote(r); } catch (e) { remoteFail(e); }   // an error here used to vanish and leave the page "loading" forever
@@ -369,7 +379,7 @@
     });
   }
   function syncBarHtml(t) {
-    if (!IS_GAS || !S.settings.planning || !t) return '';
+    if (!HAS_SERVER || !S.settings.planning || !t) return '';
     var busy = S.remote.busy, dis = busy ? ' disabled' : '', local = t.origin !== 'server';
     var promote = '<button class="btn sm pri" data-act="promote"' + dis + '>' + icon('upload') + '<span>' + T('ใช้แผนนี้เป็นแผนบน Drive') + '</span></button>';
     if (local || (!busy && S.remote.state === 'error')) syncHide(false);
@@ -439,8 +449,8 @@
         var byDate = S.trips.filter(function (t) { return t.meta.start === r.id.slice(-10); });
         if (byDate.length === 1) trip = byDate[0];
       }
-      if (!trip && IS_GAS) trip = serverTrip();   // one plan per deployment: its id differs between browsers (made from the title on first load), so any trip link opens it
-      var waiting = IS_GAS && S.remote.state === 'loading' && !serverTrip();   // deep link on a first visit: keep the hash until Drive answers
+      if (!trip && HAS_SERVER) trip = serverTrip();   // one plan per deployment: its id differs between browsers (made from the title on first load), so any trip link opens it
+      var waiting = HAS_SERVER && S.remote.state === 'loading' && !serverTrip();   // deep link on a first visit: keep the hash until Drive answers
       if (!trip) { if (!waiting) history.replaceState(null, '', '#home'); r = { view: 'home' }; }
     }
     if (!trip) S.edit = false;
@@ -495,7 +505,7 @@
     var ongoing = list.filter(function (x) { return x.s.status === 'ongoing'; })[0];
     var banner = ongoing ? '<a class="now-banner" href="#' + esc(ongoing.t.id) + (ongoing.s.dayIdx >= 0 ? '--d' + (ongoing.s.dayIdx + 1) : '') + '">' + icon('clock') + T('<span>กำลังเที่ยว ') + esc(L(ongoing.t.meta, 'title')) + T(' · วันที่ ') + ongoing.s.k + T(' จาก ') + ongoing.s.total + T(' — เปิดแผนวันนี้</span></a>') : '';
     var cards = list.length ? list.map(function (x) { return tripCard(x.t, x.s, x.i); }).join('')
-      : IS_GAS ? gasEmptyHtml()
+      : HAS_SERVER ? gasEmptyHtml()
       : T('<div class="card empty"><h2>ยังไม่มีแผน</h2><p>นำเข้าไฟล์ .md ที่สร้างตาม template เพื่อเริ่มใช้งาน</p><div class="tools"><button class="btn pri" data-act="import">') + icon('upload') + T('<span>นำเข้าแผน</span></button><button class="btn" data-act="template">') + icon('download') + '<span>Template (.md)</span></button></div></div>';
     if (S.calOpen == null) S.calOpen = window.matchMedia('(min-width:960px)').matches;
     if (!S.cal) S.cal = defaultCalMonth(list);
@@ -576,7 +586,7 @@
     else if (tab === 'ref') body = S.edit ? refEdit(t) : refView(t);
     else if (tab === 'plan') body = S.edit ? planEdit(t) : planView(t);
     else { var di = +tab.slice(1) - 1; body = S.edit ? dayEdit(t, di) : dayView(t, di, st); }
-    var gasT = IS_GAS && t.origin === 'server';
+    var gasT = HAS_SERVER && t.origin === 'server';
     var bar = (S.edit ? '<div class="editbar">' + icon('edit') + (gasT ? T('<span>โหมดแก้ไข · เก็บในเครื่องนี้ก่อน กด “บันทึกขึ้น Drive” เมื่อพร้อมให้คนอื่นเห็น</span></div>') : T('<span>โหมดแก้ไข · บันทึกอัตโนมัติในเครื่องนี้ ส่งออก .md หรือ .json เพื่อเก็บสำรอง</span></div>')) : '') + syncBarHtml(t);
     return T('<nav class="tabs" aria-label="ส่วนของแผน"><div class="tabs-in">') + tabs + '</div></nav><div class="wrap">' + bar + body + '</div>';
   }
@@ -1012,7 +1022,7 @@
   var dlPromise = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('downloads').catch(function () { return null; }) : Promise.resolve(null);
   function blobDownload(name, text) { var a = D.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' })); a.download = name; D.body.appendChild(a); a.click(); a.remove(); }
   function saveFile(name, text) {
-    if (IS_GAS) { showCopy(name, text, true); return Promise.resolve(); }   // the Apps Script iframe may block downloads silently, so always offer copy too
+    if (IN_GAS) { showCopy(name, text, true); return Promise.resolve(); }   // the Apps Script iframe may block downloads silently, so always offer copy too
     return dlPromise.then(function (dl) {
       if (dl) return dl.save({ filename: name, data: text }).then(function () { toast(T('บันทึกไฟล์แล้ว')); }, function (e) { if (e && e.code === 'declined') return; showCopy(name, text); });
       if (!window.claude) {
@@ -1108,15 +1118,15 @@
     return T('<h2>ตั้งค่า</h2>') +
       T('<div class="set"><div><b>ธีม</b><p class="muted">เริ่มต้นเป็นธีมมืด</p></div><div class="seg"><button data-set="theme" data-v="dark" aria-pressed="') + dark + T('">มืด</button><button data-set="theme" data-v="light" aria-pressed="') + !dark + T('">สว่าง</button></div></div>') +
       T('<div class="set"><div><b>ภาษา / Language</b></div>') + langSeg() + '</div>' +
-      (own && !IS_GAS ? T('<div class="set"><div><b>โหมดเจ้าของ</b><p class="muted">เปิดโหมดวางแผน การแก้ไข นำเข้า ส่งออก การแก้ไขอยู่ในเครื่องนี้เท่านั้น คนอื่นไม่เห็น</p></div><button class="btn sm" data-set="owner-off">ออกจากโหมดเจ้าของ</button></div>') : '') +
-      (own && IS_GAS ? T('<div class="set"><div><b>โหมดเจ้าของ</b><p class="muted">เปิดโหมดวางแผนและการแก้ไข แก้แล้วกด “บันทึกขึ้น Drive” คนอื่นจึงจะเห็น</p></div><button class="btn sm" data-set="owner-off">ออกจากโหมดเจ้าของ</button></div>') : '') +
-      (own && IS_GAS ? (editKey()
+      (own && !HAS_SERVER ? T('<div class="set"><div><b>โหมดเจ้าของ</b><p class="muted">เปิดโหมดวางแผน การแก้ไข นำเข้า ส่งออก การแก้ไขอยู่ในเครื่องนี้เท่านั้น คนอื่นไม่เห็น</p></div><button class="btn sm" data-set="owner-off">ออกจากโหมดเจ้าของ</button></div>') : '') +
+      (own && HAS_SERVER ? T('<div class="set"><div><b>โหมดเจ้าของ</b><p class="muted">เปิดโหมดวางแผนและการแก้ไข แก้แล้วกด “บันทึกขึ้น Drive” คนอื่นจึงจะเห็น</p></div><button class="btn sm" data-set="owner-off">ออกจากโหมดเจ้าของ</button></div>') : '') +
+      (own && HAS_SERVER ? (editKey()
         ? T('<div class="set"><div><b>รหัสแก้ไข</b><p class="muted">ยืนยันแล้ว จำไว้ในเครื่องนี้</p></div><button class="btn sm" data-set="key-forget">ลืมรหัสในเครื่องนี้</button></div>')
         : T('<div class="set"><div><b>รหัสแก้ไข</b><p class="muted">ต้องใส่ก่อนบันทึกขึ้น Drive</p></div><button class="btn sm pri" data-set="key">ใส่รหัส</button></div>')) : '') +
       (own ? T('<div class="set"><div><b>โหมดวางแผน</b><p class="muted">แสดงสถานะข้อมูล หน้าวางแผน และเครื่องมือแก้ไข นำเข้า ส่งออก</p></div><button class="sw" role="switch" aria-checked="') + p + T('" aria-label="โหมดวางแผน" data-set="planning"><span></span></button></div>') : '') +
       (p && SEEDS.length ? T('<div class="set"><div><b>ใช้แผนที่มากับลิงก์</b><p class="muted">ล้างการแก้ไขในเครื่องนี้ของแผนที่มากับลิงก์ แล้วโหลดใหม่ (การติ๊กยังอยู่)</p></div><button class="btn danger sm" data-set="reset">รีเซ็ต</button></div>') : '') +
       '<p class="note">' + (!storageOK ? T('เบราว์เซอร์นี้ไม่ให้บันทึกข้อมูล การแก้ไขจะหายเมื่อปิดหน้า')
-        : IS_GAS ? (own ? T('แผนหลักอยู่บน Drive ของเจ้าของ การแก้ไขที่ยังไม่บันทึกและการติ๊กเก็บในเครื่องนี้') : T('แผนโหลดจาก Drive ของเจ้าของ การติ๊กเก็บในเครื่องนี้เท่านั้น'))
+        : HAS_SERVER ? (own ? T('แผนหลักอยู่บน Drive ของเจ้าของ การแก้ไขที่ยังไม่บันทึกและการติ๊กเก็บในเครื่องนี้') : T('แผนโหลดจาก Drive ของเจ้าของ การติ๊กเก็บในเครื่องนี้เท่านั้น'))
         : own ? T('แผน การแก้ไข และการติ๊ก เก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น') : T('การติ๊กเก็บในเครื่องนี้เท่านั้น')) + '</p>' +
       '<p class="note ver" data-ver>' + T('แผนเที่ยว') + ' ' + APP_VERSION + '</p>' +
       T('<div class="mbtns"><button class="btn pri" data-res="ok">เสร็จ</button></div>');
@@ -1289,11 +1299,11 @@
   setInterval(function () { if (S.cur && !S.edit) { placeNow(); refreshNowCard(); } }, 60000);
   D.addEventListener('visibilitychange', function () { if (D.visibilityState === 'visible' && S.cur && !S.edit) { placeNow(); refreshNowCard(); } });
   /* GAS: coming back to the tab after 5+ minutes picks up the owner's latest save (no polling, to stay inside quota) */
-  D.addEventListener('visibilitychange', function () { if (IS_GAS && D.visibilityState === 'visible' && !S.edit && !S.remote.busy && Date.now() - S.remote.at > 300000) loadRemote(); });
+  D.addEventListener('visibilitychange', function () { if (HAS_SERVER && D.visibilityState === 'visible' && !S.edit && !S.remote.busy && Date.now() - S.remote.at > 300000) loadRemote(); });
   /* GAS: the page runs in an iframe, so copy our hash to the address bar to keep links shareable.
      Not before getLocation() has answered, or we would wipe the deep link the visitor opened. */
-  var hashReady = !IS_GAS, lastMirror = null;
-  function gasApi(k) { return IS_GAS && window.google && window.google.script ? window.google.script[k] : null; }
+  var hashReady = !IN_GAS, lastMirror = null;
+  function gasApi(k) { return IN_GAS && window.google && window.google.script ? window.google.script[k] : null; }
   function mirrorHash() {
     var h = gasApi('history'), cur = location.hash.slice(1);
     if (!hashReady || !h || !h.replace || cur === lastMirror) return;
@@ -1304,12 +1314,12 @@
   var conflicts = initData();
   if (!location.hash || location.hash === '#' || location.hash === '#home') {
     var on = sortedTrips().filter(function (x) { return x.s.status === 'ongoing' && x.s.dayIdx >= 0; })[0];
-    var st0 = IS_GAS ? serverTrip() : null;
+    var st0 = HAS_SERVER ? serverTrip() : null;
     if (st0) { S.remote.first = false; history.replaceState(null, '', '#' + landing(st0)); }
     else if (on) history.replaceState(null, '', '#' + on.t.id + '--d' + (on.s.dayIdx + 1));
   }
   render(false);
-  if (IS_GAS) {
+  if (HAS_SERVER) {
     var gu = gasApi('url');
     var onLoc = function (loc) {
       var h = loc && loc.hash; hashReady = true;

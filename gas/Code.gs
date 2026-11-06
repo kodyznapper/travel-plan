@@ -4,8 +4,13 @@
  * Everyone can read the plan; only a caller that sends the right edit key can write.
  * The edit key lives in Script Properties (EDIT_KEY) — never in this file, the page or the repo.
  *
- * Public functions (callable from the page via google.script.run): doGet, getTrip, checkKey, saveTrip, setup.
+ * Public functions (callable from the page via google.script.run): doGet, doPost, getTrip, checkKey, saveTrip, setup.
  * Every helper ends with "_" so the page cannot call it.
+ *
+ * JSON API for the GitHub Pages front end (dist/pages, a normal top-level page, so iPhone keeps its storage):
+ *   POST /exec   body (Content-Type text/plain, avoids a CORS preflight) = {"fn": "getTrip"|"checkKey"|"saveTrip", "args": [...]}
+ *   GET  /exec?api=getTrip   viewer copy only (a GET never carries the edit key: URLs end up in logs)
+ *   Answer: {"ok": <result>} or {"error": "BAD_KEY" | "LOCKED" | ...} — same results and errors as google.script.run.
  *
  * Script Properties:
  *   EDIT_KEY          set by the owner (Project Settings → Script properties). Long random text.
@@ -21,10 +26,20 @@ var FAIL_LIMIT = 10;          // wrong keys allowed per window, for all callers 
 var FAIL_WINDOW = 600;        // seconds
 var PLAN_HEAD = 'วางแผน';     // "# วางแผน" section is owner-only
 
-function doGet() {
+function doGet(e) {
+  var p = (e && e.parameter) || {};
+  if (p.api) return apiOut_(p.api === 'getTrip' ? getTrip : null, ['']);
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('Trip Plans - วางแผนเที่ยว')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover');
+}
+
+function doPost(e) {
+  var req = null;
+  try { req = JSON.parse(e.postData.contents); } catch (err) { req = null; }
+  var fns = { getTrip: getTrip, checkKey: checkKey, saveTrip: saveTrip };
+  var ok = req && typeof req.fn === 'string' && fns.hasOwnProperty(req.fn) && Array.isArray(req.args || []) && (req.args || []).length <= 4;
+  return apiOut_(ok ? fns[req.fn] : null, ok ? req.args || [] : []);
 }
 
 /* Read the plan. Without a valid key the owner-only parts are removed. */
@@ -97,6 +112,15 @@ function setup() {
 }
 
 /* ---------------- helpers (private) ---------------- */
+function apiOut_(fn, args) {
+  var out;
+  if (!fn) out = { error: 'BAD_REQUEST' };
+  else {
+    try { var r = fn.apply(null, args); out = { ok: r === undefined ? null : r }; }
+    catch (err) { out = { error: String((err && err.message) || err) }; }
+  }
+  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+}
 function tripFile_() {
   var id = PropertiesService.getScriptProperties().getProperty('TRIP_FILE_ID');
   if (!id) throw new Error('NOT_SET_UP');

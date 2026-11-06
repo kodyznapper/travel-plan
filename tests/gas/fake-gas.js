@@ -54,6 +54,7 @@ function services(st) {
     Session: { getActiveUser: () => ({ getEmail: () => st.activeUser }), getEffectiveUser: () => ({ getEmail: () => st.owner }) },
     Utilities: { formatDate: d => new Date(d).toISOString().replace(/[:.]/g, '-'), newBlob: (content, mime, name) => ({ __blob: true, content: String(content), name }) },
     HtmlService: { createHtmlOutputFromFile: () => html, XFrameOptionsMode: { DEFAULT: 'DEFAULT', ALLOWALL: 'ALLOWALL' } },
+    ContentService: { MimeType: { JSON: 'JSON' }, createTextOutput: c => { const o = { __text: true, content: String(c), mime: 'TEXT', setMimeType: m => { o.mime = m; return o; }, getContent: () => o.content }; return o; } },
     Logger: { log: () => { } }
   };
 }
